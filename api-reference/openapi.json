@@ -1,0 +1,863 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "c4ldas API",
+    "version": "1.0.0",
+    "description": "Collection of some API endpoints"
+  },
+  "servers": [
+    {
+      "url": "https://c4ldas-api.vercel.app/api",
+      "variables": {}
+    }
+  ],
+  "tags": [
+    {
+      "name": "League of Legends",
+      "description": "Endpoints related to League of Legends"
+    },
+    {
+      "name": "Spotify",
+      "description": "Endpoints related to Spotify"
+    },
+    {
+      "name": "Steam",
+      "description": "Endpoints related to Steam"
+    },
+    {
+      "name": "TFT",
+      "description": "Endpoints related to TFT"
+    },
+    {
+      "name": "Twitch",
+      "description": "Endpoints related to Twitch"
+    },
+    {
+      "name": "Valorant",
+      "description": "Endpoints related to Valorant"
+    },
+    {
+      "name": "Youtube",
+      "description": "Endpoints related to Youtube"
+    }
+  ],
+  "paths": {
+    "/valorant/rank": {
+      "get": {
+        "tags": [
+          "Valorant"
+        ],
+        "summary": "Display your real-time rank and elo in Valorant",
+        "description": "Display your real-time rank and elo in Valorant.",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "query",
+            "description": "Name of the player",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Tag of the player, same as #",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eu",
+                "na",
+                "latam",
+                "br",
+                "ap",
+                "kr"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          },
+          {
+            "name": "msg",
+            "in": "query",
+            "description": "Message to be displayed as response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "(player) está (rank) com (pontos) pontos"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Your Twitch channel",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/valorant/lastgame": {
+      "get": {
+        "tags": [
+          "Valorant"
+        ],
+        "summary": "Display your last game stats in Valorant",
+        "description": "Display your last game stats in Valorant.",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "query",
+            "description": "Name of the player",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Tag of the player, same as #",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eu",
+                "na",
+                "latam",
+                "br",
+                "ap",
+                "kr"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/valorant/puuid": {
+      "get": {
+        "tags": [
+          "Valorant"
+        ],
+        "summary": "Display your puuid in Valorant",
+        "description": "Display your puuid in Valorant.",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "query",
+            "description": "Name of the player",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Tag of the player, same as #",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/valorant/schedule": {
+      "get": {
+        "tags": [
+          "Valorant"
+        ],
+        "summary": "Display the games of the day based on the tournament searched",
+        "description": "Display the games of the day based on the tournament searched.",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Your channel name, no need to change",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "league",
+            "in": "query",
+            "description": "Name of the league",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "challengers_br",
+                "vct_lock_in",
+                "game_changers_series_brazil",
+                "last_chance_qualifier_br_and_latam",
+                "vct_americas",
+                "vct_masters",
+                "champions",
+                "ascension_americas",
+                "last_chance_qualifier_americas",
+                "game_changers_championship",
+                "vct_emea"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/lol/rank": {
+      "get": {
+        "tags": [
+          "League of Legends"
+        ],
+        "summary": "Display your real-time rank and elo in League of Legends",
+        "description": "Display your real-time rank and elo in League of Legends.",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "query",
+            "description": "Name of the player",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Tag of the player, same as #",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eun1",
+                "euw1",
+                "ru1",
+                "tr1",
+                "br1",
+                "la1",
+                "la2",
+                "na1",
+                "jp1",
+                "kr",
+                "oc1"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          },
+          {
+            "name": "msg",
+            "in": "query",
+            "description": "Message to be displayed as response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "(player): (rank) - (points) points"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/tft/rank": {
+      "get": {
+        "tags": [
+          "TFT"
+        ],
+        "summary": "Display your real-time rank and elo in TFT",
+        "description": "Display your real-time rank and elo in TFT.",
+        "parameters": [
+          {
+            "name": "player",
+            "in": "query",
+            "description": "Name of the player",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Tag of the player, same as #",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eun1",
+                "euw1",
+                "ru1",
+                "tr1",
+                "br1",
+                "la1",
+                "la2",
+                "na1",
+                "jp1",
+                "kr",
+                "oc1"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          },
+          {
+            "name": "msg",
+            "in": "query",
+            "description": "Message to be displayed as response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "(player): (rank) - (points) points"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/twitch/prediction/create/{code}": {
+      "get": {
+        "tags": [
+          "Twitch"
+        ],
+        "summary": "Control Twitch predictions",
+        "description": "Create a Twitch prediction.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Code received by application",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Twitch channel name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "option1",
+            "in": "query",
+            "description": "First option of prediction",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "option2",
+            "in": "query",
+            "description": "Second option of prediction",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "question",
+            "in": "query",
+            "description": "Question of prediction. Use query escape to include special characters",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/twitch/prediction/close/{code}": {
+      "get": {
+        "tags": [
+          "Twitch"
+        ],
+        "summary": "Closes a previously created prediction and chooses a winner",
+        "description": "Close a previously created Twitch prediction.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Code received by application",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Twitch channel name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "winner",
+            "in": "query",
+            "description": "Prediction result. Should be either one of the options created for option1 or option2",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/twitch/prediction/cancel/{code}": {
+      "get": {
+        "tags": [
+          "Twitch"
+        ],
+        "summary": "Cancel a previously created prediction",
+        "description": "Cancel a previously created Twitch prediction.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "Code received by application",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Twitch channel name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/spotify/musica/{id}": {
+      "get": {
+        "tags": [
+          "Spotify"
+        ],
+        "summary": "Shows which song is currently playing for the user",
+        "description": "Shows which song is currently playing for the user.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the user after registering on API. Can be retrieved on https://c4ldas-api.vercel.app /spotify",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "text"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/youtube/channel": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "summary": "Retrieve information about a YouTube channel",
+        "description": "Retrieve information about a YouTube channel.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "YouTube handle, also known as @username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/youtube/search/{id}": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "summary": "Retrieve information about a video from YouTube",
+        "description": "Retrieve information about a video from YouTube.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Video ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/youtube/search": {
+      "get": {
+        "tags": [
+          "Youtube"
+        ],
+        "summary": "Retrieve information about a video from YouTube",
+        "description": "Retrieve information about a video from YouTube.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Video ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/steam/game": {
+      "get": {
+        "tags": [
+          "Steam"
+        ],
+        "summary": "Get the details of the currently running Steam game",
+        "description": "Get the details of the currently running Steam game.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Steam ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region of the game",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ar",
+                "at",
+                "au",
+                "be",
+                "br",
+                "cl",
+                "cn",
+                "ca",
+                "co",
+                "cr",
+                "cy",
+                "ee",
+                "es",
+                "fi",
+                "fr",
+                "de",
+                "gr",
+                "hk",
+                "id",
+                "ie",
+                "il",
+                "in",
+                "it",
+                "jp",
+                "kz",
+                "kw",
+                "lt",
+                "lu",
+                "lv",
+                "my",
+                "mt",
+                "mx",
+                "nl",
+                "no",
+                "nz",
+                "pe",
+                "ph",
+                "pl",
+                "pt",
+                "qa",
+                "ru",
+                "sg",
+                "sk",
+                "si",
+                "za",
+                "kr",
+                "tw",
+                "th",
+                "tr",
+                "ua",
+                "uk",
+                "ae",
+                "us",
+                "uy",
+                "vn"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Format of the response",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
+}
