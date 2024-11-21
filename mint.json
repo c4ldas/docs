@@ -32,7 +32,7 @@
       "openapi": "/api-reference/openapi.json",
       "url": "api-reference",
       "icon": "square-terminal"
-    },
+    }
   ],
   "navigation": [
     {
