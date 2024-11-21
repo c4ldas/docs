@@ -38,8 +38,8 @@
     {
       "group": "Get Started",
       "pages": [
-        "introduction",
-        "quickstart",
+        "get-started/introduction",
+        "get-started/quickstart",
         "get-started/development"
       ]
     },
