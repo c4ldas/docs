@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://c4ldas-api.vercel.app/api",
+      "url": "https://repl.c4ldas.com.br/api",
       "variables": {}
     }
   ],
