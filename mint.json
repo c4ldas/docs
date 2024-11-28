@@ -30,9 +30,9 @@
       {
       "name": "API Reference",
       "openapi": "/api-reference/api.json",
-      "url": "api-reference",
+      "url": "",
       "icon": "square-terminal"
-    }
+    },
   ],
   "navigation": [
     {
