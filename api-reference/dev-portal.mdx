@@ -1,0 +1,60 @@
+---
+title: "Developer Portal"
+description: "API Endpoints to integrate your system, application or overlays with StreamElements."
+---
+
+So... you want to integrate your application with our API? Or maybe create a custom widget? Or use our API for a personal project? You are in the right place! Welcome to StreamElements API!
+
+<Card title="It's free!" icon="rocket" href="https://streamelements.com">
+  The API is completely free to use and you can start using right away, no additional configuration is needed. Except a StreamElements account, of course. 😉
+</Card>
+
+## Authentication
+
+All API endpoints are authenticated using `Authorization` header on the request. There are 3 ways of authentication: `Bearer`, `Oauth` and `Apikey`.
+
+**Bearer** - JWT token used for personal projects, found in [`https://streamelements.com/dashboard/account/channels`](https://streamelements.com/dashboard/account/channels)
+
+**Oauth** - Token provided after oAuth authentication. More info in [https://dev.streamelements.com/docs/api-docs/cd02cda5171ea-o-auth2](https://dev.streamelements.com/docs/api-docs/cd02cda5171ea-o-auth2)
+
+**Apikey** - Token provided for use in custom widgets, visible during onWidgetLoad, key `obj.detail.channel.apiToken`
+
+<Note>
+  Not all endpoints accept all of 3. Most of them work with Bearer, some with Oauth and a few with Apikey. When trying a non-supported authentication, the response will be a `403 - Forbidden`.
+</Note>
+
+## Example request
+
+This is an example request and its response:
+
+<CodeGroup>
+  ```bash Example request
+  curl -X GET "https://api.streamelements.com/kappa/v2/channels/me" \
+  -H "Accept: application/json" \
+  -H "Authorization: oAuth 5a30c9621f638600014af608123" 
+  ```
+
+  ```json Example response
+  {
+    "profile": {
+      "title": "example's profile",
+      "headerImage": "https://cdn.streamelements.com/uploads/cc9f302f-44e6-4527-9db5-f461678ec643.png"
+    },
+    "_id": "0123456789abcdefghijkl",
+    "provider": "twitch",
+    "broadcasterType": "affiliate",
+    "suspended": false,
+    "providerId": "28057703",
+    "email": "example@example.com",
+    "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/01234567-0123-abcd-efgh-9876543210ab-profile_image-300x300.png",
+    "type": "streamer",
+    "apiToken": "abcdefghijklmnopqrstuvwxyz",
+    "username": "example",
+    "alias": "example",
+    "displayName": "Example",
+    "[...]"
+  }
+  ```
+</CodeGroup>
+
+  <Note>Feel free to report any bugs and issues to support@streamelements.com</Note>
