@@ -18,7 +18,7 @@
   "topbarLinks": [
     {
       "name": "Main Page",
-      "url": "https://repl.c4ldas.com.br/"
+      "url": "https://streamelements.com/"
     }
   ],
   "topbarCtaButton": {
@@ -71,8 +71,12 @@
     }
   ],
   "footerSocials": {
-    "x": "https://twitter.com/c4ldas",
-    "github": "https://github.com/c4ldas",
-    "linkedin": "https://www.linkedin.com/in/caldas"
+    "twitch": "https://twitch.tv/streamelementshq",
+    "x": "https://x.com/streamelements",
+    "facebook": "https://facebook.com/streamelements",
+    "youtube": "https://youtube.com/streamelements",
+    "instagram": "https://instagram.com/streamelementsofficial",
+    "discord": "https://strms.net/sediscord",
+    "github": "https://github.com/streamelements"
   }
 }
