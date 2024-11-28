@@ -29,7 +29,10 @@
         "operationId": "/:channel",
         "security": [
           {
-            "httpBearer": []
+            "JWTBearer": []
+          },
+          {
+            "ApiKeyBearer": []
           },
           {
             "OAuth2": [
@@ -45640,8 +45643,7 @@
       },
       "ApiKeyBearer": {
         "type": "http",
-        "scheme": "bearer",
-        "name": "apiKey"
+        "scheme": "bearer"
       },
       "OAuth2": {
         "type": "oauth2",
