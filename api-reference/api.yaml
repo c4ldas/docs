@@ -1420,11 +1420,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 400
-                    error: Bad Request
-                    message: The bot is not in your channel
               examples:
                 Example 1:
                   value:
@@ -1769,27 +1764,6 @@ paths:
                           type: boolean
                         avatarUrl:
                           type: string
-                x-examples:
-                  Example 1:
-                    users:
-                      - channelId: 2de5f5dd9a0474a2c2dabdc4
-                        providerId: '128070065'
-                        name: testuser
-                        displayName: testUser
-                        lastMessage: This is my last message
-                        lastMessageAt: '2024-12-03T12:24:00Z'
-                        level: 500
-                        fixedLevel: true
-                        avatarUrl: 'https://static-cdn.jtvnw.net/jtv_user_pictures/test-profile_image-300x300.png'
-                      - channelId: 2de5f5dd9a0474a2c2dabdc4
-                        providerId: '128070066'
-                        name: testuser
-                        displayName: testUser2
-                        lastMessage: Bye
-                        lastMessageAt: '2024-12-03T12:24:00Z'
-                        level: 500
-                        fixedLevel: true
-                        avatarUrl: 'https://static-cdn.jtvnw.net/jtv_user_pictures/test2-profile_image-300x300.png'
               examples:
                 Example:
                   value:
@@ -1861,10 +1835,6 @@ paths:
                   type: string
                 level:
                   type: integer
-              x-examples:
-                Example 1:
-                  providerId: '1234567'
-                  level: 500
             examples:
               Example 1:
                 value:
@@ -1893,11 +1863,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 400
-                    error: Bad Request
-                    message: '[invalid_argument] provider_id is required'
               examples:
                 Example:
                   value:
@@ -1948,9 +1913,6 @@ paths:
                 properties:
                   statusCode:
                     type: integer
-                x-examples:
-                  Example 1:
-                    statusCode: 201
               examples:
                 Example:
                   value:
@@ -1967,6 +1929,233 @@ paths:
                 __default_content:
                   value: '52'
       deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/{channel}/counters':
+    get:
+      tags:
+        - bot
+      summary: '/:channel/counters'
+      description: Get list of counters and their values
+      operationId: 'Get/:channel/counters'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    count:
+                      type: integer
+              examples:
+                Example:
+                  value:
+                    - id: testcounter
+                      count: 31
+                    - id: assists
+                      count: 15
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Sat, 08 Dec 2018 09:39:57 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '35'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/{channel}/counters/{counter}':
+    get:
+      tags:
+        - bot
+      summary: '/:channel/counters/:counter'
+      description: Get counter value
+      operationId: 'Get/:channel/counters/:counter'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: counter
+          in: path
+          description: string - Counter name
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Success27'
+              examples:
+                default:
+                  value:
+                    counter: testcounter
+                    value: 1
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Sat, 08 Dec 2018 09:39:57 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '35'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+    put:
+      tags:
+        - bot
+      summary: '/:channel/counters/:counter'
+      description: Update counter value
+      operationId: 'Put/:channel/counters/:counter'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          schema:
+            type: string
+        - name: counter
+          in: path
+          description: string - counter name
+          required: true
+          schema:
+            type: string
+            example: testcounter
+          examples:
+            default:
+              value: testcounter
+      requestBody:
+        description: "`count` is the value to be added to the current counter\r\n\r\n- Postive values will increase the count value\r\n\r\n- Negative values will decrease the count value"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+            examples:
+              Example:
+                value:
+                  count: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  count:
+                    type: integer
+              examples:
+                Example:
+                  value:
+                    id: testcounter
+                    count: 12
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+    delete:
+      tags:
+        - bot
+      summary: '/:channel/counters/:counter'
+      description: Delete counter
+      operationId: 'Delete/:channel/counters/:counter'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          schema:
+            type: string
+        - name: counter
+          in: path
+          description: string - counter name
+          required: true
+          schema:
+            type: string
+            example: testcounter
+          examples:
+            default:
+              value: testcounter
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  count:
+                    type: integer
+              examples:
+                Example:
+                  value:
+                    id: testcounter
+                    count: 0
       security:
         - JWTBearer: []
         - OAuth2:
@@ -2109,67 +2298,6 @@ paths:
                         type: string
                   geo:
                     type: string
-                x-examples:
-                  Example 1:
-                    profile:
-                      title: username's profile
-                      headerImage: 'https://cdn.streamelements.com/uploads/example-image.png'
-                    _id: da2ca2df2c4d05de5d9a474b
-                    provider: twitch
-                    broadcasterType: affiliate
-                    suspended: false
-                    providerId: '123456'
-                    email: example@email.com
-                    avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
-                    type: streamer
-                    apiToken: YXXXXC0KODH28jF0NnFEZ-v3tNBP5JK9h7ESo8Os4
-                    username: username
-                    alias: username
-                    displayName: username
-                    accessToken: yaaaaqf1jm211y3aj8qw8ioris0qaj
-                    users:
-                      - _id: 5fd9af5c42dea255dd0a474a
-                        user: 5fd9af5c42dea255dd0a474a
-                        role: owner
-                        providerId: '123456'
-                      - user: 60868a7654f946911da161ab
-                        role: administrator
-                      - user: 7f1470e02085edf09a8fa82d
-                        role: editor
-                    ab:
-                      use-third-party-activities: '1'
-                      obslive_widgets: '1'
-                      newNavigation: '1'
-                      myOverlaysV2: '1'
-                      share-overlay: '1'
-                      widgets-v2: '1'
-                      chatbot-votekick: '1'
-                      af-multiplatform: '1'
-                    createdAt: '2020-08-07T23:38:05.630Z'
-                    updatedAt: '2024-12-03T10:54:14.669Z'
-                    country: IE
-                    lastLogin: '2024-12-03T10:54:14.667Z'
-                    scopesBitmask: 67038047
-                    authorized: true
-                    inactive: false
-                    isPartner: true
-                    providerTotals:
-                      follower-total: 97500
-                    features:
-                      g2a.countries: AX
-                      sepayCountries: 'CA,AU,US,DE,FR,AT,BE,IE,NL,PT,ES,FI,GB,PL,CZ,CH,IT,SE,DK,SK,NO,RO'
-                      paypalMicroCurrencies: xxx_disabled
-                      paypalMicroCountries: xx_disabled
-                      zendeskFollowersMin: '500'
-                      zendeskActive: '1'
-                      donatepay.countries: 'RU,AZ,BY,KZ,KG,AM,MD,TJ,UZ,UA'
-                      zd.show: semerch
-                      donatepay.providers: 'twitch,mixer,youtube'
-                      disableMerch: 'false'
-                      merchBlocklist: ID
-                      showChristmas: 'false'
-                      heartbeat.sampleRate: '1.00'
-                    geo: IE
               examples:
                 Example:
                   value:
@@ -2256,11 +2384,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 401
-                    error: Unauthorized
-                    message: Not allowed to perform this operation
               examples:
                 Example:
                   value:
@@ -2341,11 +2464,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 404
-                    error: Not Found
-                    message: channel wrongchannel was not found
               examples:
                 Example:
                   value:
@@ -2459,11 +2577,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 403
-                    error: Forbidden
-                    message: Not allowed to perform this operation
               examples:
                 Example:
                   value:
@@ -6142,11 +6255,6 @@ paths:
                     type: string
                   message:
                     type: string
-                x-examples:
-                  Example 1:
-                    statusCode: 500
-                    error: Internal Server Error
-                    message: An internal server error occurred
               examples:
                 Example:
                   value:
@@ -6190,10 +6298,6 @@ paths:
                   type: string
                 data:
                   type: object
-              x-examples:
-                Example 1:
-                  event: 'event:test'
-                  data: {}
             examples:
               Example 1:
                 value:
@@ -6237,11 +6341,6 @@ paths:
                   message:
                     type: string
                     example: Not allowed to perform this operation
-                x-examples:
-                  Example 1:
-                    statusCode: 401
-                    error: Unauthorized
-                    message: Not allowed to perform this operation
       deprecated: false
       security:
         - JWTBearer: []
@@ -6256,9 +6355,9 @@ paths:
     delete:
       tags:
         - channels
-      summary: '/:channelId/accesstoken'
-      description: TODO - Missing description
-      operationId: '/:channelId/accesstoken'
+      summary: '/:channel/accesstoken'
+      description: "Invalidates your current overlay token (apikey). \r\n\r\nIt can take some time until the overlay token stops working.\r\n\r\nYou may need to re-add your overlays, as the URL will change.\r\n\r\n"
+      operationId: 'Delete/:channel/accesstoken'
       parameters:
         - name: channel
           in: path
@@ -6269,32 +6368,47 @@ paths:
             type: string
             example: 5b2e2007760aeb7729487dab
       responses:
-        '200':
-          description: ''
+        '201':
+          description: Created
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Created
+              examples:
+                default:
+                  value: Created
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 403
+                  error:
+                    type: string
+                    example: Forbidden
+                  message:
+                    type: string
+                    example: Not allowed to perform this operation
       deprecated: false
       security:
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
         - url: 'https://api.streamelements.com/kappa/v3'
           description: V3
-  '/bot/{channel}/counters':
+  /chatstats:
     get:
       tags:
-        - bot
-      summary: '/:channel/counters'
-      description: Get list of counters and their values
-      operationId: 'Get/:channel/counters'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          schema:
-            type: string
+        - chatstats
+      summary: /
+      description: Get global chatstats
+      operationId: /
       responses:
         '200':
           description: ''
@@ -6305,141 +6419,97 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
+                    channel:
                       type: string
-                    count:
+                      example: gaules
+                    messages:
                       type: integer
-                x-examples:
-                  Example 1:
-                    - id: testcounter
-                      count: 31
-                    - id: assists
-                      count: 15
+                      example: 234685482
               examples:
-                Example:
+                Example 1:
                   value:
-                    - id: testcounter
-                      count: 31
-                    - id: assists
-                      count: 15
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Sat, 08 Dec 2018 09:39:57 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '35'
+                    - channel: mizkif
+                      messages: 243957243
+                    - channel: gaules
+                      messages: 234685482
       deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2:
-            - 'bot:read'
-            - 'bot:write'
+      security: []
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
         - url: 'https://api.streamelements.com/kappa/v3'
           description: V3
-  '/bot/{channel}/counters/{counter}':
+  /chatstats/search:
     get:
       tags:
-        - bot
-      summary: '/:channel/counters/:counter'
-      description: Get counter value
-      operationId: 'Get/:channel/counters/:counter'
+        - chatstats
+      summary: /search
+      description: Search for channel by channel name
+      operationId: /search
       parameters:
         - name: channel
-          in: path
-          description: guid - Channel id
+          in: query
+          description: string - Channel name
           required: true
-          style: simple
+          style: form
+          explode: true
           schema:
             type: string
-            example: 5b2e2007760aeb7729487dab
-        - name: counter
-          in: path
-          description: string - Counter name
-          required: true
-          style: simple
-          schema:
-            type: string
+            example: leeeeex
       responses:
         '200':
           description: ''
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/Success27'
+                type: array
+                items:
+                  type: string
               examples:
-                default:
-                  value:
-                    counter: testcounter
-                    value: 1
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Sat, 08 Dec 2018 09:39:57 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '35'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2:
-            - 'bot:read'
-            - 'bot:write'
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-    put:
-      tags:
-        - bot
-      summary: '/:channel/counters/:counter'
-      description: Update counter value
-      operationId: 'Put/:channel/counters/:counter'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          schema:
-            type: string
-        - name: counter
-          in: path
-          description: string - counter name
-          required: true
-          schema:
-            type: string
-            example: testcounter
-          examples:
-            default:
-              value: testcounter
-      requestBody:
-        description: "`count` is the value to be added to the current counter\r\n\r\n- Postive values will increase the count value\r\n\r\n- Negative values will decrease the count value"
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                count:
-                  type: integer
-              x-examples:
                 Example 1:
-                  count: -1
-            examples:
-              Example:
-                value:
-                  count: 1
+                  value:
+                    - testchannel101001
+                    - testchannel1028
+                    - testchannel199999
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 500
+                  error:
+                    type: string
+                    example: Internal Server Error
+                  message:
+                    type: string
+                    example: An internal server error occurred
+      deprecated: false
+      security: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/chatstats/{username}':
+    get:
+      tags:
+        - chatstats
+      summary: '/:username'
+      description: "Get stats for channel name\r\n*"
+      operationId: '/:username'
+      parameters:
+        - name: username
+          in: path
+          description: string - Channel name
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: leeeeex
       responses:
         '200':
           description: ''
@@ -6448,78 +6518,357 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
+                  username:
                     type: string
-                  count:
+                  providerId:
+                    type: string
+                  loaded:
+                    type: boolean
+                  emotesUpdatedAt:
+                    type: string
+                  emotes:
+                    type: object
+                    properties:
+                      5Head:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          _id:
+                            type: string
+                          type:
+                            type: string
+                          width:
+                            type: integer
+                          height:
+                            type: integer
+                          gif:
+                            type: boolean
+                  lastMessage:
+                    type: string
+                  uniqueChatters:
                     type: integer
-                x-examples:
-                  Example 1:
-                    id: testcounter
-                    count: 12
               examples:
                 Example:
                   value:
-                    id: testcounter
-                    count: 12
-      security:
-        - JWTBearer: []
-        - OAuth2:
-            - 'bot:read'
-            - 'bot:write'
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-    delete:
-      tags:
-        - bot
-      summary: '/:channel/counters/:counter'
-      description: Delete counter
-      operationId: 'Delete/:channel/counters/:counter'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          schema:
-            type: string
-        - name: counter
-          in: path
-          description: string - counter name
-          required: true
-          schema:
-            type: string
-            example: testcounter
-          examples:
-            default:
-              value: testcounter
-      responses:
-        '200':
-          description: OK
+                    username: username
+                    providerId: '1234567'
+                    loaded: true
+                    emotesUpdatedAt: '0001-01-01T00:00:00Z'
+                    emotes:
+                      5Head:
+                        name: 5Head
+                        _id: 5d6096974932b21d9c332904
+                        type: bttv
+                        width: 0
+                        height: 0
+                        gif: false
+                      AYAYA:
+                        name: AYAYA
+                        _id: '162146'
+                        type: ffz
+                        width: 0
+                        height: 0
+                        gif: false
+                    lastMessage: '0001-01-01T00:00:00Z'
+                    uniqueChatters: 0
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: string
-                  count:
+                  statusCode:
                     type: integer
-                x-examples:
-                  Example 1:
-                    id: testcounter
-                    count: 0
+                    example: 404
+                  error:
+                    type: string
+                    example: Not Found
+                  message:
+                    type: string
+                    example: No channel was found
+      deprecated: false
+      security: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/chatstats/{username}/epm':
+    get:
+      tags:
+        - chatstats
+      summary: '/:username/epm'
+      description: "Get channel's \"emotes per minute\"\r\n*"
+      operationId: '/:username/epm'
+      parameters:
+        - name: limit
+          in: query
+          description: integer - number of items to be shown
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            example: 25
+        - name: username
+          in: path
+          description: Username
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      deprecated: false
+      security: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/chatstats/{username}/stats':
+    get:
+      tags:
+        - chatstats
+      summary: '/:username/stats'
+      description: Get channels stats
+      operationId: '/:username/stats'
+      parameters:
+        - name: limit
+          in: query
+          description: integer - Number of items to be shown
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 100
+            default: 100
+            example: 25
+        - name: username
+          in: path
+          description: string - Channel name
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: leeeeex
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                  totalMessages:
+                    type: integer
+                  chatters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        amount:
+                          type: integer
+                  hashtags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hashtag:
+                          type: string
+                        amount:
+                          type: integer
+                  commands:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        command:
+                          type: string
+                        amount:
+                          type: integer
+                  bttvEmotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        emote:
+                          type: string
+                        amount:
+                          type: integer
+                  ffzEmotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        emote:
+                          type: string
+                        amount:
+                          type: integer
+                  twitchEmotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        emote:
+                          type: string
+                        amount:
+                          type: integer
+                  sevenTVEmotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        emote:
+                          type: string
+                        amount:
+                          type: integer
+                  uniqueChatters:
+                    type: integer
               examples:
                 Example:
                   value:
-                    id: testcounter
-                    count: 0
-      security:
-        - JWTBearer: []
-        - OAuth2:
-            - 'bot:read'
-            - 'bot:write'
+                    channel: channelName
+                    totalMessages: 5129427
+                    chatters:
+                      - name: streamelements
+                        amount: 229150
+                      - name: user4
+                        amount: 101976
+                      - name: user543
+                        amount: 70701
+                    hashtags:
+                      - hashtag: '#se'
+                        amount: 1934
+                      - hashtag: '#streamelements'
+                        amount: 933
+                      - hashtag: '#hashtag'
+                        amount: 893
+                    commands:
+                      - command: '!followage'
+                        amount: 49313
+                      - command: '!commands'
+                        amount: 17885
+                      - command: '!test'
+                        amount: 16754
+                    bttvEmotes:
+                      - id: 606b8d86fba15a03df2c8dfb
+                        emote: Kirby
+                        amount: 27036
+                      - id: 5de88ccef6e95977b50e6eb1
+                        emote: pugPls
+                        amount: 25436
+                      - id: 5f1b0186cf6d2144653d2970
+                        emote: catJAM
+                        amount: 12883
+                    ffzEmotes:
+                      - id: '28136'
+                        emote: LilZ
+                        amount: 7
+                      - id: '723890'
+                        emote: ffzW
+                        amount: 5
+                      - id: '757384'
+                        emote: BibleThump
+                        amount: 4
+                    twitchEmotes:
+                      - id: emotesv2_dc2fe91e43a54gdfgdfgf0def174
+                        emote: testEmote
+                        amount: 72478
+                      - id: emotesv2_e5226e938fe6dfgdfgdec766
+                        emote: emote2
+                        amount: 36380
+                      - id: emotesv2_88a454b37b5f48acgergegsdfg4
+                        emote: emotes34g
+                        amount: 32003
+                    sevenTVEmotes:
+                      - id: 636b877aada75990352334c7
+                        emote: Clap
+                        amount: 514
+                      - id: 63019cd97f31c2c757a21162
+                        emote: peepoSad
+                        amount: 64
+                      - id: 62fc0a0c4a75fd54bd3520a9
+                        emote: Clap
+                        amount: 63
+                    uniqueChatters: 34349
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  error:
+                    type: string
+                    example: Not Found
+                  message:
+                    type: string
+                    example: No channel was found
+      deprecated: false
+      security: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/chatstats/{username}/{category}/{item}':
+    get:
+      tags:
+        - chatstats
+      summary: '/:username/:category/:item'
+      description: "Get channels details linked to provided URL \r\n*"
+      operationId: '/:username/:category/:item'
+      parameters:
+        - name: username
+          in: path
+          description: Username
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: leeeeex
+        - name: category
+          in: path
+          description: Category
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: item
+          in: path
+          description: Item
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      deprecated: true
+      security: []
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -6606,6 +6955,7 @@ paths:
                   value: '389'
       deprecated: false
       security:
+        - {}
         - JWTBearer: []
         - OAuth2:
             - 'bot:read'
@@ -6746,8 +7096,9 @@ paths:
       deprecated: false
       security:
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -6759,8 +7110,8 @@ paths:
         - commands
         - bot
       summary: '/:channel/public'
-      description: List channel's public commands
-      operationId: '/:channel/public'
+      description: List public commands
+      operationId: 'Get/:channel/public'
       parameters:
         - name: channel
           in: path
@@ -6872,9 +7223,11 @@ paths:
                   value: '778'
       deprecated: false
       security:
+        - {}
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -6887,7 +7240,7 @@ paths:
         - bot
       summary: '/:channel/default'
       description: List default commands
-      operationId: '/:channel/default'
+      operationId: 'Get/:channel/default'
       parameters:
         - name: language
           in: query
@@ -8672,9 +9025,11 @@ paths:
                   value: '15959'
       deprecated: false
       security:
+        - {}
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -8686,7 +9041,7 @@ paths:
         - commands
       summary: '/:channel/default/:commandId'
       description: Update default command
-      operationId: '/:channel/default/:commandId'
+      operationId: 'Put/:channel/default/:commandId'
       parameters:
         - name: channel
           in: path
@@ -8736,20 +9091,6 @@ paths:
                     type: string
                 commandId:
                   type: string
-              x-examples:
-                Example 1:
-                  command: chatstats
-                  accessLevel: 100
-                  enabled: true
-                  enabledOnline: true
-                  enabledOffline: true
-                  cost: 0
-                  cooldown:
-                    user: 15
-                    global: 5
-                  aliases:
-                    - twitchstats
-                  commandId: chatstats
             examples:
               '':
                 value:
@@ -8826,8 +9167,9 @@ paths:
       deprecated: false
       security:
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -8839,7 +9181,7 @@ paths:
         - commands
       summary: '/:channel/:commandId'
       description: Get command details
-      operationId: '/:channel/:commandId'
+      operationId: 'Get/:channel/:commandId'
       parameters:
         - name: channel
           in: path
@@ -8914,9 +9256,10 @@ paths:
                         message: '"commandId" with value "1" fails to match the required pattern: /^[0-9a-fA-F]{24}$/'
       deprecated: false
       security:
+        - {}
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -9013,8 +9356,9 @@ paths:
       deprecated: false
       security:
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
@@ -9025,7 +9369,7 @@ paths:
         - commands
       summary: '/:channel/:commandId'
       description: Delete custom command
-      operationId: '/:channel/:commandId1'
+      operationId: 'Delete/:channel/:commandId1'
       parameters:
         - name: channel
           in: path
@@ -9042,26 +9386,119 @@ paths:
           style: simple
           schema:
             type: string
+            example: 5f94719f9d1aff0ce6f1d02e
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cooldown:
+                    type: object
+                    properties:
+                      user:
+                        type: integer
+                      global:
+                        type: integer
+                  _id:
+                    type: string
+                  channel:
+                    type: string
+                  command:
+                    type: string
+                  aliases:
+                    type: array
+                    items:
+                      type: object
+                  keywords:
+                    type: array
+                    items:
+                      type: object
+                  titleKeywords:
+                    type: array
+                    items:
+                      type: object
+                  enabled:
+                    type: boolean
+                  enabledOnline:
+                    type: boolean
+                  enabledOffline:
+                    type: boolean
+                  hidden:
+                    type: boolean
+                  cost:
+                    type: integer
+                  type:
+                    type: string
+                  accessLevel:
+                    type: integer
+                  reply:
+                    type: string
+                  startsAt:
+                    type: string
+                  expiresAt:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              examples:
+                Example:
+                  value:
+                    cooldown:
+                      user: 15
+                      global: 5
+                    _id: 668086ee990aa4ae64772fa0
+                    channel: 5f2de5dd9accc474aaaaaaaa
+                    command: test2
+                    aliases: []
+                    keywords: []
+                    titleKeywords: []
+                    enabled: true
+                    enabledOnline: true
+                    enabledOffline: true
+                    hidden: false
+                    cost: 0
+                    type: say
+                    accessLevel: 100
+                    reply: test response
+                    startsAt: '0001-01-01T00:00:00.000Z'
+                    expiresAt: '0001-01-01T00:00:00.000Z'
+                    createdAt: '2024-06-29T22:13:02.058Z'
+                    updatedAt: '2024-06-29T22:13:02.058Z'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  error:
+                    type: string
+                    example: Not found
       deprecated: false
       security:
         - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
+        - OAuth2:
+            - 'bot:read'
+            - 'bot:write'
       servers:
         - url: 'https://api.streamelements.com/kappa/v2'
           description: V2
         - url: 'https://api.streamelements.com/kappa/v3'
           description: V3
-  '/bot/timers/{channel}':
+  '/contests/{channel}':
     get:
       tags:
-        - timers
+        - contests
       summary: '/:channel'
-      description: List timers
-      operationId: 'Get/:channel1'
+      description: List contests
+      operationId: 'Get/:channel123456'
       parameters:
         - name: channel
           in: path
@@ -9077,52 +9514,113 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Success11'
-                example:
-                  - online:
-                      enabled: true
-                      interval: 5
-                    offline:
-                      enabled: true
-                      interval: 30
-                    enabled: true
-                    chatLines: 5
-                    _id: 5c0aa9d3de9a4c4622a14e07
-                    channel: 5b2e2007760aeb7729487dab
-                    name: test timer
-                    message: This is a test
-                    createdAt: '2018-12-07T17:11:47.909Z'
-                    updatedAt: '2018-12-07T17:11:47.909Z'
-              examples:
-                default:
-                  value:
-                    - online:
-                        enabled: true
-                        interval: 5
-                      offline:
-                        enabled: true
-                        interval: 30
-                      enabled: true
-                      chatLines: 5
-                      _id: 5c0aa9d3de9a4c4622a14e07
-                      channel: 5b2e2007760aeb7729487dab
-                      name: test timer
-                      message: This is a test
-                      createdAt: '2018-12-07T17:11:47.909Z'
-                      updatedAt: '2018-12-07T17:11:47.909Z'
+                type: object
+                properties:
+                  active:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      minBet:
+                        type: integer
+                      maxBet:
+                        type: integer
+                      botResponses:
+                        type: boolean
+                      options:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            command:
+                              type: string
+                            title:
+                              type: string
+                            totalAmount:
+                              type: integer
+                            totalUsers:
+                              type: integer
+                            _id:
+                              type: string
+                      totalAmount:
+                        type: integer
+                      totalUsers:
+                        type: integer
+                      duration:
+                        type: integer
+                      channel:
+                        type: string
+                      state:
+                        type: string
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                      startedAt:
+                        type: string
+                  contests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        minBet:
+                          type: integer
+                        maxBet:
+                          type: integer
+                        botResponses:
+                          type: boolean
+                        options:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              command:
+                                type: string
+                              title:
+                                type: string
+                              totalAmount:
+                                type: integer
+                              totalUsers:
+                                type: integer
+                              _id:
+                                type: string
+                        totalAmount:
+                          type: integer
+                        totalUsers:
+                          type: integer
+                        duration:
+                          type: integer
+                        channel:
+                          type: string
+                        state:
+                          type: string
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        startedAt:
+                          type: string
           headers:
             Date:
               schema: {}
               examples:
                 __default_content:
-                  value: 'Fri, 07 Dec 2018 17:11:53 GMT'
+                  value: 'Fri, 07 Dec 2018 11:05:03 GMT'
             Content-Length:
               schema: {}
               examples:
                 __default_content:
-                  value: '307'
+                  value: '529'
       deprecated: false
       security:
         - JWTBearer: []
@@ -9135,10 +9633,10 @@ paths:
           description: V3
     post:
       tags:
-        - timers
+        - contests
       summary: '/:channel'
-      description: Create a new timer
-      operationId: 'Post/:channel1'
+      description: Create a new contest
+      operationId: 'Post/:channel12'
       parameters:
         - name: channel
           in: path
@@ -9154,662 +9652,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/channelrequest1'
+              type: object
+              example: {}
             examples:
               default:
-                value:
-                  online:
-                    enabled: true
-                    interval: 5
-                  offline:
-                    enabled: true
-                    interval: 30
-                  enabled: true
-                  chatLines: 5
-                  name: ''
-                  message: ''
-      responses:
-        '201':
-          description: ''
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BotCommand'
-              examples:
-                default:
-                  value:
-                    cooldown:
-                      user: 15
-                      global: 5
-                    aliases: []
-                    keywords: []
-                    enabled: true
-                    enabledOnline: true
-                    enabledOffline: true
-                    hidden: false
-                    cost: 0
-                    type: say
-                    accessLevel: 100
-                    _id: 5c0a52dcde9a4c1de1a14d8d
-                    regex: 'test[0-9]{3}'
-                    reply: test response
-                    command: test2
-                    channel: 5b2e2007760aeb7729487dab
-                    createdAt: '2018-12-07T11:00:44.538Z'
-                    updatedAt: '2018-12-07T11:00:44.538Z'
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Fri, 07 Dec 2018 11:00:44 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '388'
-            Vary:
-              schema: {}
-              examples:
-                __default_content:
-                  value: X-HTTP-Method-Override
-        '409':
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/channel_redemptions_itemId'
-              examples:
-                default:
-                  value:
-                    statusCode: 409
-                    error: Conflict
-                    message: Command test already exists
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/bot/timers/{channel}/{timerId}':
-    get:
-      tags:
-        - timers
-      summary: '/:channel/:timerId'
-      description: Get timer details
-      operationId: '/:channel/:timerId'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-        - name: timerId
-          in: path
-          description: guid - Timer id
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/Success11'
-              examples:
-                default:
-                  value:
-                    online:
-                      enabled: true
-                      interval: 5
-                    offline:
-                      enabled: true
-                      interval: 30
-                    enabled: true
-                    chatLines: 5
-                    _id: 5c0aa9d3de9a4c4622a14e07
-                    channel: 5b2e2007760aeb7729487dab
-                    name: test timer
-                    message: This is a test
-                    createdAt: '2018-12-07T17:11:47.909Z'
-                    updatedAt: '2018-12-07T17:11:47.909Z'
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Fri, 07 Dec 2018 17:12:08 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '305'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-    put:
-      tags:
-        - timers
-      summary: '/:channel/:timerId'
-      description: Update timer details
-      operationId: 'Put/:channel/:timerId'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-        - name: timerId
-          in: path
-          description: guid - Timer id
-          required: true
-          style: simple
-          schema:
-            type: string
-      requestBody:
-        description: ''
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                online:
-                  type: object
-                  properties:
-                    enabled:
-                      type: boolean
-                    interval:
-                      type: integer
-                offline:
-                  type: object
-                  properties:
-                    enabled:
-                      type: boolean
-                    interval:
-                      type: integer
-                enabled:
-                  type: boolean
-                chatLines:
-                  type: integer
-                name:
-                  type: string
-                message:
-                  type: string
-              x-examples:
-                Example 1:
-                  online:
-                    enabled: true
-                    interval: 5
-                  offline:
-                    enabled: true
-                    interval: 30
-                  enabled: true
-                  chatLines: 5
-                  name: ''
-                  message: ''
-            examples:
-              default:
-                value:
-                  online:
-                    enabled: true
-                    interval: 5
-                  offline:
-                    enabled: true
-                    interval: 30
-                  enabled: true
-                  chatLines: 5
-                  name: ''
-                  message: ''
-      responses:
-        '201':
-          description: ''
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/Success11'
-              examples:
-                default:
-                  value:
-                    online:
-                      enabled: true
-                      interval: 5
-                    offline:
-                      enabled: false
-                      interval: 35
-                    enabled: true
-                    chatLines: 5
-                    _id: 5c0aa9d3de9a4c4622a14e07
-                    channel: 5b2e2007760aeb7729487dab
-                    name: test timer
-                    message: This is a test
-                    createdAt: '2018-12-07T17:11:47.909Z'
-                    updatedAt: '2018-12-07T17:13:23.118Z'
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Fri, 07 Dec 2018 17:13:23 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '306'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-    delete:
-      tags:
-        - timers
-      summary: '/:channel/:timerId'
-      description: Delete timer
-      operationId: '/:channel/:timerId1'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-        - name: timerId
-          in: path
-          description: guid - Timer id
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/bot/modules/{channel}':
-    get:
-      tags:
-        - modules
-      summary: '/:channel'
-      description: List modules
-      operationId: 'Get/:channel2'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BotModules'
-              examples:
-                default:
-                  value:
-                    roulette:
-                      cooldown:
-                        user: 60
-                        global: 0
-                      messages:
-                        win: '/me {user} won {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsGoodMan'
-                        lose: '/me {user} lost {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsBadMan'
-                        allinWin: '/me PogChamp {user} went all in and won {bet} ${pointsname} PogChamp they now have {points} ${pointsname} FeelsGoodMan'
-                        allinLose: '/me {user} went all in and lost every single one of their {bet} ${pointsname} LUL'
-                      enabled: false
-                      luck: 45
-                      minAmount: 1
-                    raffle:
-                      single:
-                        messages:
-                          start: '/me PogChamp a Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
-                          running: '/me The Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
-                          end: '/me The Raffle has ended and {winner} won {points} ${pointsname} FeelsGoodMan'
-                        duration: 30
-                        maxAmount: 3000
-                      multi:
-                        messages:
-                          start: '/me PogChamp a Multi-Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
-                          running: '/me The Multi-Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
-                          end: '/me The Multi-Raffle has ended and {winner} won {points} ${pointsname} each FeelsGoodMan'
-                        duration: 30
-                        maxAmount: 6000
-                      enabled: false
-                    pyramid:
-                      enabled: false
-                      messages:
-                        - _id: 5b2e2007760aeb7356487db5
-                          width: 3
-                          message: '/me nice {width}-width {emote} pyramid {user} LUL'
-                        - _id: 5b2e2007760aeb46e0487db4
-                          width: 5
-                          message: '/me PogChamp {user} just finished a {width}-width {emote} pyramid, gj KKona'
-                        - _id: 5b2e2007760aeb39fc487db3
-                          width: 9
-                          message: '/me {user} just finished a {width}-width {emote} pyramid! Now thats what i call pyramid farming Kappa //'
-                        - _id: 5b2e2007760aeb22ae487db2
-                          width: 15
-                          message: '/me {user} just finished a {width}-width {emote} pyramid!!! I almost ran out of memory there MrDestructoid //'
-                        - _id: 5b2e2007760aeb6219487db1
-                          width: 25
-                          message: '/me WutFace {user} just finished a {width}-width {emote} pyramid!!! BUFFER OVERFLOW WutFace WutFace WutFace'
-                    bingo:
-                      enabled: false
-                      maxAmount: 4000
-                    slotmachine:
-                      cooldown:
-                        user: 60
-                        global: 0
-                      messages:
-                        win: '@{user} you got {emotes} and won {points} ${pointsname} PogChamp //'
-                        lose: '@{user} you got {emotes} and lost your {points} ${pointsname} LUL'
-                      enabled: false
-                      returnAmount: 80
-                      minAmount: 100
-                      emotes:
-                        - Kappa
-                        - PogChamp
-                        - BibleThump
-                        - OpieOP
-                        - 4Head
-                    duel:
-                      cooldown:
-                        user: 5
-                        global: 0
-                      messages:
-                        win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                        pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                      enabled: false
-                    eightball:
-                      cooldown:
-                        user: 5
-                        global: 15
-                      enabled: false
-                      messages:
-                        - sure
-                        - are you kidding?!
-                        - yeah
-                        - 'no'
-                        - i think so
-                        - don't bet on it
-                        - ja
-                        - doubtful
-                        - for sure
-                        - forget about it
-                        - nein
-                        - maybe
-                        - Kappa Keepo PogChamp
-                        - sure
-                        - i don't think so
-                        - it is so
-                        - leaning towards no
-                        - look deep in your heart and you will see the answer
-                        - most definitely
-                        - most likely
-                        - my sources say yes
-                        - never
-                        - nah m8
-                        - might actually be yes
-                        - no.
-                        - outlook good
-                        - outlook not so good
-                        - perhaps
-                        - mayhaps
-                        - that's a tough one
-                        - idk kev
-                        - don't ask that
-                        - the answer to that isn't pretty
-                        - the heavens point to yes
-                        - who knows?
-                        - without a doubt
-                        - 'yesterday it would''ve been a yes, but today it''s a yep'
-                        - you will have to wait
-                      emotes:
-                        - Kappa
-                        - Keepo
-                        - xD
-                        - KKona
-                        - 4Head
-                        - EleGiggle
-                        - DansGame
-                        - KappaCool
-                        - BrokeBack
-                        - OpieOP
-                        - KappaRoss
-                        - KappaPride
-                        - FeelsBadMan
-                        - FeelsGoodMan
-                        - FeelsBirthdayMan
-                        - FeelsAmazingMan
-                        - PogChamp
-                        - VisLaud
-                        - OhMyDog
-                        - FrankerZ
-                        - DatSheffy
-                        - BabyRage
-                        - VoHiYo
-                        - haHAA
-                        - LUL
-                        - ResidentSleeper
-                        - SourPls
-                        - TriHard
-                        - SMOrc
-                    emotecombo:
-                      enabled: false
-                      minCount: 5
-                      cooldown: 10
-                      messages:
-                        - _id: 5b2e2007760aeb1d7e487dba
-                          count: 3
-                          message: '{count}x {emote} combo'
-                        - _id: 5b2e2007760aeb31c3487db9
-                          count: 10
-                          message: '{count}x {emote} combo PogChamp'
-                        - _id: 5b2e2007760aeb4b11487db8
-                          count: 20
-                          message: '/me {user} ruined the {count}x {emote} combo KappaRoss'
-                        - _id: 5b2e2007760aeb4251487db7
-                          count: 50
-                          message: '/me you don''t ruin {count}x {emote} combos {user} DansGame'
-                        - _id: 5b2e2007760aebbbe7487db6
-                          count: 420
-                          message: '/timeout {user} {count} you don''t ruin {emote} combos DansGame'
-                    twitter:
-                      enabled: false
-                      replies: false
-                      retweets: false
-                      template: '/me PogChamp new Tweet from {user}: {tweet}'
-                      followed:
-                        - twitchsupport
-                        - streamelements
-                    chatalerts:
-                      follow:
-                        enabled: true
-                        messages:
-                          - 'Thank you for following {user} :)'
-                      tip:
-                        enabled: true
-                        messages:
-                          - _id: 5b2e2007760aebcb99487dbb
-                            amount: 1
-                            message: '{user} just tipped {currency}{amount} PogChamp'
-                      host:
-                        enabled: true
-                        messages:
-                          - _id: 5b2e2007760aebad31487dbc
-                            amount: 1
-                            message: '{user} just hosted the stream for {amount} viewers PogChamp'
-                      subscriber:
-                        enabled: true
-                        messages:
-                          - _id: 5b2e2007760aeb0830487dbe
-                            amount: 1
-                            message: '{user} just subscribed PogChamp'
-                          - _id: 5b2e2007760aebaf00487dbd
-                            amount: 2
-                            message: '{user} just subscribed for {amount} months in a row PogChamp'
-                      cheer:
-                        enabled: true
-                        messages:
-                          - _id: 5b2e2007760aeb5381487dbf
-                            amount: 1
-                            message: '{user} just cheered {amount} bits PogChamp'
-                      redemption:
-                        enabled: true
-                        message: '{user} just redeemed {item} PogChamp'
-                      raid:
-                        enabled: true
-                        messages:
-                          - _id: 5b2e2007760aeb0fed487dc0
-                            amount: 1
-                            message: '{user} just raided the channel with {amount} viewers PogChamp'
-                      enabled: false
-                      delay: 0
-                    songrequest:
-                      voteskip:
-                        enabled: true
-                        votesRequired: 5
-                      enabled: true
-                      moderation: true
-                      minUserLevel: 100
-                      cost: 0
-                      subscriberDiscount: 50
-                      exemptUserLevel: 500
-                    announcements:
-                      streamStart:
-                        enabled: true
-                        message: '${channel.display_name} is now live! Streaming {game}: {title}'
-                      enabled: true
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Sat, 08 Dec 2018 20:19:23 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '5947'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/bot/modules/{channel}/{moduleId}':
-    put:
-      tags:
-        - modules
-      summary: '/:channel/:moduleId'
-      description: Update module
-      operationId: 'Post/:channel/:moduleId'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-        - name: moduleId
-          in: path
-          description: string - Module name
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: duel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                duel:
-                  type: object
-                  properties:
-                    cooldown:
-                      type: object
-                      properties:
-                        user:
-                          type: integer
-                        global:
-                          type: integer
-                    messages:
-                      type: object
-                      properties:
-                        win:
-                          type: string
-                        pointsWin:
-                          type: string
-                    enabled:
-                      type: boolean
-              x-examples:
-                Example 1:
-                  duel:
-                    cooldown:
-                      user: 5
-                      global: 0
-                    messages:
-                      win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                      pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                    enabled: true
-            examples:
-              Example:
-                value:
-                  duel:
-                    cooldown:
-                      user: 5
-                      global: 0
-                    messages:
-                      win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                      pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                    enabled: true
+                value: {}
       responses:
         '200':
           description: ''
@@ -9818,46 +9665,124 @@ paths:
               schema:
                 type: object
                 properties:
-                  duel:
-                    type: object
-                    properties:
-                      cooldown:
-                        type: object
-                        properties:
-                          user:
-                            type: integer
-                          global:
-                            type: integer
-                      messages:
-                        type: object
-                        properties:
-                          win:
-                            type: string
-                          pointsWin:
-                            type: string
-                      enabled:
-                        type: boolean
-                x-examples:
-                  Example 1:
-                    duel:
-                      cooldown:
-                        user: 5
-                        global: 0
-                      messages:
-                        win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                        pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                      enabled: true
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  minBet:
+                    type: integer
+                  maxBet:
+                    type: integer
+                  botResponses:
+                    type: boolean
+                  options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        command:
+                          type: string
+                        title:
+                          type: string
+                        totalAmount:
+                          type: integer
+                        totalUsers:
+                          type: integer
+                        _id:
+                          type: string
+                  totalAmount:
+                    type: integer
+                  totalUsers:
+                    type: integer
+                  duration:
+                    type: integer
+                  _id:
+                    type: string
+                  channel:
+                    type: string
+                  state:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
               examples:
-                Example 1:
+                Example:
                   value:
-                    duel:
-                      cooldown:
-                        user: 5
-                        global: 0
-                      messages:
-                        win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                        pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                      enabled: true
+                    title: Will I win the next game?
+                    description: Description of contest
+                    minBet: 10
+                    maxBet: 10000
+                    botResponses: true
+                    options:
+                      - command: win
+                        title: Win
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 674bbaaf17f569f8ce0381be
+                      - command: lose
+                        title: Lose
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 674bbaaf17f569f8ce0381bf
+                    totalAmount: 0
+                    totalUsers: 0
+                    duration: 5
+                    _id: 674bbaaf17f569f8ce0381bd
+                    channel: 5f2de5dd9a474a2c2dc4d0ab
+                    state: created
+                    createdAt: '2024-12-01T01:23:59.902Z'
+                    updatedAt: '2024-12-01T01:23:59.902Z'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/contests/{channel}/history':
+    get:
+      tags:
+        - contests
+      summary: '/:channel/history'
+      description: List previous contests
+      operationId: '/:channel/history'
+      parameters:
+        - name: limit
+          in: query
+          description: integer - Number of items per page
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            example: 25
+        - name: offset
+          in: query
+          description: integer - Number of items to be skipped
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+      responses:
+        '200':
+          description: ''
+      deprecated: false
       security:
         - JWTBearer: []
         - OAuth2: []
@@ -10308,177 +10233,6 @@ paths:
                     type: string
                   updatedAt:
                     type: string
-                x-examples:
-                  Example 1:
-                    activitySettings:
-                      enabled: false
-                      enableDefaultPhrases: true
-                      enableCustomPhrases: false
-                      mode: 3
-                      replaceWords:
-                        - bunnies
-                        - butterfly
-                        - kitten
-                        - love
-                        - gingerly
-                        - flowers
-                        - puppy
-                        - joyful
-                        - rainbows
-                        - unicorn
-                    botFilters:
-                      caps:
-                        timeout:
-                          length: 30
-                          message: 'Por favor, não envie essa quantidade exagerada de Caps Lock ou emotes'
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          limit: 30
-                          min: 10
-                          percent: 50
-                        enabled: false
-                        exclude: 300
-                      links:
-                        timeout:
-                          length: 120
-                          message: 'Links estão bloqueados, exceto para VIPs e MODs. Apenas clipes da live estão liberados.'
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        enabled: true
-                        exclude: 250
-                        whitelist:
-                          - 'https://www.twitch.tv/coreanofps'
-                          - 'https://streamlabs.com/coreanofps'
-                          - 'https://streamelements.com/coreanofps'
-                          - 'https://www.twitch.tv/valorant_br'
-                          - 'https://www.twitch.tv/pepa_vt'
-                          - 'https://www.twitch.tv/belkytv'
-                          - 'https://www.twitch.tv/redbullpt'
-                          - valorantesports.com
-                          - clips.twitch.tv
-                          - twitch.tv/coreano
-                          - twitchtv/belkytv
-                          - twitch.tv/otsukaxd
-                          - gold.razer.com
-                        blacklist: []
-                      banphrases:
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        enabled: true
-                      emotes:
-                        timeout:
-                          length: 30
-                          message: 'Por favor, não envie essa quantidade excessiva de emotes.'
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          limit: 15
-                        enabled: false
-                        exclude: 250
-                      symbols:
-                        timeout:
-                          length: 15
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          limit: 25
-                          min: 10
-                          percent: 50
-                        enabled: false
-                        exclude: 300
-                      repetition:
-                        timeout:
-                          length: 30
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          minCharacters: 3
-                          maxRepetitions: 15
-                        enabled: false
-                        exclude: 300
-                      paragraph:
-                        timeout:
-                          length: 30
-                          message: Links estão bloqueados. Apenas clipes da live estão liberados.
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          limit: 140
-                        enabled: false
-                        exclude: 300
-                      onemanspam:
-                        timeout:
-                          length: 30
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          minCharacters: 4
-                          minMessages: 5
-                          lookback: 30
-                          threshold: 75
-                        enabled: false
-                        exclude: 300
-                      zalgo:
-                        timeout:
-                          length: 30
-                        probation:
-                          enabled: false
-                          cooldown: 300
-                          multiplier: 1.5
-                        settings:
-                          limit: 15
-                        enabled: false
-                        exclude: 300
-                    _id: 5f2de5dd9a474af233c4d0b1
-                    banphrases:
-                      - _id: 673ecbb217802a7f03f2b42e
-                        public: false
-                        name: 'New ban phrase '
-                        banReason: Teste de ban
-                        timeoutLength: -1
-                        excludeLevel: 400
-                        enabled: true
-                        appliesTo:
-                          - bot
-                        runsOn:
-                          - message
-                        phrases:
-                          - type: text
-                            phrase: viadinho
-                            _id: 673ee93517802a7f03f9196e
-                          - type: text
-                            phrase: bicha
-                            _id: 673ee93517802a7f03f9196f
-                        channel: 5f2de5dd9a474a2c2dc4d0ab
-                        lastUpdatedBy:
-                          _id: 5f2de5dd9a474a2c2dc4d0ab
-                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/451dd285-491d-49e0-b1e0-20147f3ab56b-profile_image-300x300.png'
-                          username: c4ldas
-                          displayName: c4ldas
-                          inactive: false
-                          isPartner: true
-                        createdAt: '2024-11-21T05:57:06.225Z'
-                        updatedAt: '2024-11-21T08:03:01.579Z'
-                    channel: 5f2de5dd9a474a2c2dc4d0ab
-                    createdAt: '2020-08-07T23:38:05.724Z'
-                    updatedAt: '2024-11-21T07:56:33.839Z'
               examples:
                 default:
                   value:
@@ -10642,6 +10396,786 @@ paths:
         '200':
           description: ''
       deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/timers/{channel}':
+    get:
+      tags:
+        - timers
+      summary: '/:channel'
+      description: List timers
+      operationId: 'Get/:channel1'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Success11'
+                example:
+                  - online:
+                      enabled: true
+                      interval: 5
+                    offline:
+                      enabled: true
+                      interval: 30
+                    enabled: true
+                    chatLines: 5
+                    _id: 5c0aa9d3de9a4c4622a14e07
+                    channel: 5b2e2007760aeb7729487dab
+                    name: test timer
+                    message: This is a test
+                    createdAt: '2018-12-07T17:11:47.909Z'
+                    updatedAt: '2018-12-07T17:11:47.909Z'
+              examples:
+                default:
+                  value:
+                    - online:
+                        enabled: true
+                        interval: 5
+                      offline:
+                        enabled: true
+                        interval: 30
+                      enabled: true
+                      chatLines: 5
+                      _id: 5c0aa9d3de9a4c4622a14e07
+                      channel: 5b2e2007760aeb7729487dab
+                      name: test timer
+                      message: This is a test
+                      createdAt: '2018-12-07T17:11:47.909Z'
+                      updatedAt: '2018-12-07T17:11:47.909Z'
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Fri, 07 Dec 2018 17:11:53 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '307'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+    post:
+      tags:
+        - timers
+      summary: '/:channel'
+      description: Create a new timer
+      operationId: 'Post/:channel1'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/channelrequest1'
+            examples:
+              default:
+                value:
+                  online:
+                    enabled: true
+                    interval: 5
+                  offline:
+                    enabled: true
+                    interval: 30
+                  enabled: true
+                  chatLines: 5
+                  name: ''
+                  message: ''
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BotCommand'
+              examples:
+                default:
+                  value:
+                    cooldown:
+                      user: 15
+                      global: 5
+                    aliases: []
+                    keywords: []
+                    enabled: true
+                    enabledOnline: true
+                    enabledOffline: true
+                    hidden: false
+                    cost: 0
+                    type: say
+                    accessLevel: 100
+                    _id: 5c0a52dcde9a4c1de1a14d8d
+                    regex: 'test[0-9]{3}'
+                    reply: test response
+                    command: test2
+                    channel: 5b2e2007760aeb7729487dab
+                    createdAt: '2018-12-07T11:00:44.538Z'
+                    updatedAt: '2018-12-07T11:00:44.538Z'
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Fri, 07 Dec 2018 11:00:44 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '388'
+            Vary:
+              schema: {}
+              examples:
+                __default_content:
+                  value: X-HTTP-Method-Override
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/channel_redemptions_itemId'
+              examples:
+                default:
+                  value:
+                    statusCode: 409
+                    error: Conflict
+                    message: Command test already exists
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/timers/{channel}/{timerId}':
+    get:
+      tags:
+        - timers
+      summary: '/:channel/:timerId'
+      description: Get timer details
+      operationId: '/:channel/:timerId'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: timerId
+          in: path
+          description: guid - Timer id
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Success11'
+              examples:
+                default:
+                  value:
+                    online:
+                      enabled: true
+                      interval: 5
+                    offline:
+                      enabled: true
+                      interval: 30
+                    enabled: true
+                    chatLines: 5
+                    _id: 5c0aa9d3de9a4c4622a14e07
+                    channel: 5b2e2007760aeb7729487dab
+                    name: test timer
+                    message: This is a test
+                    createdAt: '2018-12-07T17:11:47.909Z'
+                    updatedAt: '2018-12-07T17:11:47.909Z'
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Fri, 07 Dec 2018 17:12:08 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '305'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+    put:
+      tags:
+        - timers
+      summary: '/:channel/:timerId'
+      description: Update timer details
+      operationId: 'Put/:channel/:timerId'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: timerId
+          in: path
+          description: guid - Timer id
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                online:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    interval:
+                      type: integer
+                offline:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    interval:
+                      type: integer
+                enabled:
+                  type: boolean
+                chatLines:
+                  type: integer
+                name:
+                  type: string
+                message:
+                  type: string
+            examples:
+              default:
+                value:
+                  online:
+                    enabled: true
+                    interval: 5
+                  offline:
+                    enabled: true
+                    interval: 30
+                  enabled: true
+                  chatLines: 5
+                  name: ''
+                  message: ''
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Success11'
+              examples:
+                default:
+                  value:
+                    online:
+                      enabled: true
+                      interval: 5
+                    offline:
+                      enabled: false
+                      interval: 35
+                    enabled: true
+                    chatLines: 5
+                    _id: 5c0aa9d3de9a4c4622a14e07
+                    channel: 5b2e2007760aeb7729487dab
+                    name: test timer
+                    message: This is a test
+                    createdAt: '2018-12-07T17:11:47.909Z'
+                    updatedAt: '2018-12-07T17:13:23.118Z'
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Fri, 07 Dec 2018 17:13:23 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '306'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+    delete:
+      tags:
+        - timers
+      summary: '/:channel/:timerId'
+      description: Delete timer
+      operationId: '/:channel/:timerId1'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: timerId
+          in: path
+          description: guid - Timer id
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/modules/{channel}':
+    get:
+      tags:
+        - modules
+      summary: '/:channel'
+      description: List modules
+      operationId: 'Get/:channel2'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BotModules'
+              examples:
+                default:
+                  value:
+                    roulette:
+                      cooldown:
+                        user: 60
+                        global: 0
+                      messages:
+                        win: '/me {user} won {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsGoodMan'
+                        lose: '/me {user} lost {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsBadMan'
+                        allinWin: '/me PogChamp {user} went all in and won {bet} ${pointsname} PogChamp they now have {points} ${pointsname} FeelsGoodMan'
+                        allinLose: '/me {user} went all in and lost every single one of their {bet} ${pointsname} LUL'
+                      enabled: false
+                      luck: 45
+                      minAmount: 1
+                    raffle:
+                      single:
+                        messages:
+                          start: '/me PogChamp a Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
+                          running: '/me The Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
+                          end: '/me The Raffle has ended and {winner} won {points} ${pointsname} FeelsGoodMan'
+                        duration: 30
+                        maxAmount: 3000
+                      multi:
+                        messages:
+                          start: '/me PogChamp a Multi-Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
+                          running: '/me The Multi-Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
+                          end: '/me The Multi-Raffle has ended and {winner} won {points} ${pointsname} each FeelsGoodMan'
+                        duration: 30
+                        maxAmount: 6000
+                      enabled: false
+                    pyramid:
+                      enabled: false
+                      messages:
+                        - _id: 5b2e2007760aeb7356487db5
+                          width: 3
+                          message: '/me nice {width}-width {emote} pyramid {user} LUL'
+                        - _id: 5b2e2007760aeb46e0487db4
+                          width: 5
+                          message: '/me PogChamp {user} just finished a {width}-width {emote} pyramid, gj KKona'
+                        - _id: 5b2e2007760aeb39fc487db3
+                          width: 9
+                          message: '/me {user} just finished a {width}-width {emote} pyramid! Now thats what i call pyramid farming Kappa //'
+                        - _id: 5b2e2007760aeb22ae487db2
+                          width: 15
+                          message: '/me {user} just finished a {width}-width {emote} pyramid!!! I almost ran out of memory there MrDestructoid //'
+                        - _id: 5b2e2007760aeb6219487db1
+                          width: 25
+                          message: '/me WutFace {user} just finished a {width}-width {emote} pyramid!!! BUFFER OVERFLOW WutFace WutFace WutFace'
+                    bingo:
+                      enabled: false
+                      maxAmount: 4000
+                    slotmachine:
+                      cooldown:
+                        user: 60
+                        global: 0
+                      messages:
+                        win: '@{user} you got {emotes} and won {points} ${pointsname} PogChamp //'
+                        lose: '@{user} you got {emotes} and lost your {points} ${pointsname} LUL'
+                      enabled: false
+                      returnAmount: 80
+                      minAmount: 100
+                      emotes:
+                        - Kappa
+                        - PogChamp
+                        - BibleThump
+                        - OpieOP
+                        - 4Head
+                    duel:
+                      cooldown:
+                        user: 5
+                        global: 0
+                      messages:
+                        win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
+                        pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
+                      enabled: false
+                    eightball:
+                      cooldown:
+                        user: 5
+                        global: 15
+                      enabled: false
+                      messages:
+                        - sure
+                        - are you kidding?!
+                        - yeah
+                        - 'no'
+                        - i think so
+                        - don't bet on it
+                        - ja
+                        - doubtful
+                        - for sure
+                        - forget about it
+                        - nein
+                        - maybe
+                        - Kappa Keepo PogChamp
+                        - sure
+                        - i don't think so
+                        - it is so
+                        - leaning towards no
+                        - look deep in your heart and you will see the answer
+                        - most definitely
+                        - most likely
+                        - my sources say yes
+                        - never
+                        - nah m8
+                        - might actually be yes
+                        - no.
+                        - outlook good
+                        - outlook not so good
+                        - perhaps
+                        - mayhaps
+                        - that's a tough one
+                        - idk kev
+                        - don't ask that
+                        - the answer to that isn't pretty
+                        - the heavens point to yes
+                        - who knows?
+                        - without a doubt
+                        - 'yesterday it would''ve been a yes, but today it''s a yep'
+                        - you will have to wait
+                      emotes:
+                        - Kappa
+                        - Keepo
+                        - xD
+                        - KKona
+                        - 4Head
+                        - EleGiggle
+                        - DansGame
+                        - KappaCool
+                        - BrokeBack
+                        - OpieOP
+                        - KappaRoss
+                        - KappaPride
+                        - FeelsBadMan
+                        - FeelsGoodMan
+                        - FeelsBirthdayMan
+                        - FeelsAmazingMan
+                        - PogChamp
+                        - VisLaud
+                        - OhMyDog
+                        - FrankerZ
+                        - DatSheffy
+                        - BabyRage
+                        - VoHiYo
+                        - haHAA
+                        - LUL
+                        - ResidentSleeper
+                        - SourPls
+                        - TriHard
+                        - SMOrc
+                    emotecombo:
+                      enabled: false
+                      minCount: 5
+                      cooldown: 10
+                      messages:
+                        - _id: 5b2e2007760aeb1d7e487dba
+                          count: 3
+                          message: '{count}x {emote} combo'
+                        - _id: 5b2e2007760aeb31c3487db9
+                          count: 10
+                          message: '{count}x {emote} combo PogChamp'
+                        - _id: 5b2e2007760aeb4b11487db8
+                          count: 20
+                          message: '/me {user} ruined the {count}x {emote} combo KappaRoss'
+                        - _id: 5b2e2007760aeb4251487db7
+                          count: 50
+                          message: '/me you don''t ruin {count}x {emote} combos {user} DansGame'
+                        - _id: 5b2e2007760aebbbe7487db6
+                          count: 420
+                          message: '/timeout {user} {count} you don''t ruin {emote} combos DansGame'
+                    twitter:
+                      enabled: false
+                      replies: false
+                      retweets: false
+                      template: '/me PogChamp new Tweet from {user}: {tweet}'
+                      followed:
+                        - twitchsupport
+                        - streamelements
+                    chatalerts:
+                      follow:
+                        enabled: true
+                        messages:
+                          - 'Thank you for following {user} :)'
+                      tip:
+                        enabled: true
+                        messages:
+                          - _id: 5b2e2007760aebcb99487dbb
+                            amount: 1
+                            message: '{user} just tipped {currency}{amount} PogChamp'
+                      host:
+                        enabled: true
+                        messages:
+                          - _id: 5b2e2007760aebad31487dbc
+                            amount: 1
+                            message: '{user} just hosted the stream for {amount} viewers PogChamp'
+                      subscriber:
+                        enabled: true
+                        messages:
+                          - _id: 5b2e2007760aeb0830487dbe
+                            amount: 1
+                            message: '{user} just subscribed PogChamp'
+                          - _id: 5b2e2007760aebaf00487dbd
+                            amount: 2
+                            message: '{user} just subscribed for {amount} months in a row PogChamp'
+                      cheer:
+                        enabled: true
+                        messages:
+                          - _id: 5b2e2007760aeb5381487dbf
+                            amount: 1
+                            message: '{user} just cheered {amount} bits PogChamp'
+                      redemption:
+                        enabled: true
+                        message: '{user} just redeemed {item} PogChamp'
+                      raid:
+                        enabled: true
+                        messages:
+                          - _id: 5b2e2007760aeb0fed487dc0
+                            amount: 1
+                            message: '{user} just raided the channel with {amount} viewers PogChamp'
+                      enabled: false
+                      delay: 0
+                    songrequest:
+                      voteskip:
+                        enabled: true
+                        votesRequired: 5
+                      enabled: true
+                      moderation: true
+                      minUserLevel: 100
+                      cost: 0
+                      subscriberDiscount: 50
+                      exemptUserLevel: 500
+                    announcements:
+                      streamStart:
+                        enabled: true
+                        message: '${channel.display_name} is now live! Streaming {game}: {title}'
+                      enabled: true
+          headers:
+            Date:
+              schema: {}
+              examples:
+                __default_content:
+                  value: 'Sat, 08 Dec 2018 20:19:23 GMT'
+            Content-Length:
+              schema: {}
+              examples:
+                __default_content:
+                  value: '5947'
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2: []
+        - ApiKeyBearer: []
+      servers:
+        - url: 'https://api.streamelements.com/kappa/v2'
+          description: V2
+        - url: 'https://api.streamelements.com/kappa/v3'
+          description: V3
+  '/bot/modules/{channel}/{moduleId}':
+    put:
+      tags:
+        - modules
+      summary: '/:channel/:moduleId'
+      description: Update module
+      operationId: 'Post/:channel/:moduleId'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: moduleId
+          in: path
+          description: string - Module name
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: duel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                duel:
+                  type: object
+                  properties:
+                    cooldown:
+                      type: object
+                      properties:
+                        user:
+                          type: integer
+                        global:
+                          type: integer
+                    messages:
+                      type: object
+                      properties:
+                        win:
+                          type: string
+                        pointsWin:
+                          type: string
+                    enabled:
+                      type: boolean
+            examples:
+              Example:
+                value:
+                  duel:
+                    cooldown:
+                      user: 5
+                      global: 0
+                    messages:
+                      win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
+                      pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
+                    enabled: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  duel:
+                    type: object
+                    properties:
+                      cooldown:
+                        type: object
+                        properties:
+                          user:
+                            type: integer
+                          global:
+                            type: integer
+                      messages:
+                        type: object
+                        properties:
+                          win:
+                            type: string
+                          pointsWin:
+                            type: string
+                      enabled:
+                        type: boolean
+              examples:
+                Example 1:
+                  value:
+                    duel:
+                      cooldown:
+                        user: 5
+                        global: 0
+                      messages:
+                        win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
+                        pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
+                      enabled: true
       security:
         - JWTBearer: []
         - OAuth2: []
@@ -10819,231 +11353,10 @@ paths:
           description: V2
         - url: 'https://api.streamelements.com/kappa/v3'
           description: V3
-  /chatstats:
-    get:
-      tags:
-        - chatstats
-      summary: /
-      description: Get global chatstats
-      operationId: /
-      parameters:
-        - name: limit
-          in: query
-          description: integer - Number of items per page
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 25
-        - name: offset
-          in: query
-          description: integer - Number of items to be skipped
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 0
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  /chatstats/search:
-    get:
-      tags:
-        - chatstats
-      summary: /search
-      description: Search for channel by channel name
-      operationId: /search
-      parameters:
-        - name: channel
-          in: query
-          description: string - Channel name
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: leeeeex
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/chatstats/{username}':
-    get:
-      tags:
-        - chatstats
-      summary: '/:username'
-      description: Get stats for channel name
-      operationId: '/:username'
-      parameters:
-        - name: username
-          in: path
-          description: string - Channel name
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: leeeeex
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/chatstats/{username}/epm':
-    get:
-      tags:
-        - chatstats
-      summary: '/:username/epm'
-      description: Get channel's "emotes per minute"
-      operationId: '/:username/epm'
-      parameters:
-        - name: limit
-          in: query
-          description: integer - number of items to be shown
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 25
-        - name: username
-          in: path
-          description: Username
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/chatstats/{username}/stats':
-    get:
-      tags:
-        - chatstats
-      summary: '/:username/stats'
-      description: Get channels stats
-      operationId: '/:username/stats'
-      parameters:
-        - name: limit
-          in: query
-          description: integer - Number of items to be shown
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 25
-        - name: username
-          in: path
-          description: string - Channel name
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: leeeeex
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/chatstats/{username}/{category}/{item}':
-    get:
-      tags:
-        - chatstats
-      summary: '/:username/:category/:item'
-      description: Get channels details linked to provided URL
-      operationId: '/:username/:category/:item'
-      parameters:
-        - name: username
-          in: path
-          description: Username
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: leeeeex
-        - name: category
-          in: path
-          description: Category
-          required: true
-          style: simple
-          schema:
-            type: string
-        - name: item
-          in: path
-          description: Item
-          required: true
-          style: simple
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
   '/contests/{channel}/{contestId}':
     get:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId'
       description: List contests
       operationId: '/:channel/:contestId'
@@ -11270,7 +11583,6 @@ paths:
     get:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId/bet'
       description: Get contests bets
       operationId: 'Get/:channel/:contestId/bet'
@@ -11307,7 +11619,6 @@ paths:
     put:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId/start'
       description: Start a contest
       operationId: '/:channel/:contestId/start'
@@ -11397,7 +11708,6 @@ paths:
     put:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId/winner'
       description: Draw a winner of contest
       operationId: '/:channel/:contestId/winner'
@@ -11464,7 +11774,6 @@ paths:
     delete:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId/refund'
       description: Refund users participating in contest
       operationId: '/:channel/:contestId/refund'
@@ -11501,7 +11810,6 @@ paths:
     delete:
       tags:
         - single contest
-        - contests
       summary: '/:channel/:contestId/close'
       description: Close contest
       operationId: '/:channel/:contestId/close'
@@ -11543,386 +11851,6 @@ paths:
               examples:
                 __default_content:
                   value: '7'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/contests/{channel}':
-    get:
-      tags:
-        - contests
-      summary: '/:channel'
-      description: List contests
-      operationId: 'Get/:channel123456'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: object
-                properties:
-                  active:
-                    type: object
-                    properties:
-                      _id:
-                        type: string
-                      title:
-                        type: string
-                      description:
-                        type: string
-                      minBet:
-                        type: integer
-                      maxBet:
-                        type: integer
-                      botResponses:
-                        type: boolean
-                      options:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            command:
-                              type: string
-                            title:
-                              type: string
-                            totalAmount:
-                              type: integer
-                            totalUsers:
-                              type: integer
-                            _id:
-                              type: string
-                      totalAmount:
-                        type: integer
-                      totalUsers:
-                        type: integer
-                      duration:
-                        type: integer
-                      channel:
-                        type: string
-                      state:
-                        type: string
-                      createdAt:
-                        type: string
-                      updatedAt:
-                        type: string
-                      startedAt:
-                        type: string
-                  contests:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        _id:
-                          type: string
-                        title:
-                          type: string
-                        description:
-                          type: string
-                        minBet:
-                          type: integer
-                        maxBet:
-                          type: integer
-                        botResponses:
-                          type: boolean
-                        options:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              command:
-                                type: string
-                              title:
-                                type: string
-                              totalAmount:
-                                type: integer
-                              totalUsers:
-                                type: integer
-                              _id:
-                                type: string
-                        totalAmount:
-                          type: integer
-                        totalUsers:
-                          type: integer
-                        duration:
-                          type: integer
-                        channel:
-                          type: string
-                        state:
-                          type: string
-                        createdAt:
-                          type: string
-                        updatedAt:
-                          type: string
-                        startedAt:
-                          type: string
-                x-examples:
-                  Example 1:
-                    active:
-                      _id: 674bbaaf17f569f8ce0381bd
-                      title: Will I win the next game?
-                      description: Description of contest
-                      minBet: 10
-                      maxBet: 10000
-                      botResponses: true
-                      options:
-                        - command: win
-                          title: Win
-                          totalAmount: 0
-                          totalUsers: 0
-                          _id: 674bbaaf17f569f8ce0381be
-                        - command: lose
-                          title: Lose
-                          totalAmount: 0
-                          totalUsers: 0
-                          _id: 674bbaaf17f569f8ce0381bf
-                      totalAmount: 0
-                      totalUsers: 0
-                      duration: 5
-                      channel: 5f2de5dd9a474a2c2dc4d0ab
-                      state: running
-                      createdAt: '2024-12-01T01:23:59.902Z'
-                      updatedAt: '2024-12-01T01:24:00.154Z'
-                      startedAt: '2024-12-01T01:24:00.152Z'
-                    contests:
-                      - _id: 674bbaaf17f569f8ce0381bd
-                        title: Will I win the next game?
-                        description: Description of contest
-                        minBet: 10
-                        maxBet: 10000
-                        botResponses: true
-                        options:
-                          - command: win
-                            title: Win
-                            totalAmount: 0
-                            totalUsers: 0
-                            _id: 674bbaaf17f569f8ce0381be
-                          - command: lose
-                            title: Lose
-                            totalAmount: 0
-                            totalUsers: 0
-                            _id: 674bbaaf17f569f8ce0381bf
-                        totalAmount: 0
-                        totalUsers: 0
-                        duration: 5
-                        channel: 5f2de5dd9a474a2c2dc4d0ab
-                        state: running
-                        createdAt: '2024-12-01T01:23:59.902Z'
-                        updatedAt: '2024-12-01T01:24:00.154Z'
-                        startedAt: '2024-12-01T01:24:00.152Z'
-          headers:
-            Date:
-              schema: {}
-              examples:
-                __default_content:
-                  value: 'Fri, 07 Dec 2018 11:05:03 GMT'
-            Content-Length:
-              schema: {}
-              examples:
-                __default_content:
-                  value: '529'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-    post:
-      tags:
-        - contests
-      summary: '/:channel'
-      description: Create a new contest
-      operationId: 'Post/:channel12'
-      parameters:
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-      requestBody:
-        description: ''
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              example: {}
-            examples:
-              default:
-                value: {}
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  title:
-                    type: string
-                  description:
-                    type: string
-                  minBet:
-                    type: integer
-                  maxBet:
-                    type: integer
-                  botResponses:
-                    type: boolean
-                  options:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        command:
-                          type: string
-                        title:
-                          type: string
-                        totalAmount:
-                          type: integer
-                        totalUsers:
-                          type: integer
-                        _id:
-                          type: string
-                  totalAmount:
-                    type: integer
-                  totalUsers:
-                    type: integer
-                  duration:
-                    type: integer
-                  _id:
-                    type: string
-                  channel:
-                    type: string
-                  state:
-                    type: string
-                  createdAt:
-                    type: string
-                  updatedAt:
-                    type: string
-                x-examples:
-                  Example 1:
-                    title: Will I win the next game?
-                    description: Description of contest
-                    minBet: 10
-                    maxBet: 10000
-                    botResponses: true
-                    options:
-                      - command: win
-                        title: Win
-                        totalAmount: 0
-                        totalUsers: 0
-                        _id: 674bbaaf17f569f8ce0381be
-                      - command: lose
-                        title: Lose
-                        totalAmount: 0
-                        totalUsers: 0
-                        _id: 674bbaaf17f569f8ce0381bf
-                    totalAmount: 0
-                    totalUsers: 0
-                    duration: 5
-                    _id: 674bbaaf17f569f8ce0381bd
-                    channel: 5f2de5dd9a474a2c2dc4d0ab
-                    state: created
-                    createdAt: '2024-12-01T01:23:59.902Z'
-                    updatedAt: '2024-12-01T01:23:59.902Z'
-              examples:
-                Example:
-                  value:
-                    title: Will I win the next game?
-                    description: Description of contest
-                    minBet: 10
-                    maxBet: 10000
-                    botResponses: true
-                    options:
-                      - command: win
-                        title: Win
-                        totalAmount: 0
-                        totalUsers: 0
-                        _id: 674bbaaf17f569f8ce0381be
-                      - command: lose
-                        title: Lose
-                        totalAmount: 0
-                        totalUsers: 0
-                        _id: 674bbaaf17f569f8ce0381bf
-                    totalAmount: 0
-                    totalUsers: 0
-                    duration: 5
-                    _id: 674bbaaf17f569f8ce0381bd
-                    channel: 5f2de5dd9a474a2c2dc4d0ab
-                    state: created
-                    createdAt: '2024-12-01T01:23:59.902Z'
-                    updatedAt: '2024-12-01T01:23:59.902Z'
-      deprecated: false
-      security:
-        - JWTBearer: []
-        - OAuth2: []
-        - ApiKeyBearer: []
-      servers:
-        - url: 'https://api.streamelements.com/kappa/v2'
-          description: V2
-        - url: 'https://api.streamelements.com/kappa/v3'
-          description: V3
-  '/contests/{channel}/history':
-    get:
-      tags:
-        - contests
-      summary: '/:channel/history'
-      description: List previous contests
-      operationId: '/:channel/history'
-      parameters:
-        - name: limit
-          in: query
-          description: integer - Number of items per page
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 25
-        - name: offset
-          in: query
-          description: integer - Number of items to be skipped
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            example: 0
-        - name: channel
-          in: path
-          description: guid - Channel id
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 5b2e2007760aeb7729487dab
-      responses:
-        '200':
-          description: ''
       deprecated: false
       security:
         - JWTBearer: []
@@ -13428,154 +13356,6 @@ paths:
                     type: string
                   updatedAt:
                     type: string
-                x-examples:
-                  Example 1:
-                    settings:
-                      width: 1920
-                      height: 1080
-                      name: 1080p
-                    _id: 673e6909f4862cd5edac5583
-                    channel: 5f2de5dd9a474a2c2dc4d0ab
-                    type: regular
-                    name: Chat Doorbell by LX
-                    game: 'Door Kickers: Action Squad'
-                    preview: 'https://static-cdn.jtvnw.net/ttv-boxart/./Door%20Kickers:%20Action%20Squad-272x380.jpg'
-                    widgets:
-                      - id: 1
-                        group: null
-                        version: 1
-                        type: se-widget-custom-event-list
-                        visible: true
-                        locked: false
-                        listeners:
-                          tip-latest: true
-                          subscriber-latest: true
-                          follower-latest: true
-                          cheer-latest: true
-                          host-latest: true
-                          raid-latest: true
-                          redemption-latest: true
-                        css:
-                          z-index: 2
-                          top: 0
-                          left: 0
-                          width: 290px
-                          height: 180px
-                          opacity: 1
-                        text:
-                          type: text
-                          enableShadow: true
-                          scrolling:
-                            direction: left
-                            speed: 6
-                          css:
-                            position: relative
-                            z-index: 1
-                            font-family: Nunito
-                            font-size: 24
-                            color: '#fff'
-                            font-weight: bold
-                            text-shadow: 'rgb(0, 0, 0) 1px 1px 1px'
-                            text-align: left
-                            line-height: 1.3
-                            message:
-                              enableShadow: false
-                              font-family: Nunito
-                              font-size: 16
-                              line-height: 1.3
-                              color: '#fff'
-                              text-align: center
-                          value: null
-                        image:
-                          type: image
-                          css:
-                            max-width: 100%
-                        video:
-                          type: video
-                          css:
-                            widget: 320
-                            height: 240
-                        audio:
-                          type: audio
-                          volume: 1
-                        animation:
-                          in: fadeIn
-                          inDuration: 1
-                          out: fadeOut
-                          outDuration: 1
-                          timeout: 6
-                        variables:
-                          css: ''
-                          html: ''
-                          js: |-
-                            let isPlaying = false;
-                            let cooldown = parseInt("{cooldown}") * 1000;
-                            let audio = new Audio("{soundFile}");
-                            audio.volume = parseInt("{soundVolume}") * .01;
-
-                            window.addEventListener('onEventReceived', function (obj) {
-                                if (obj.detail.listener !== "message") return;
-                                if (isPlaying) return;
-                                console.log("Playing");
-                                audio.play();
-                                isPlaying = true;
-                                setTimeout(() => {
-                                    isPlaying = false;
-                                }, cooldown);
-                            });
-                              
-                          fields: |-
-                            {
-                              "cooldown": {
-                                "type": "number",
-                                "label": "Cooldown (s):",
-                                "value": 5
-                              },
-                              "soundFile": {
-                                "type": "sound-input",
-                                "label": "Sound file:"
-                                
-                              },
-                              "soundVolume": {
-                                "type": "slider",
-                                "label": "Volume:",
-                                "value": 50,
-                                "min":0,
-                                "max":100,
-                                "step":1
-                              }
-                            }
-                          fieldData:
-                            eventsLimit: 5
-                            includeFollowers: 'yes'
-                            includeRedemptions: 'yes'
-                            includeHosts: 'yes'
-                            minHost: 1
-                            includeRaids: 'yes'
-                            minRaid: 1
-                            includeSubs: 'yes'
-                            includeTips: 'yes'
-                            minTip: 1
-                            includeCheers: 'yes'
-                            minCheer: 1
-                            direction: top
-                            textOrder: nameFirst
-                            fadeoutTime: 999
-                            fontColor: 'rgb(255, 255, 255)'
-                            theme: texture
-                            backgroundOpacity: 50
-                            backgroundColor: 'rgba(36, 6, 73, 0.15)'
-                            iconColor: 'rgb(255, 255, 255, 255)'
-                            locale: en-US
-                            cooldown: 0
-                            soundFile: 'https://cdn.streamelements.com/uploads/410a16cb-bc1c-45e3-9e5d-1717ad41fc0b.mp3'
-                            soundVolume: 50
-                        provider: twitch
-                    mobile: false
-                    campaign: false
-                    favorite: false
-                    createdAt: '2024-11-20T22:56:09.235Z'
-                    updatedAt: '2024-11-20T22:57:31.710Z'
               examples:
                 default:
                   value:
@@ -19183,59 +18963,6 @@ paths:
                     type: number
                   new:
                     type: boolean
-                x-examples:
-                  Example 1:
-                    published: true
-                    provider: twitch
-                    type: super
-                    size: '1080'
-                    totalUsers: 359
-                    mobile: false
-                    _id: 59c29040a59fb471efc0c8c5
-                    updatedAt: '2018-03-17T22:46:11.532Z'
-                    createdAt: '2017-09-20T15:58:56.312Z'
-                    title: HATTRICK SUPER THEME
-                    author: designki
-                    game: FIFA2018
-                    thumbnail: 'https://cdn.streamelements.com/uploads/418cd740-f6ea-4050-a82b-761c9b1c9b1d.png'
-                    overlays:
-                      - overlay:
-                          _id: 59c03140374e871d01925ef1
-                          game: FIFA 18
-                          name: HATTRICK IN GAME SCENE
-                        thumbnail: 'https://cdn.streamelements.com/uploads/6882ec4d-a59b-4fed-9bb2-86d88b3a10d6.jpg'
-                        preview: 'https://cdn.streamelements.com/uploads/0be5a140-42d4-4311-a139-947a33f89680.jpg'
-                        _id: 59c29040a59fb471efc0c8c6
-                      - overlay:
-                          _id: 59c03634374e871d01926090
-                          game: FIFA 18
-                          name: HATTRICK TALK  SCENE
-                        thumbnail: 'https://cdn.streamelements.com/uploads/c8f686e8-505f-47ab-8f90-f923bb62eafa.jpg'
-                        preview: 'https://cdn.streamelements.com/uploads/7e79a7c1-18cd-48c3-ac55-52b9daad55ab.jpg'
-                        _id: 59c29040a59fb471efc0c8c7
-                      - overlay:
-                          _id: 59c0d6cadf375d6bb3858424
-                          game: FIFA 18
-                          name: HATTRICK START SCENE
-                        thumbnail: 'https://cdn.streamelements.com/uploads/8d494630-3264-44c0-9e68-bce32bb8267c.jpg'
-                        preview: 'https://cdn.streamelements.com/uploads/4b249217-5b4e-4277-be8a-cae8abf7dc84.jpg'
-                        _id: 59c29040a59fb471efc0c8c8
-                      - overlay:
-                          _id: 59c0d9444492765935648d70
-                          game: FIFA 18
-                          name: HATTRICK BRB SCENE
-                        thumbnail: 'https://cdn.streamelements.com/uploads/4cb659ea-7a7b-4e81-b75e-8643944d5957.jpg'
-                        preview: 'https://cdn.streamelements.com/uploads/c2202e0c-1695-4169-b155-cd1c4dd5a157.jpg'
-                        _id: 59c29040a59fb471efc0c8c9
-                      - overlay:
-                          _id: 59c0dbff69db7f0460376197
-                          game: FIFA 18
-                          name: HATTRICK END SCENE
-                        thumbnail: 'https://cdn.streamelements.com/uploads/c3f6be0f-2c93-41f9-8b84-469c1073e558.jpg'
-                        preview: 'https://cdn.streamelements.com/uploads/643b716d-0597-4673-9772-3b7f1194b604.jpg'
-                        _id: 59c29040a59fb471efc0c8ca
-                    rating: 0.2777777777777778
-                    new: false
               examples:
                 default:
                   value:
@@ -19492,29 +19219,6 @@ paths:
                     type: integer
                   offset:
                     type: integer
-                x-examples:
-                  Example 1:
-                    docs:
-                      - donation:
-                          user:
-                            username: StreamElements
-                            geo: null
-                            email: streamelements@streamelements.com
-                          message: This is a test
-                          amount: 100
-                          currency: USD
-                        provider: paypal
-                        status: success
-                        deleted: false
-                        _id: 5c0aab85de9a4c6756a14e0d
-                        channel: 5b2e2007760aeb7729487dab
-                        transactionId: IMPORTED
-                        createdAt: '2018-12-07T17:19:01.957Z'
-                        approved: allowed
-                        updatedAt: '2018-12-07T17:19:01.957Z'
-                    total: 1
-                    limit: 25
-                    offset: 0
               examples:
                 default:
                   value:
@@ -19873,27 +19577,6 @@ paths:
                     type: array
                     items:
                       type: object
-                x-examples:
-                  Example 1:
-                    recent:
-                      - donation:
-                          user:
-                            username: StreamElements
-                            geo: null
-                            email: streamelements@streamelements.com
-                          message: This is a test
-                          amount: 100
-                          currency: USD
-                        provider: paypal
-                        status: success
-                        deleted: false
-                        _id: 5c0aab85de9a4c6756a14e0d
-                        channel: 5b2e2007760aeb7729487dab
-                        transactionId: IMPORTED
-                        createdAt: '2018-12-07T17:19:01.957Z'
-                        approved: allowed
-                        updatedAt: '2018-12-07T17:19:01.957Z'
-                    pending: []
               examples:
                 default:
                   value:
@@ -20548,9 +20231,6 @@ components:
         - message
       example:
         message: '{{botMessage}}'
-      x-examples:
-        Example:
-          message: Hello! I am here to help!
     channel_languagerequest:
       type: object
       title: '/:channel/languagerequest'
@@ -20561,6 +20241,21 @@ components:
         - language
       example:
         language: en
+    Success27:
+      type: object
+      title: Success27
+      properties:
+        counter:
+          type: string
+        value:
+          type: integer
+          format: int32
+      required:
+        - counter
+        - value
+      example:
+        counter: testcounter
+        value: 1
     SimpleChannelDetails:
       type: object
       title: SimpleChannelDetails
@@ -20705,58 +20400,6 @@ components:
           type: boolean
         isPartner:
           type: boolean
-      x-examples:
-        Example 1:
-          profile:
-            title: username's profile
-            headerImage: 'https://cdn.streamelements.com/uploads/example-image.png'
-          _id: 5f2de5dd9a474a2c2aaaaaaa
-          provider: twitch
-          broadcasterType: affiliate
-          suspended: false
-          providerId: '123456'
-          email: example@email.com
-          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
-          type: streamer
-          apiToken: YGwcODHyA28aeb5mdjF-AaaaaaaaAAAa
-          username: username
-          alias: username
-          displayName: username
-          accessToken: yc3aj0w8i7hjqfq8qaaaaaaaaaa
-          users:
-            - _id: 5f2de5dd9a474a2aaaaaaa
-              user: 5f2de5dd9a474a2aaaaaaa
-              role: owner
-              providerId: '123456'
-            - user: 601ab8a691da86654aaaaaaa
-              role: administrator
-            - user: 5edf7f08214709a8aaaaaaaa
-              role: editor
-          ab:
-            - name: use-third-party-activities
-              value: '1'
-            - name: obslive_widgets
-              value: '1'
-            - name: newNavigation
-              value: '1'
-            - name: myOverlaysV2
-              value: '1'
-            - name: share-overlay
-              value: '1'
-            - name: widgets-v2
-              value: '1'
-            - name: chatbot-votekick
-              value: '1'
-            - name: af-multiplatform
-              value: '1'
-          createdAt: '2020-08-07T23:38:05.630Z'
-          updatedAt: '2024-12-03T10:54:14.669Z'
-          country: IE
-          lastLogin: '2024-12-03T10:54:14.667Z'
-          scopesBitmask: 67038047
-          authorized: true
-          inactive: false
-          isPartner: true
     ChannelEmotes:
       type: object
       title: ChannelEmotes
@@ -24396,7 +24039,6 @@ components:
               '2': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/1.0'
               '4': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/3.0'
         twitchSubEmotes: null
-      x-examples: {}
     BttvEmotes:
       type: object
       title: BttvGlobalEmotes
@@ -28081,21 +27723,6 @@ components:
             '1': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/1.0'
             '2': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/1.0'
             '4': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/3.0'
-    Success27:
-      type: object
-      title: Success27
-      properties:
-        counter:
-          type: string
-        value:
-          type: integer
-          format: int32
-      required:
-        - counter
-        - value
-      example:
-        counter: testcounter
-        value: 1
     BotCommand:
       type: object
       title: BotCommand
@@ -28397,6 +28024,77 @@ components:
         reply: test response
         command: test2
         channel: 5b2e2007760aeb7729487dab
+    Success16:
+      type: object
+      title: Success16
+      properties:
+        public:
+          type: boolean
+        excludeLevel:
+          type: integer
+          format: int32
+        enabled:
+          type: boolean
+        appliesTo:
+          type: array
+          items:
+            type: string
+        runsOn:
+          type: array
+          items:
+            type: string
+        _id:
+          type: string
+        name:
+          type: string
+        phrases:
+          type: array
+          items:
+            type: string
+        channel:
+          type: string
+        lastUpdatedBy:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - public
+        - excludeLevel
+        - enabled
+        - appliesTo
+        - runsOn
+        - _id
+        - name
+        - phrases
+        - channel
+        - lastUpdatedBy
+        - createdAt
+        - updatedAt
+      example:
+        public: false
+        excludeLevel: 500
+        enabled: true
+        appliesTo: []
+        runsOn: []
+        _id: 5c0b9794de9a4c1f3aa15034
+        name: someInsult
+        phrases: []
+        channel: 5b2e2007760aeb7729487dab
+        lastUpdatedBy: 5b2e2007760aeb7729487dab
+        createdAt: '2018-12-08T10:06:12.342Z'
+        updatedAt: '2018-12-08T10:06:12.342Z'
+    Banphrasesrequest:
+      type: object
+      title: New ban phrase
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: ''
     Success11:
       type: object
       title: Success11
@@ -29590,77 +29288,6 @@ components:
       example:
         enabled: true
         message: '${channel.display_name} is now live! Streaming {game}: {title}'
-    Success16:
-      type: object
-      title: Success16
-      properties:
-        public:
-          type: boolean
-        excludeLevel:
-          type: integer
-          format: int32
-        enabled:
-          type: boolean
-        appliesTo:
-          type: array
-          items:
-            type: string
-        runsOn:
-          type: array
-          items:
-            type: string
-        _id:
-          type: string
-        name:
-          type: string
-        phrases:
-          type: array
-          items:
-            type: string
-        channel:
-          type: string
-        lastUpdatedBy:
-          type: string
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
-      required:
-        - public
-        - excludeLevel
-        - enabled
-        - appliesTo
-        - runsOn
-        - _id
-        - name
-        - phrases
-        - channel
-        - lastUpdatedBy
-        - createdAt
-        - updatedAt
-      example:
-        public: false
-        excludeLevel: 500
-        enabled: true
-        appliesTo: []
-        runsOn: []
-        _id: 5c0b9794de9a4c1f3aa15034
-        name: someInsult
-        phrases: []
-        channel: 5b2e2007760aeb7729487dab
-        lastUpdatedBy: 5b2e2007760aeb7729487dab
-        createdAt: '2018-12-08T10:06:12.342Z'
-        updatedAt: '2018-12-08T10:06:12.342Z'
-    Banphrasesrequest:
-      type: object
-      title: New ban phrase
-      properties:
-        name:
-          type: string
-      required:
-        - name
-      example:
-        name: ''
     Contest:
       type: object
       title: Contest
@@ -35085,24 +34712,6 @@ components:
               type: string
             source:
               type: string
-      x-examples:
-        Example 1:
-          song:
-            user:
-              username: leeeeex
-              providerId: '85827806'
-            statistics:
-              viewCount: 505416595
-              likeCount: 3387160
-              dislikeCount: 154477
-            duration: 213
-            tags: []
-            voteskips: []
-            _id: 5c0f9d54bd1e47cf2d3d6cac
-            videoId: dQw4w9WgXcQ
-            title: Rick Astley - Never Gonna Give You Up (Video)
-            channel: RickAstleyVEVO
-            source: site
     channel_queuerequest:
       type: object
       title: '/:channel/queuerequest'
