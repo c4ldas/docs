@@ -32,49 +32,49 @@
           "activities"
         ],
         "summary": "/:channel",
-        "description": "List channel activities. Similar to Activity Feed info",
+        "description": "List channel activities. That's what you see in your Activity Feed",
         "operationId": "Get/acttivities/:channel",
         "parameters": [
           {
             "name": "after",
             "in": "query",
-            "description": "Start date - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format",
+            "description": "Start date - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format\n",
             "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string",
-              "format": "date",
               "oneOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Start Date                  \nDate in ISO 8061 format. Examples: `2020-01-01` or `2020-01-01T00:00:00` or `2020-01-01T00:00:00Z` \n"
                 },
                 {
-                  "type": "integer"
+                  "type": "number",
+                  "description": "Start Date                  \nTimestamp in milliseconds or Unix epoch time. Examples: `1577836800` or `1577836800000` \n"
                 }
               ],
-              "example": "2020-01-01"
+              "example": "2020-01-01 or 1577836800000"
             }
           },
           {
             "name": "before",
             "in": "query",
-            "description": "End date - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format",
+            "description": "End date - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format\n",
             "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string",
-              "format": "date",
               "oneOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "description": "End Date                  \nDate in ISO 8061 format. Examples: `2021-10-31` or `2021-10-31T00:00:00` or `2021-10-31T00:00:00Z` \n"
                 },
                 {
-                  "type": "integer"
+                  "type": "number",
+                  "description": "End Date                  \nTimestamp in milliseconds or Unix epoch time. Examples: `1635638400` or `1635638400000`\n"
                 }
               ],
-              "example": 1544178274000
+              "example": "2021-10-31 or 1635638400"
             }
           },
           {
@@ -1066,7 +1066,7 @@
           "activities"
         ],
         "summary": "/:channel",
-        "description": "Post a new activity\r\n\r\n### As this endpoint impacts directly on Activity feed, sending wrong data body can break it (making it blank)!\r\n### If that happens, send at least 50 new events to restore it.",
+        "description": "Post a new activity\r\n\r\n**As this endpoint impacts directly on Activity feed, sending wrong data body can break it (making it blank)!**\r\n**If that happens, send at least 50 new events to restore it.**",
         "operationId": "Post/activities/:channel",
         "parameters": [
           {
@@ -1083,7 +1083,7 @@
           }
         ],
         "requestBody": {
-          "description": "Each `type` requires different `data` object. Here are some examples:\r\n\r\n### - follow\r\n```json\r\n{\r\n  \"type\": \"follow\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"providerId\": \"1234567\", // optional, but make sure to use the actual Twitch user ID\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n\r\n```\r\n\r\n### - subscriber\r\n```json\r\n{\r\n  \"type\": \"subscriber\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 1,\r\n    \"message\": \"This is a message\", // resubs only\r\n    \"username\": \"MrSim\", // either subscriber or gifted user\r\n    \"sender\": \"MrGifter\", // subgifts and community gifts only\r\n    \"gifted\": true, // subgifts only\r\n    \"bulkGifted\": true, // community gifts only\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - cheer\r\n```json\r\n{\r\n  \"type\": \"cheer\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 100,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\", // optional\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - raid\r\n```json\r\n{\r\n  \"type\": \"raid\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 3500,\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - tip\r\n```json\r\n{\r\n  \"type\": \"tip\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 10,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\", // optional\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - charityCampaignDonation\r\n```json\r\n{\r\n  \"type\": \"charityCampaignDonation\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 250,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - purchase\r\n```json\r\n{\r\n  \"type\": \"purchase\",\r\n  \"provider\": \"twitch\",  \r\n  \"data\": { // everything below is optional\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\",\r\n    \"message\": \"This is a message\",\r\n    \"items\": [\r\n      {\r\n        \"name\": \"gloves\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 35,\r\n        \"quantity\": 1\r\n      },\r\n      {\r\n        \"name\": \"t-shirt\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 80,\r\n        \"quantity\": 2\r\n      }\r\n    ]\r\n  }\r\n}\r\n```\r\n",
+          "description": "Each `type` requires different `data` object. Here are some examples:\r\n\r\n## Twitch \r\n### - follow\r\n```json\r\n{\r\n  \"type\": \"follow\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"providerId\": \"1234567\", // optional, but make sure to use the actual Twitch user ID\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n\r\n```\r\n\r\n### - subscriber\r\n```json\r\n{\r\n  \"type\": \"subscriber\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 1,\r\n    \"message\": \"This is a message\", // resubs only\r\n    \"username\": \"MrSim\", // either subscriber or gifted user\r\n    \"sender\": \"MrGifter\", // subgifts and community gifts only\r\n    \"gifted\": true, // subgifts only\r\n    \"bulkGifted\": true, // community gifts only\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - cheer\r\n```json\r\n{\r\n  \"type\": \"cheer\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 100,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\", // optional\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - raid\r\n```json\r\n{\r\n  \"type\": \"raid\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 3500,\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - charityCampaignDonation\r\n```json\r\n{\r\n  \"type\": \"charityCampaignDonation\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 250,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - host\r\n_Host does not exist anymore on Twitch_\r\n```json\r\n{\r\n  \"type\": \"host\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 10,\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n## Youtube\r\n### - subscriber\r\n```json\r\n{\r\n  \"type\": \"subscriber\",\r\n  \"provider\": \"youtube\",\r\n  \"data\": {\r\n    \"avatar\": \"https://link/to/image.png\", // optional\r\n    \"displayName\": \"MrSim\", // optional\r\n    \"username\": \"mrsim\"\r\n  }\r\n}\r\n```\r\n\r\n### - member (sponsor)\r\n```json\r\n{\r\n  \"type\": \"sponsor\",\r\n  \"provider\": \"youtube\",\r\n  \"data\": {\r\n    \"amount\": 3,\r\n    \"avatar\": \"https://link/to/image.png\",\r\n    \"username\": \"mrsim\", // either subscriber or gifted user\r\n    \"gifted\": true, // subgifts only\r\n    \"sender\": \"MrGifter\", // gifts and community gifts only\r\n    \"message\": \"This is a message\", // renew member only\r\n  }\r\n}\r\n```\r\n\r\n### - superchat\r\n```json\r\n{\r\n  \"type\": \"superchat\",\r\n  \"provider\": \"youtube\",\r\n  \"data\": {\r\n    \"amount\": 10,\r\n    \"avatar\": \"https://link/to/image.png\", // optional\r\n    \"displayName\": \"Conny\", // optional\r\n    \"username\": \"conny\"\r\n  }\r\n}\r\n```\r\n\r\n\r\n\r\n\r\n## Streamelements\r\n### - purchase\r\n```json\r\n{\r\n  \"type\": \"purchase\",\r\n  \"provider\": \"streamelements\",  \r\n  \"data\": { // everything below is optional\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\",\r\n    \"message\": \"This is a message\",\r\n    \"items\": [\r\n      {\r\n        \"name\": \"gloves\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 35,\r\n        \"quantity\": 1\r\n      },\r\n      {\r\n        \"name\": \"t-shirt\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 80,\r\n        \"quantity\": 2\r\n      }\r\n    ]\r\n  }\r\n}\r\n```\r\n\r\n### - tip\r\n_Use the tip endpoint instead, which takes care of posting in Activity feed itself._\r\n\r\n```json\r\n\r\n```\r\n\r\n### - redemption\r\n```json\r\n{\r\n  \"type\": \"redemption\",\r\n  \"provider\": \"streamelements\",\r\n  \"data\": { \r\n    \"avatar\": \"https://link/to/image.png\", // optional\r\n    \"message\": \"This is a new message\", // optional\r\n    \"redemption\": \"Redemption name\",\r\n    \"username\": \"mrsim\",\r\n    \"displayName\": \"MrSim\" // optional\r\n  }\r\n}\r\n```",
           "content": {
             "application/json": {
               "schema": {
@@ -1106,6 +1106,7 @@
                       "facebook",
                       "mixer"
                     ],
+                    "description": "Platform the mentioned activity is coming from. \r\n\r\nThat will create a link to the username on Activity Feed. Using `streamelements` removes the link",
                     "example": "twitch"
                   },
                   "type": {
@@ -8720,7 +8721,7 @@
           "channels"
         ],
         "summary": "/:channel/accesstoken",
-        "description": "Invalidates your current overlay token (apikey). \r\n\r\nIt can take some time until the overlay token stops working.\r\n\r\nYou may need to re-add your overlays, as the URL will change.\r\n\r\n",
+        "description": "Invalidates your current overlay token (apikey). \r\n\r\nIt may take some time until the token stops working.\r\n\r\nYou may need to re-add your overlays, as the URL will change.\r\n\r\n",
         "operationId": "Delete/:channel/accesstoken",
         "parameters": [
           {
