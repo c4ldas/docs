@@ -33,7 +33,7 @@
         ],
         "summary": "/:channel",
         "description": "List channel activities. Similar to Activity Feed info",
-        "operationId": "/:channel",
+        "operationId": "Get/acttivities/:channel",
         "parameters": [
           {
             "name": "after",
@@ -1060,6 +1060,236 @@
             "description": "V3"
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "activities"
+        ],
+        "summary": "/:channel",
+        "description": "Post a new activity\r\n\r\n### As this endpoint impacts directly on Activity feed, sending wrong data body can break it (making it blank)!\r\n### If that happens, send at least 50 new events to restore it.",
+        "operationId": "Post/activities/:channel",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Account ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Each `type` requires different `data` object. Here are some examples:\r\n\r\n### - follow\r\n```json\r\n{\r\n  \"type\": \"follow\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"providerId\": \"1234567\", // optional, but make sure to use the actual Twitch user ID\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n\r\n```\r\n\r\n### - subscriber\r\n```json\r\n{\r\n  \"type\": \"subscriber\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 1,\r\n    \"message\": \"This is a message\", // resubs only\r\n    \"username\": \"MrSim\", // either subscriber or gifted user\r\n    \"sender\": \"MrGifter\", // subgifts and community gifts only\r\n    \"gifted\": true, // subgifts only\r\n    \"bulkGifted\": true, // community gifts only\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - cheer\r\n```json\r\n{\r\n  \"type\": \"cheer\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 100,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\", // optional\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - raid\r\n```json\r\n{\r\n  \"type\": \"raid\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 3500,\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - tip\r\n```json\r\n{\r\n  \"type\": \"tip\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 10,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\", // optional\r\n    \"avatar\": \"https://link/to/image.png\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - charityCampaignDonation\r\n```json\r\n{\r\n  \"type\": \"charityCampaignDonation\",\r\n  \"provider\": \"twitch\",\r\n  \"data\": {\r\n    \"amount\": 250,\r\n    \"username\": \"MrSim\",\r\n    \"message\": \"This is a message\" // optional\r\n  }\r\n}\r\n```\r\n\r\n### - purchase\r\n```json\r\n{\r\n  \"type\": \"purchase\",\r\n  \"provider\": \"twitch\",  \r\n  \"data\": { // everything below is optional\r\n    \"username\": \"MrSim\",\r\n    \"avatar\": \"https://link/to/image.png\",\r\n    \"message\": \"This is a message\",\r\n    \"items\": [\r\n      {\r\n        \"name\": \"gloves\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 35,\r\n        \"quantity\": 1\r\n      },\r\n      {\r\n        \"name\": \"t-shirt\",\r\n        \"image\": \"https://link/to/image.png\",\r\n        \"price\": 80,\r\n        \"quantity\": 2\r\n      }\r\n    ]\r\n  }\r\n}\r\n```\r\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "twitch",
+                      "youtube",
+                      "x",
+                      "trovo",
+                      "streamelements",
+                      "displate",
+                      "xsolla",
+                      "represent",
+                      "patreon",
+                      "fourthwall",
+                      "lunar",
+                      "facebook",
+                      "mixer"
+                    ],
+                    "example": "twitch"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "follow",
+                      "tip",
+                      "sponsor",
+                      "superchat",
+                      "host",
+                      "raid",
+                      "subscriber",
+                      "cheer",
+                      "redemption",
+                      "merch",
+                      "fan",
+                      "supporter",
+                      "follower",
+                      "stars",
+                      "share",
+                      "videolike",
+                      "sparks",
+                      "elixir",
+                      "purchase",
+                      "communityGiftPurchase",
+                      "charityCampaignDonation",
+                      "giveaway",
+                      "sponsorship"
+                    ],
+                    "example": "purchase"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "https://cdn.streamelements.com/assets/homepage/SE_logo_396x309px_ground_control_page%403x.png"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Message to be read by TTS"
+                      },
+                      "amount": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "username"
+                    ]
+                  }
+                },
+                "required": [
+                  "provider",
+                  "type"
+                ]
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "provider": "twitch",
+                    "type": "purchase",
+                    "data": {
+                      "username": "customerName",
+                      "avatar": "https://link/to/image.png",
+                      "message": "This is a message",
+                      "items": [
+                        {
+                          "name": "gloves",
+                          "image": "https://link/to/image.png",
+                          "price": 35,
+                          "quantity": 1
+                        },
+                        {
+                          "name": "t-shirt",
+                          "image": "https://link/to/image.png",
+                          "price": 80,
+                          "quantity": 2
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Created"
+                },
+                "examples": {
+                  "default": {
+                    "value": "Created"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "child \"provider\" fails because [\"provider\" must be one of [twitch, youtube, facebook, mixer, trovo, displate, xsolla, represent, patreon, fourthwall, lunar, x, streamelements]]",
+                      "details": [
+                        {
+                          "path": [
+                            "provider"
+                          ],
+                          "message": "\"provider\" must be one of [twitch, youtube, facebook, mixer, trovo, displate, xsolla, represent, patreon, fourthwall, lunar, x, streamelements]"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "OAuth2": [
+              "activities:read",
+              "activities:write"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
       }
     },
     "/activities/{channel}/top": {
@@ -1069,7 +1299,7 @@
         ],
         "summary": "/:channel/top",
         "description": "List the top cheerers or tippers in a period (alltime, months, weeks, session) ",
-        "operationId": "/:channel/top",
+        "operationId": "Get/:channel/top",
         "parameters": [
           {
             "name": "offset",
@@ -1454,7 +1684,7 @@
         ],
         "summary": "/:channel/:activityId",
         "description": "Get activity details by id",
-        "operationId": "/:channel/:activityId",
+        "operationId": "Get/:channel/:activityId",
         "parameters": [
           {
             "name": "channel",
@@ -1582,7 +1812,7 @@
         ],
         "summary": "/:channel/:activityId",
         "description": "Update activity id",
-        "operationId": "/:channel/:activityId1",
+        "operationId": "Post/:channel/:activityId1",
         "parameters": [
           {
             "name": "channel",
@@ -1669,7 +1899,7 @@
         ],
         "summary": "/:channel/:activityId/replay",
         "description": "Replay activity",
-        "operationId": "/:channel/:activityId/replay",
+        "operationId": "Post/:channel/:activityId/replay",
         "parameters": [
           {
             "name": "channel",
@@ -20261,7 +20491,7 @@
         ],
         "summary": "/:channel/top",
         "description": "List top userpoints",
-        "operationId": "Get/:channel/top",
+        "operationId": "Get/:channel/top1234",
         "parameters": [
           {
             "name": "limit",
