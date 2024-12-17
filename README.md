@@ -1,37 +1,7 @@
-# Mintlify Starter Kit
+# Repo
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+I am using this repo to create a copy of Streamelements API and update its endpoints as their documentation is outdated. I am mainly using it to store the api.yaml and api.json. 
 
-* Guide pages
+The URL with the updated endpoints is https://seapi.stoplight.io/docs/se-endpoints
 
-* Navigation
-
-* Customizations
-
-* API Reference pages
-
-* Use of popular components
-
-### Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
-
-```
-npm i -g mintlify
-```
-
-Run the following command at the root of your documentation (where mint.json is)
-
-```
-mintlify dev
-```
-
-### Publishing Changes
-
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard.
-
-#### Troubleshooting
-
-* Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
-
-* Page loads as a 404 - Make sure you are running in a folder with `mint.json`
+I noticed Mintlify API reference does not provide all fields available in Stoplight, and although Stoplight interface is slower, the way they show the information is better for me.
