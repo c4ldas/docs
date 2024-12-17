@@ -8947,7 +8947,7 @@
           "chatstats"
         ],
         "summary": "/:username",
-        "description": "Get stats for channel name",
+        "description": "Get stats for channel name\r\n*",
         "operationId": "/:username",
         "parameters": [
           {
@@ -31172,6 +31172,188 @@
           }
         ]
       }
+    },
+    "/streams/{channel}": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "/:channel",
+        "description": "Get stats of recent streams",
+        "operationId": "Get:/channel",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - channel id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string"
+                      },
+                      "streamId": {
+                        "type": "string"
+                      },
+                      "online": {
+                        "type": "boolean"
+                      },
+                      "totalChatters": {
+                        "type": "integer"
+                      },
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "_id": "675b86cc4c4973cb660270f7",
+                        "channel": "5ec66c9bea3068d13a925772",
+                        "provider": "twitch",
+                        "streamId": "52659431533",
+                        "online": false,
+                        "totalChatters": 2704,
+                        "start": "2024-12-13T00:58:52.088Z",
+                        "end": "2024-12-13T06:28:44.613Z"
+                      },
+                      {
+                        "_id": "675f77f9b59079e18bceca67",
+                        "channel": "5ec66c9bea3068d13a925772",
+                        "provider": "twitch",
+                        "streamId": "52687668973",
+                        "online": false,
+                        "totalChatters": 1251,
+                        "start": "2024-12-16T00:44:41.599Z",
+                        "end": "2024-12-16T06:56:56.719Z"
+                      },
+                      {
+                        "_id": "6760e01784e4ec792c6bdfac",
+                        "channel": "5ec66c9bea3068d13a925772",
+                        "provider": "twitch",
+                        "streamId": "52696772493",
+                        "online": false,
+                        "totalChatters": 1821,
+                        "start": "2024-12-17T02:21:11.311Z",
+                        "end": "2024-12-17T06:29:35.297Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "OAuth2": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      }
+    },
+    "/streams/{channel}/live": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "/:channel/live",
+        "description": "Get stream live status",
+        "operationId": "Get:/channel/live",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - channel id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isLive": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "isLive": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      }
     }
   },
   "tags": [
@@ -31266,6 +31448,10 @@
     {
       "name": "store",
       "description": "Store items management"
+    },
+    {
+      "name": "streams",
+      "description": "Get Stream statu"
     },
     {
       "name": "themes",
