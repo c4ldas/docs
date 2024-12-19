@@ -2,6 +2,55 @@ openapi: 3.0.0
 info:
   title: SE API Docs
   description: |-
+    ## Authorization / Authentication
+
+    This API documentation uses 3 types of Authorization. 
+    - JWT Token
+    - Overlay Token
+    - oAuth2
+
+    Not all operations accept all types of security authentication. Most of them accept JWT, some work with Oauth2 and a few will support Overlay Token. When trying to use a non-supported authentication, you will receive a `403 - Forbidden`.
+    You can see on each operation which types they support.
+
+    ### JWT Token 
+
+    It is the bearer token, most endpoints use this one and it is focused on personal projects. 
+
+    Use it with `bearer` prefix in the Authorization header.
+
+    Example: `Authorization: bearer TOKEN`
+
+    You can find your JWT Token in https://streamelements.com/dashboard/account/channels
+
+    ### Overlay Token 
+
+    This is the token you can mostly use with endpoints related to overlays and custom widgets. 
+
+    Use it with `apikey` prefix in the Authorization header
+
+    Example: `Authorization: apikey TOKEN`
+
+    You can find your Overlay token in https://streamelements.com/dashboard/account/channels
+
+    You can also find it in a custom widget when using `onWidgetLoad` event listener.
+
+    ```js
+    window.addEventListener("onWidgetLoad", (obj) => {
+      const token = obj.detail.channel.apiToken;
+      console.log("Overlay token:", token);
+    })
+    ```
+
+    ### oAuth2 Token 
+
+    It is the oAuth token you can use it after receiving a Client ID and Client Secret. 
+
+    Use it with `oAuth` or `oauth2` prefix in the Authorization header.
+
+    Example: `Authorization: oauth2 TOKEN`
+
+    You can request oAuth access using the form in https://strms.net/oauth2_request
+
     ## Custom Variable types
 
     `guid` - string that matches pattern: `/^[0-9a-fA-F]{24}$/` (24 character hexadecimal string)
@@ -10,7 +59,7 @@ info:
 
     ## Global variables
 
-    `Authorization` - string:  JWT Token you can obtain here: https://streamelements.com/dashboard/account/channels
+    `Authorization` - string:  JWT Token / Overlay Token / oAuth2 Token
 
     `channelId` - guid: obtained by requesting `/channels/me` endpoint with provided JWT token. Also known as `Account ID`: https://streamelements.com/dashboard/account/channels
 
@@ -10367,8 +10416,8 @@ paths:
   /bot/filters/banphrases/search:
     get:
       tags:
+        - a pending
         - filters
-        - pending
       summary: /banphrases/search
       description: Get details for provided banned phrase id
       operationId: /banphrases/search
@@ -10442,8 +10491,8 @@ paths:
   '/bot/filters/{channel}':
     get:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel'
       description: List filters
       operationId: 'Get/:channel123'
@@ -11056,8 +11105,8 @@ paths:
       deprecated: false
     put:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel'
       description: Update channel settings
       operationId: 'Put/:channel'
@@ -11087,8 +11136,8 @@ paths:
   '/bot/filters/{channel}/banphrases':
     post:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel/banphrases'
       description: Add new banphrases group
       operationId: '/:channel/banphrases'
@@ -11931,8 +11980,8 @@ paths:
   '/bot/filters/{channel}/test':
     post:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel/test'
       description: Test a message against filters
       operationId: '/:channel/test'
@@ -11961,8 +12010,8 @@ paths:
   '/bot/filters/{channel}/banphrases/{groupId}':
     put:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel/banphrases/:groupId'
       description: Update banphrases group
       operationId: '/:channel/banphrases/:groupId'
@@ -11998,8 +12047,8 @@ paths:
       deprecated: false
     delete:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel/banphrases/:groupId'
       description: Delete banphrases group
       operationId: 'Delete/:channel/banphrases/:groupId'
@@ -12027,8 +12076,8 @@ paths:
   '/bot/filters/{channel}/{filter}':
     put:
       tags:
+        - a pending
         - filters
-        - pending
       summary: '/:channel/:filter'
       description: Update filters
       operationId: '/:channel/:filter'
@@ -12824,9 +12873,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}':
     get:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nGet giveaway details. "
       operationId: '/:channel/:giveawayId'
@@ -12927,8 +12975,8 @@ paths:
       deprecated: false
     post:
       tags:
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway"
       operationId: 'Post/:channel/:giveawayId'
@@ -13008,8 +13056,8 @@ paths:
       deprecated: false
     put:
       tags:
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId1'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway details"
       operationId: '/:channel/:giveawayId1'
@@ -13089,8 +13137,8 @@ paths:
       deprecated: false
     delete:
       tags:
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDelete Giveaway \r\n"
       operationId: 'Delete/:channel/:giveawayId'
@@ -13128,9 +13176,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}/joined':
     get:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/joined'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway"
       operationId: '/:channel/:giveawayId/joined'
@@ -13193,9 +13240,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}/entries':
     get:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/entries'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined entries in giveaway"
       operationId: 'Get/giveaways/:channel/:giveawayId/entries'
@@ -13279,9 +13325,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}/start':
     put:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/start'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway"
       operationId: '/:channel/:giveawayId/start'
@@ -13353,9 +13398,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}/winner':
     put:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/winner'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner"
       operationId: '/:channel/:giveawayId/winner'
@@ -13397,11 +13441,10 @@ paths:
   '/giveaways/{channel}/{giveawayId}/complete':
     put:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/complete'
-      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete"
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete\r\n"
       operationId: '/:channel/:giveawayId/complete'
       parameters:
         - name: channel
@@ -13459,9 +13502,8 @@ paths:
   '/giveaways/{channel}/{giveawayId}/reopen':
     put:
       tags:
-        - giveaways
+        - a pending
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/reopen'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway"
       operationId: '/:channel/:giveawayId/reopen'
@@ -13521,9 +13563,9 @@ paths:
   '/giveaways/{channel}/{giveawayId}/refund':
     delete:
       tags:
+        - a pending
         - giveaways
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/refund'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway "
       operationId: '/:channel/:giveawayId/refund'
@@ -13583,9 +13625,9 @@ paths:
   '/giveaways/{channel}/{giveawayId}/close':
     delete:
       tags:
+        - a pending
         - giveaways
         - single giveaway
-        - pending
       summary: '/:channel/:giveawayId/close'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway"
       operationId: '/:channel/:giveawayId/close'
@@ -15819,9 +15861,9 @@ paths:
   '/points/{channel}/{user}':
     get:
       tags:
+        - a pending
         - points
         - single user
-        - pending
       summary: '/:channel/:user'
       description: Get userpoints for specific username
       operationId: '/:channel/:user'
@@ -15848,8 +15890,8 @@ paths:
       deprecated: false
     delete:
       tags:
+        - a pending
         - single user
-        - pending
       summary: '/:channel/:user1'
       description: Reset user points (remove from table)
       operationId: '/:channel/:user1'
@@ -15877,9 +15919,9 @@ paths:
   '/points/{channel}/{user}/rank':
     get:
       tags:
+        - a pending
         - points
         - single user
-        - pending
       summary: '/:channel/:user/rank'
       description: Get current user rank by username
       operationId: '/:channel/:user/rank'
@@ -15907,9 +15949,9 @@ paths:
   '/points/{channel}/{user}/{amount}':
     put:
       tags:
+        - a pending
         - points
         - single user
-        - pending
       summary: '/:channel/:user/:amount'
       description: Add or remove points from user
       operationId: '/:channel/:user/:amount'
@@ -15944,9 +15986,9 @@ paths:
   '/points/{channel}/alltime/{user}/{amount}':
     put:
       tags:
+        - a pending
         - points
         - single user
-        - pending
       summary: '/:channel/alltime/:user/:amount'
       description: Update alltime points for user
       operationId: '/:channel/alltime/:user/:amount'
@@ -15994,8 +16036,8 @@ paths:
     delete:
       description: Reset alltime user points (remove from table)
       tags:
+        - a pending
         - single user
-        - pending
       summary: '/:channel/alltime/:user'
       operationId: '/:channel/alltime/:user'
       parameters:
@@ -16022,8 +16064,8 @@ paths:
   '/points/{channel}/alltime':
     get:
       tags:
+        - a pending
         - points
-        - pending
       summary: '/:channel/alltime'
       description: List alltime userpoints
       operationId: '/:channel/alltime'
@@ -16064,8 +16106,8 @@ paths:
   '/points/{channel}/top':
     get:
       tags:
+        - a pending
         - points
-        - pending
       summary: '/:channel/top'
       description: List top userpoints
       operationId: 'Get/:channel/top1234'
@@ -16106,8 +16148,8 @@ paths:
   '/points/{channel}/watchtime':
     get:
       tags:
+        - a pending
         - points
-        - pending
       summary: '/:channel/watchtime'
       description: List users watchtime
       operationId: '/:channel/watchtime'
@@ -16148,8 +16190,8 @@ paths:
   '/points/{channel}':
     put:
       tags:
+        - a pending
         - points
-        - pending
       summary: '/:channel'
       description: Bulk add/set points to users
       operationId: 'Put/:channel1'
@@ -16179,8 +16221,8 @@ paths:
     delete:
       description: TODO - Missing description
       tags:
+        - a pending
         - points
-        - pending
       summary: '/:channel/reset/:context'
       operationId: '/:channel/reset/:context'
       parameters:
@@ -18397,8 +18439,8 @@ paths:
     get:
       description: TODO - Missing description
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: /playing
       operationId: /playing
       parameters:
@@ -18519,8 +18561,8 @@ paths:
   /songrequest/youtube:
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: /youtube
       description: Get song details
       operationId: /youtube
@@ -18599,8 +18641,8 @@ paths:
   '/songrequest/{channel}/settings':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/settings'
       description: Get settings
       operationId: 'Get/:channel/settings'
@@ -18672,8 +18714,8 @@ paths:
   '/songrequest/{channel}/settings/public':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/settings/public'
       description: Get public settings
       operationId: '/:channel/settings/public'
@@ -18726,8 +18768,8 @@ paths:
   '/songrequest/{channel}/queue':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/queue'
       description: Get songrequest queue
       operationId: '/:channel/queue'
@@ -18797,8 +18839,8 @@ paths:
       deprecated: false
     post:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/queue'
       description: Get songrequest queue
       operationId: 'Post/:channel/queue'
@@ -18878,8 +18920,8 @@ paths:
   '/songrequest/{channel}/queue/{song}':
     delete:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/queue/:song'
       description: Remove song from queue
       operationId: '/:channel/queue/:song'
@@ -18940,8 +18982,8 @@ paths:
   '/songrequest/{channel}/queue/public':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/queue/public'
       description: Get songrequest queue for public exposure (without video details)
       operationId: '/:channel/queue/public'
@@ -19000,8 +19042,8 @@ paths:
   '/songrequest/{channel}/pending':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/pending'
       description: Get songs in moderation queue
       operationId: '/:channel/pending'
@@ -19022,8 +19064,8 @@ paths:
   '/songrequest/{channel}/playlist':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/playlist'
       description: Get songs on playlist
       operationId: '/:channel/playlist'
@@ -19175,8 +19217,8 @@ paths:
   '/songrequest/{channel}/player':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/player'
       description: Get current player status
       operationId: '/:channel/player'
@@ -19215,8 +19257,8 @@ paths:
   '/songrequest/{channel}/player/{state}':
     post:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/player/:state'
       description: Change current state of media player
       operationId: '/:channel/player/:state'
@@ -19282,8 +19324,8 @@ paths:
   '/songrequest/{channel}/history':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/history'
       description: Get songrequest history
       operationId: 'Get/:channel/history1'
@@ -19324,8 +19366,8 @@ paths:
   '/songrequest/{channel}/playing':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/playing'
       description: Get currently playing song
       operationId: '/:channel/playing'
@@ -19378,8 +19420,8 @@ paths:
   '/songrequest/{channel}/next':
     get:
       tags:
+        - a pending
         - songrequests
-        - pending
       summary: '/:channel/next'
       description: Get details of next song in queue
       operationId: '/:channel/next'
@@ -39469,6 +39511,8 @@ security:
   - OAuth2: []
   - ApiKeyBearer: []
 tags:
+  - name: a pending
+    description: Pending endpoints
   - name: activities
     description: Endpoints to interact with activities collected by StreamElements
   - name: bot
@@ -39493,8 +39537,6 @@ tags:
     description: Endpoints to manage bot modules
   - name: overlays
     description: Endpoints to manage overlays assigned to channel
-  - name: pending
-    description: Pending endpoints
   - name: points
     description: Endpoints to manage loyalty points
   - name: redemptions
