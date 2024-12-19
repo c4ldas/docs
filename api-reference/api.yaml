@@ -6468,11 +6468,11 @@ paths:
       deprecated: false
   '/channels/{channel}/socket':
     post:
-      description: Send an event to Streamelements socket
+      description: "Send an event to Streamelements socket\r\n\r\nIt is useful to send info to be captured Streamelements customwidgets"
       tags:
         - channels
       summary: '/:channel/socket'
-      operationId: '/:channel/socket'
+      operationId: 'Post/channels/:channel/socket'
       parameters:
         - name: channel
           in: path
@@ -6545,7 +6545,7 @@ paths:
                       another_item: this is a new item
                       value: 6
                       another_value: bla bla bla
-        description: "Body should have `event` and `data` object.\r\n\r\nUsing `event: \"event\"` or `event: \"event:test\"` will trigger an event for custom widgets, `onEventReceived`\r\n\r\nYou can put any value you want in `data` object, everything is accepted.\r\n"
+        description: "Body should have `event` and `data` object.\r\n\r\nUsing `event: \"event\"` or `event: \"event:test\"` will trigger an event for custom widgets, `onEventReceived`\r\n\r\nYou can put any value you want in `data` object, everything is accepted.\r\n\r\n\r\n### Mute/unmute alerts:\r\n\r\nUsing the example below as a body, you can mute and unmute alerts:\r\n\r\n`{\"event\": \"overlay:mute\", \"data\": { \"muted\": true }}` // Mute alerts\r\n\r\n`{\"event\": \"overlay:mute\", \"data\": { \"muted\": false }}` // Unmute alerts\r\n\r\n### Skip current alert:\r\n\r\nUsing the example below as a body, you can skip the current alert:\r\n\r\n`{\"event\": \"event:skip\", \"data\": {}}`\r\n"
   '/channels/{channel}/accesstoken':
     delete:
       description: "Invalidates your current overlay token (apikey). \r\n\r\nIt may take some time until the token stops working.\r\n\r\nYou may need to re-add your overlays, as the URL will change.\r\n\r\n"
@@ -9768,10 +9768,9 @@ paths:
     get:
       tags:
         - contests
-        - pending
       summary: '/:channel'
       description: List contests
-      operationId: 'Get/:channel123456'
+      operationId: 'Get/contests/:channel'
       parameters:
         - name: channel
           in: path
@@ -9951,13 +9950,17 @@ paths:
                         updatedAt: '2024-12-01T01:24:00.154Z'
                         startedAt: '2024-12-01T01:24:00.152Z'
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2: []
     post:
       tags:
         - contests
-        - pending
       summary: '/:channel'
       description: Create a new contest
-      operationId: 'Post/:channel12'
+      operationId: 'Post/contests/:channel'
       parameters:
         - name: channel
           in: path
@@ -9973,8 +9976,59 @@ paths:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties:
+                title:
+                  type: string
+                minBet:
+                  type: integer
+                maxBet:
+                  type: integer
+                duration:
+                  type: integer
+                botResponses:
+                  type: boolean
+                options:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      command:
+                        type: string
+                description:
+                  type: string
+              x-examples:
+                Example 1:
+                  title: Contest Title
+                  minBet: 10
+                  maxBet: 10000
+                  duration: 5
+                  botResponses: true
+                  options:
+                    - title: 1st option
+                      command: firstoption
+                    - title: 2nd option
+                      command: secondoption
+                    - command: thirdoption
+                      title: 3rd option
+                  description: Contest Description
+            examples:
+              Example 1:
+                value:
+                  title: Contest Title
+                  minBet: 10
+                  maxBet: 10000
+                  duration: 5
+                  botResponses: true
+                  options:
+                    - title: 1st option
+                      command: firstoption
+                    - title: 2nd option
+                      command: secondoption
+                    - command: thirdoption
+                      title: 3rd option
+                  description: Contest Description
         required: true
       deprecated: false
       responses:
@@ -10079,19 +10133,43 @@ paths:
                     state: created
                     createdAt: '2024-12-01T01:23:59.902Z'
                     updatedAt: '2024-12-01T01:23:59.902Z'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
+      security:
+        - JWTBearer: []
   '/contests/{channel}/history':
     get:
       tags:
         - contests
-        - pending
       summary: '/:channel/history'
       description: List previous contests
-      operationId: '/:channel/history'
+      operationId: 'Get/contest/:channel/history'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items per page
-          required: true
           style: form
           explode: true
           schema:
@@ -10101,7 +10179,6 @@ paths:
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -10120,7 +10197,173 @@ paths:
         '200':
           description: ''
           headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  docs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        title:
+                          type: string
+                        minBet:
+                          type: integer
+                        maxBet:
+                          type: integer
+                        botResponses:
+                          type: boolean
+                        options:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              command:
+                                type: string
+                              title:
+                                type: string
+                              totalAmount:
+                                type: integer
+                              totalUsers:
+                                type: integer
+                              _id:
+                                type: string
+                              winner:
+                                type: boolean
+                        totalAmount:
+                          type: integer
+                        totalUsers:
+                          type: integer
+                        duration:
+                          type: integer
+                        channel:
+                          type: string
+                        state:
+                          type: string
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        startedAt:
+                          type: string
+                        endedAt:
+                          type: string
+                x-examples:
+                  Example 1:
+                    _total: 1
+                    docs:
+                      - _id: 67635e00613d71e82b8d06f0
+                        title: Will I lose the next game?
+                        minBet: 10
+                        maxBet: 10000
+                        botResponses: true
+                        options:
+                          - command: win
+                            title: Win
+                            totalAmount: 0
+                            totalUsers: 0
+                            _id: 67635e00613d71e82b8d06f1
+                            winner: true
+                          - command: lose
+                            title: Lose
+                            totalAmount: 0
+                            totalUsers: 0
+                            _id: 67635e00613d71e82b8d06f2
+                        totalAmount: 0
+                        totalUsers: 0
+                        duration: 5
+                        channel: 5f2de5dd9a474a2c2dc4d0ab
+                        state: completed
+                        createdAt: '2024-12-18T23:42:56.826Z'
+                        updatedAt: '2024-12-18T23:43:02.597Z'
+                        startedAt: '2024-12-18T23:42:57.116Z'
+                        endedAt: '2024-12-18T23:43:02.597Z'
+              examples:
+                Example 1:
+                  value:
+                    _total: 1
+                    docs:
+                      - _id: 67635e00613d71e82b8d06f0
+                        title: Will I lose the next game?
+                        minBet: 10
+                        maxBet: 10000
+                        botResponses: true
+                        options:
+                          - command: win
+                            title: Win
+                            totalAmount: 0
+                            totalUsers: 0
+                            _id: 67635e00613d71e82b8d06f1
+                            winner: true
+                          - command: lose
+                            title: Lose
+                            totalAmount: 0
+                            totalUsers: 0
+                            _id: 67635e00613d71e82b8d06f2
+                        totalAmount: 0
+                        totalUsers: 0
+                        duration: 5
+                        channel: 5f2de5dd9a474a2c2aaaaaaa
+                        state: completed
+                        createdAt: '2024-12-18T23:42:56.826Z'
+                        updatedAt: '2024-12-18T23:43:02.597Z'
+                        startedAt: '2024-12-18T23:42:57.116Z'
+                        endedAt: '2024-12-18T23:43:02.597Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: array
+                          items:
+                            type: string
+                        message:
+                          type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 400
+                    error: Bad Request
+                    message: 'child "limit" fails because ["limit" must be larger than or equal to 1]'
+                    details:
+                      - path:
+                          - limit
+                        message: '"limit" must be larger than or equal to 1'
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 400
+                    error: Bad Request
+                    message: 'child "limit" fails because ["limit" must be larger than or equal to 1]'
+                    details:
+                      - path:
+                          - limit
+                        message: '"limit" must be larger than or equal to 1'
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2: []
   /bot/filters/banphrases/search:
     get:
       tags:
@@ -11823,10 +12066,9 @@ paths:
     get:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId'
-      description: List contests
-      operationId: '/:channel/:contestId'
+      description: List contest
+      operationId: 'Get/contests/:channel/:contestId'
       parameters:
         - name: channel
           in: path
@@ -11898,10 +12140,14 @@ paths:
                 error: Not Found
                 message: No contest found
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2: []
     put:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId'
       description: Update contest
       operationId: 'Put/:channel/:contestId'
@@ -11922,26 +12168,153 @@ paths:
           schema:
             type: string
       requestBody:
-        description: ''
+        description: "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each command option will replace the old one in the same order. You can also create more options."
         content:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties: {}
+            examples:
+              Example 1:
+                value:
+                  title: Contest new title
+                  duration: 20
         required: true
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  title:
+                    type: string
+                  minBet:
+                    type: integer
+                  maxBet:
+                    type: integer
+                  botResponses:
+                    type: boolean
+                  options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        command:
+                          type: string
+                        title:
+                          type: string
+                        totalAmount:
+                          type: integer
+                        totalUsers:
+                          type: integer
+                        _id:
+                          type: string
+                  totalAmount:
+                    type: integer
+                  totalUsers:
+                    type: integer
+                  duration:
+                    type: integer
+                  channel:
+                    type: string
+                  state:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                  startedAt:
+                    type: string
+                x-examples:
+                  Example 1:
+                    _id: 67637038ea1fe69a6ea1afd8
+                    title: Contest new title
+                    minBet: 10
+                    maxBet: 10000
+                    botResponses: true
+                    options:
+                      - command: win
+                        title: Win
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 67637038ea1fe69a6ea1afd9
+                      - command: lose
+                        title: Lose
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 67637038ea1fe69a6ea1afda
+                    totalAmount: 0
+                    totalUsers: 0
+                    duration: 20
+                    channel: 5f2de5dd9a474a2c2dc4d0ab
+                    state: running
+                    createdAt: '2024-12-19T01:00:40.003Z'
+                    updatedAt: '2024-12-19T01:01:03.802Z'
+                    startedAt: '2024-12-19T01:00:40.271Z'
+              examples:
+                Example 1:
+                  value:
+                    _id: 67637038ea1fe69a6ea1afd8
+                    title: Contest new title
+                    minBet: 10
+                    maxBet: 10000
+                    botResponses: true
+                    options:
+                      - command: win
+                        title: Win
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 67637038ea1fe69a6ea1afd9
+                      - command: lose
+                        title: Lose
+                        totalAmount: 0
+                        totalUsers: 0
+                        _id: 67637038ea1fe69a6ea1afda
+                    totalAmount: 0
+                    totalUsers: 0
+                    duration: 20
+                    channel: 5f2de5dd9a474a2c20000000
+                    state: running
+                    createdAt: '2024-12-19T01:00:40.003Z'
+                    updatedAt: '2024-12-19T01:01:03.802Z'
+                    startedAt: '2024-12-19T01:00:40.271Z'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
       deprecated: false
+      security:
+        - JWTBearer: []
     delete:
       tags:
         - single contest
-        - pending
-      summary: '/:channel/:contestId1'
-      description: Close contest
-      operationId: '/:channel/:contestId1'
+      summary: '/:channel/:contestId'
+      description: Delete contest
+      operationId: 'Delete/:channel/:contestId'
       parameters:
         - name: channel
           in: path
@@ -11960,27 +12333,41 @@ paths:
             type: string
       responses:
         '204':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Fri, 07 Dec 2018 13:27:43 GMT'
+          description: No Content
+        '403':
+          description: Forbidden
           content:
-            text/plain:
+            application/json:
               schema:
                 type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
       deprecated: false
+      security:
+        - JWTBearer: []
   '/contests/{channel}/{contestId}/bet':
     post:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/bet'
       description: Place a bet on selected option
-      operationId: '/:channel/:contestId/bet'
+      operationId: 'Post/contests/:channel/:contestId/bet'
       parameters:
         - name: channel
           in: path
@@ -12002,22 +12389,77 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-              example: '{"optionID":,"amount":}'
-            example: '{"optionID":,"amount":}'
+              type: object
+              properties:
+                optionId:
+                  type: string
+                amount:
+                  type: integer
+              x-examples:
+                Example 1:
+                  optionId: 676366719c25c7ce1c0df38f
+                  amount: 200
+            examples:
+              Example 1:
+                value:
+                  optionId: 676366719c25c7ce1c0df38f
+                  amount: 200
         required: true
       responses:
         '200':
           description: ''
           headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    status: 200
+                    message: Success
+              examples:
+                Example 1:
+                  value:
+                    status: 200
+                    message: Success
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 400
+                    error: Bad Request
+                    message: You have already entered the contest
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 400
+                    error: Bad Request
+                    message: You have already entered the contest
       deprecated: false
+      security:
+        - JWTBearer: []
     get:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/bet'
-      description: Get contests bets
-      operationId: 'Get/:channel/:contestId/bet'
+      description: Get your bet option and amount
+      operationId: 'Get/contests/:channel/:contestId/bet'
       parameters:
         - name: channel
           in: path
@@ -12038,15 +12480,85 @@ paths:
         '200':
           description: ''
           headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  option:
+                    type: string
+                  bet:
+                    type: integer
+                x-examples:
+                  Example 1:
+                    option: 6763645c613d71e82b8f5cc1
+                    bet: 400
+              examples:
+                Example 1:
+                  value:
+                    option: 6763645c613d71e82b8f5cc1
+                    bet: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 401
+                    error: Unauthorized
+                    message: No authorization token was found
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 401
+                    error: Unauthorized
+                    message: No authorization token was found
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+                    message: no bet found
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
+                    message: no bet found
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/contests/{channel}/{contestId}/start':
     put:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/start'
       description: Start a contest
-      operationId: '/:channel/:contestId/start'
+      operationId: 'Put/contests/:channel/:contestId/start'
       parameters:
         - name: channel
           in: path
@@ -12064,13 +12576,12 @@ paths:
           schema:
             type: string
       requestBody:
-        description: ''
+        description: Request does not need a body
         content:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties: {}
         required: true
       responses:
         '200':
@@ -12089,7 +12600,7 @@ paths:
                     type: string
                   example: '539'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Contest'
               example:
@@ -12118,14 +12629,17 @@ paths:
                 updatedAt: '2018-12-07T13:21:59.997Z'
                 startedAt: '2018-12-07T13:21:59.996Z'
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2: []
   '/contests/{channel}/{contestId}/winner':
     put:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/winner'
       description: Draw a winner of contest
-      operationId: '/:channel/:contestId/winner'
+      operationId: 'Put/contests/:channel/:contestId/winner'
       parameters:
         - name: channel
           in: path
@@ -12148,40 +12662,39 @@ paths:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties:
+                winnerId:
+                  type: string
+              x-examples:
+                Example 1:
+                  winnerId: 67636896d2ecdbbbe4f7052d
+            examples:
+              Example 1:
+                value:
+                  winnerId: 67636896d2ecdbbbe4f7052d
         required: true
       responses:
         '201':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Fri, 07 Dec 2018 13:25:06 GMT'
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '7'
+          description: Created
           content:
-            text/plain; charset=utf-8:
+            text/plain:
               schema:
                 type: string
-                example: Created
-              example: Created
+              examples:
+                Example 1:
+                  value: Created
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2: []
   '/contests/{channel}/{contestId}/refund':
     delete:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/refund'
       description: Refund users participating in contest
-      operationId: '/:channel/:contestId/refund'
+      operationId: 'Delete/contests/:channel/:contestId/refund'
       parameters:
         - name: channel
           in: path
@@ -12199,18 +12712,49 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
-          headers: {}
+        '201':
+          description: Created
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                Example 1:
+                  value: Created
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+                    message: No contest found
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
+                    message: No contest found
       deprecated: false
+      security:
+        - JWTBearer: []
   '/contests/{channel}/{contestId}/close':
     delete:
       tags:
         - single contest
-        - pending
       summary: '/:channel/:contestId/close'
       description: Close contest
-      operationId: '/:channel/:contestId/close'
+      operationId: 'Delete/contests/:channel/:contestId/close'
       parameters:
         - name: channel
           in: path
@@ -12244,12 +12788,39 @@ paths:
                     type: string
                   example: '7'
           content:
-            text/plain; charset=utf-8:
+            text/plain:
               schema:
                 type: string
-                example: Created
-              example: Created
+              examples:
+                Example 1:
+                  value: Created
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+                    message: No contest found
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
+                    message: No contest found
       deprecated: false
+      security:
+        - JWTBearer: []
   '/giveaways/{channel}/{giveawayId}':
     get:
       tags:
@@ -12257,7 +12828,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId'
-      description: 'Get giveaway details. This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nGet giveaway details. "
       operationId: '/:channel/:giveawayId'
       parameters:
         - name: entrants
@@ -12359,7 +12930,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId'
-      description: 'Create a new Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway"
       operationId: 'Post/:channel/:giveawayId'
       parameters:
         - name: channel
@@ -12440,7 +13011,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId1'
-      description: 'Update giveaway details This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway details"
       operationId: '/:channel/:giveawayId1'
       parameters:
         - name: channel
@@ -12521,7 +13092,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId'
-      description: 'Delete Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDelete Giveaway \r\n"
       operationId: 'Delete/:channel/:giveawayId'
       parameters:
         - name: channel
@@ -12561,7 +13132,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/joined'
-      description: 'List joined users in giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway"
       operationId: '/:channel/:giveawayId/joined'
       parameters:
         - name: channel
@@ -12619,6 +13190,92 @@ paths:
                       - giveawayId
                     message: '"giveawayId" with value "11111111" fails to match the required pattern: /^[0-9a-fA-F]{24}$/'
       deprecated: false
+  '/giveaways/{channel}/{giveawayId}/entries':
+    get:
+      tags:
+        - giveaways
+        - single giveaway
+        - pending
+      summary: '/:channel/:giveawayId/entries'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined entries in giveaway"
+      operationId: 'Get/giveaways/:channel/:giveawayId/entries'
+      parameters:
+        - name: channel
+          in: path
+          description: guid - Channel id
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 5b2e2007760aeb7729487dab
+        - name: giveawayId
+          in: path
+          description: guid - Giveaway id
+          required: true
+          style: simple
+          schema:
+            type: string
+        - schema:
+            type: number
+            example: 10
+          in: query
+          name: limit
+          description: number of entries to show
+      responses:
+        '200':
+          description: ''
+          headers:
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: 'Fri, 07 Dec 2018 12:55:37 GMT'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '69'
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GiveawayUserList'
+              example:
+                entered: false
+                tickets: 0
+                username: leeeeex
+                subscriber: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400-badrequest'
+              example:
+                statusCode: 400
+                error: Bad Request
+                message: 'child "giveawayId" fails because ["giveawayId" with value "11111111" fails to match the required pattern: /^[0-9a-fA-F]{24}$/]'
+                details:
+                  - path:
+                      - giveawayId
+                    message: '"giveawayId" with value "11111111" fails to match the required pattern: /^[0-9a-fA-F]{24}$/'
+      deprecated: false
+      x-stoplight:
+        id: r7qu87melmbjx
+    parameters:
+      - schema:
+          type: string
+        name: channel
+        description: guid = channel id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: giveawayId
+        description: guid - Giveaway id
+        in: path
+        required: true
   '/giveaways/{channel}/{giveawayId}/start':
     put:
       tags:
@@ -12626,7 +13283,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/start'
-      description: 'Start a Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway"
       operationId: '/:channel/:giveawayId/start'
       parameters:
         - name: channel
@@ -12700,7 +13357,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/winner'
-      description: 'Draw a Giveaway winner This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner"
       operationId: '/:channel/:giveawayId/winner'
       parameters:
         - name: channel
@@ -12744,7 +13401,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/complete'
-      description: 'Mark Giveaway as complete This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete"
       operationId: '/:channel/:giveawayId/complete'
       parameters:
         - name: channel
@@ -12806,7 +13463,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/reopen'
-      description: 'Reopen Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway"
       operationId: '/:channel/:giveawayId/reopen'
       parameters:
         - name: channel
@@ -12868,7 +13525,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/refund'
-      description: 'Refund Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway "
       operationId: '/:channel/:giveawayId/refund'
       parameters:
         - name: channel
@@ -12930,7 +13587,7 @@ paths:
         - single giveaway
         - pending
       summary: '/:channel/:giveawayId/close'
-      description: 'Close Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway"
       operationId: '/:channel/:giveawayId/close'
       parameters:
         - name: channel
@@ -12990,7 +13647,7 @@ paths:
       tags:
         - giveaways
       summary: '/:channel'
-      description: List giveaways
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList giveaways"
       operationId: 'Get/:channel1234567'
       parameters:
         - name: channel
@@ -13029,8 +13686,8 @@ paths:
       tags:
         - giveaways
       summary: '/:channel'
-      description: 'Create a new Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
-      operationId: 'Post/:channel123'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway "
+      operationId: 'Post/giveaways/:channel'
       parameters:
         - name: channel
           in: path
@@ -13046,8 +13703,44 @@ paths:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties:
+                title:
+                  type: string
+                botResponses:
+                  type: boolean
+                description:
+                  type: string
+                cost:
+                  type: integer
+                subscriberLuck:
+                  type: integer
+                subscriberonly:
+                  type: boolean
+                freeTicket:
+                  type: boolean
+                maxTickets:
+                  type: integer
+              x-examples:
+                Example 1:
+                  title: Giveaway Title
+                  botResponses: true
+                  description: Giveaway description
+                  cost: 0
+                  subscriberLuck: 3
+                  subscriberonly: false
+                  freeTicket: true
+                  maxTickets: 1
+            examples:
+              Example 1:
+                value:
+                  title: Giveaway Title
+                  botResponses: true
+                  description: Giveaway description
+                  cost: 0
+                  subscriberLuck: 3
+                  subscriberonly: false
+                  freeTicket: true
+                  maxTickets: 1
         required: true
       responses:
         '200':
@@ -13093,7 +13786,7 @@ paths:
       tags:
         - giveaways
       summary: '/:channel/history'
-      description: 'List previous giveaways This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways"
       operationId: 'Get/:channel/history'
       parameters:
         - name: channel
@@ -13135,7 +13828,7 @@ paths:
         - loyalties
       summary: '/:channel'
       description: Get loyalty settings
-      operationId: 'Get/:channel12345678'
+      operationId: 'Get/loyalty/:channel'
       parameters:
         - name: channel
           in: path
@@ -13162,34 +13855,17 @@ paths:
                     type: string
                   example: '333'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Success40'
-              example:
-                loyalty:
-                  bonuses:
-                    follow: 0
-                    tip: 0
-                    subscriber: 0
-                    cheer: 0
-                    host: 0
-                  name: points
-                  enabled: false
-                  amount: 5
-                  subscriberMultiplier: 3
-                  ignored:
-                    - streamelements
-                _id: 5b2e2007760aeb7230487dc1
-                channel: 5b2e2007760aeb7729487dab
-                createdAt: '2018-06-23T10:25:11.768Z'
-                updatedAt: '2018-06-23T10:25:11.768Z'
       deprecated: false
+      security: []
     put:
       tags:
         - loyalties
-      summary: '/:channel1'
+      summary: '/:channel'
       description: Update loyalty settings
-      operationId: '/:channel1'
+      operationId: 'Put/loyalty/:channel'
       parameters:
         - name: channel
           in: path
@@ -13230,6 +13906,7 @@ paths:
                   name: points
                   enabled: false
                   amount: 5
+                  interval: 10
                   subscriberMultiplier: 3
                   ignored:
                     - streamelements
@@ -13238,6 +13915,76 @@ paths:
                 createdAt: '2018-06-23T10:25:11.768Z'
                 updatedAt: '2018-06-23T10:25:11.768Z'
       deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  loyalty:
+                    enabled: true
+                    name: negocinhos
+                    amount: 10
+                    subscriberMultiplier: 2
+                    interval: 9
+                    ignored:
+                      - streamelements
+                    ignoredText: ''
+                    bonuses:
+                      follow: 500
+                      tip: 20
+                      subscriber: 5000
+                      cheer: 100
+                      raid: 0
+              properties:
+                loyalty:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    name:
+                      type: string
+                    amount:
+                      type: integer
+                    subscriberMultiplier:
+                      type: integer
+                    interval:
+                      type: integer
+                    ignored:
+                      type: array
+                      items:
+                        type: string
+                    bonuses:
+                      type: object
+                      properties:
+                        follow:
+                          type: integer
+                        tip:
+                          type: integer
+                        subscriber:
+                          type: integer
+                        cheer:
+                          type: integer
+                        raid:
+                          type: integer
+            examples:
+              Example 1:
+                value:
+                  loyalty:
+                    enabled: true
+                    name: loyalties
+                    amount: 10
+                    subscriberMultiplier: 2
+                    interval: 9
+                    ignored:
+                      - streamelements
+                    bonuses:
+                      follow: 500
+                      tip: 20
+                      subscriber: 5000
+                      cheer: 100
+                      raid: 0
   '/overlays/{channel}':
     get:
       tags:
@@ -13248,7 +13995,7 @@ paths:
       parameters:
         - name: search
           in: query
-          description: 'Overlay to search (part of the overlay name, description, etc)'
+          description: Overlay to search (part of the overlay name)
           required: false
           style: form
           explode: true
@@ -13257,7 +14004,6 @@ paths:
         - name: type
           in: query
           description: Regular
-          required: true
           style: form
           explode: true
           schema:
@@ -13288,33 +14034,227 @@ paths:
                     type: string
                   example: '359'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/OverlaysList'
-              example:
-                total: 1
-                docs:
-                  - settings:
+              examples: {}
+      deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+    parameters:
+      - name: channel
+        in: path
+        description: guid - Channel id
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 5b2e2007760aeb7729487dab
+    post:
+      summary: '/:channel'
+      tags:
+        - overlays
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                  type:
+                    type: string
+                  name:
+                    type: string
+                  preview:
+                    type: string
+                  settings:
+                    type: object
+                    properties:
+                      width:
+                        type: integer
+                      height:
+                        type: integer
+                      name:
+                        type: string
+                  widgets:
+                    type: array
+                    items:
+                      type: object
+                      properties: {}
+                  mobile:
+                    type: boolean
+                  campaign:
+                    type: boolean
+                  favorite:
+                    type: boolean
+                  _id:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                x-examples:
+                  Example 1:
+                    channel: 5f2de5dd9a474a2c20000000
+                    type: regular
+                    name: Unnamed overlay
+                    preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg'
+                    settings:
                       width: 1920
                       height: 1080
                       name: 1080p
-                    type: regular
-                    preview: 'https://static-cdn.jtvnw.net/ttv-static/404_boxart-272x380.jpg'
+                    widgets: []
                     mobile: false
-                    _id: 5b2e2041760aeb87a0487dc7
-                    game: null
-                    name: snake
-                    channel: 5b2e2007760aeb7729487dab
-                    createdAt: '2018-06-23T10:26:09.04Z'
-                    updatedAt: '2018-06-23T10:34:21.168Z'
-      deprecated: false
+                    campaign: false
+                    favorite: false
+                    _id: 6763921b7db81790ab962a08
+                    createdAt: '2024-12-19T03:25:15.977Z'
+                    updatedAt: '2024-12-19T03:25:15.977Z'
+              examples:
+                Example 1:
+                  value:
+                    channel: 5f2de5dd9a474a2c20000000
+                    type: regular
+                    name: Test overlay
+                    preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg'
+                    settings:
+                      width: 1920
+                      height: 1080
+                      name: 1080p
+                    widgets: []
+                    mobile: false
+                    campaign: false
+                    favorite: false
+                    _id: 6763921b7db81790ab962a08
+                    createdAt: '2024-12-19T03:25:15.977Z'
+                    updatedAt: '2024-12-19T03:25:15.977Z'
+      operationId: 'Post/overlays/:channel'
+      description: Create new overlay
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+            - 'overlays:write'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                preview:
+                  type: string
+                settings:
+                  type: object
+                  properties:
+                    width:
+                      type: integer
+                    height:
+                      type: integer
+                    name:
+                      type: string
+                name:
+                  type: string
+                channel:
+                  type: string
+                widgets:
+                  type: array
+                  items:
+                    type: object
+                    properties: {}
+              x-examples:
+                Example 1:
+                  preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg'
+                  settings:
+                    width: 1920
+                    height: 1080
+                    name: 1080p
+                  name: Unnamed overlay
+                  channel: 5f2de5dd9a474a2c20000000
+                  widgets: []
+            examples:
+              Example 1:
+                value:
+                  preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg'
+                  settings:
+                    width: 1920
+                    height: 1080
+                    name: 1080p
+                  name: Unnamed overlay
+                  channel: 5f2de5dd9a474a2c20000000
+                  widgets: []
+  '/overlays/{channel}/action':
+    parameters:
+      - name: channel
+        in: path
+        description: guid - Channel id
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 5b2e2007760aeb7729487dab
+    put:
+      summary: '/:channel/action'
+      tags:
+        - overlays
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    key: alerts.muted
+                    message: successfully updated key
+              examples:
+                Example 1:
+                  value:
+                    key: alerts.muted
+                    message: successfully updated key
+      operationId: 'Put/overlays/:channel/action'
+      description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nOverlay/Alerts control"
+      requestBody:
+        description: "Body is one of:\r\n\r\n`{\"action\": \"mute\"}`\r\n\r\n`{\"action\": \"unmute\"}`\r\n\r\n`{\"action\": \"skip\"}`\r\n\r\n`{\"action\": \"pause\"}`\r\n\r\n`{\"action\": \"unpause\"}`"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+              x-examples:
+                Example 1:
+                  action: mute
+            examples:
+              Example 1:
+                value:
+                  action: mute
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+            - 'overlays:write'
   '/overlays/{channel}/{overlayId}':
     get:
       tags:
         - overlays
       summary: '/:channel/:overlayId'
       description: Gets overlay details with all widgets on it
-      operationId: '/:channel/:overlayId'
+      operationId: 'Get/overlays/:channel/:overlayId'
       parameters:
         - name: channel
           in: path
@@ -14336,13 +15276,462 @@ paths:
                 statusCode: 404
                 error: Not Found
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+    parameters:
+      - schema:
+          type: string
+        name: channel
+        in: path
+        required: true
+        description: guid - channel id
+      - schema:
+          type: string
+        name: overlayId
+        in: path
+        required: true
+        description: guid - overlay id
+    put:
+      summary: '/:channel/:overlayId'
+      tags:
+        - overlays
+      responses:
+        '200':
+          description: OK
+      operationId: 'Put/overlays/:channel/:overlayId'
+      description: Modify overlay
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+            - 'overlays:write'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  settings:
+                    width: 1920
+                    height: 1080
+                    name: 1080p
+                  _id: 67638c99061f0a9e57092047
+                  channel: 5f2de5dd9a474a2c2dc4d0ab
+                  type: regular
+                  name: Test overlay
+                  preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-3.jpg'
+                  widgets:
+                    - id: 1
+                      group: ''
+                      type: se-widget-custom-event-list
+                      name: ''
+                      visible: true
+                      locked: false
+                      listener: null
+                      listeners:
+                        tip-latest: true
+                        subscriber-latest: true
+                        follower-latest: true
+                        cheer-latest: true
+                        host-latest: true
+                        raid-latest: true
+                        redemption-latest: true
+                      css:
+                        z-index: 2
+                        width: 290px
+                        height: 180px
+                        opacity: 1
+                        top: 119.34px
+                        left: 62.65px
+                      text:
+                        type: text
+                        value: ''
+                        enableShadow: true
+                        scrolling:
+                          direction: left
+                          speed: 6
+                        css:
+                          position: relative
+                          z-index: 1
+                          font-family: Nunito
+                          font-size: 24
+                          color: '#fff'
+                          font-weight: bold
+                          text-shadow: 'rgb(0, 0, 0) 1px 1px 1px'
+                          text-align: left
+                          line-height: 1.3
+                          scrolling:
+                            direction: left
+                          message:
+                            enableShadow: false
+                            font-family: Nunito
+                            font-size: 16
+                            line-height: 1.3
+                            color: '#fff'
+                            text-align: center
+                      image:
+                        type: image
+                        css:
+                          max-width: 100%
+                      video:
+                        type: video
+                        volume: 0.5
+                        css:
+                          width: 320
+                          height: 240
+                      audio:
+                        volume: 1
+                      variables:
+                        css: |-
+                          .text {
+                            font-size: 4rem;
+                            color: white;
+                          }
+                        html: <div id="text" class="text">15</div>
+                        js: |
+                          window.addEventListener("onWidgetLoad", async (obj) => {
+                            id = obj.detail.channel.id;
+                            apiToken = obj.detail.channel.apiToken;
+                            fieldData = obj.detail.fieldData;
+                            console.log("onWidgetLoad:", obj);
+                          })
+
+
+                          window.addEventListener("onSessionUpdate", async (obj) => {
+                            console.log("onSessionUpdate:", obj);
+                          })
+
+
+                          window.addEventListener("onEventReceived", async (obj) => {
+                            console.log("onEventReceived: ", obj);
+                          })
+                        fields: |-
+                          {
+                            "textField":{
+                              "type": "text",
+                              "label": "Text label",
+                              "value": "example value"
+                            }
+                          }
+                        fieldData:
+                          textField: example value
+                      provider: twitch
+              properties:
+                settings:
+                  type: object
+                  properties:
+                    width:
+                      type: integer
+                    height:
+                      type: integer
+                    name:
+                      type: string
+                _id:
+                  type: string
+                channel:
+                  type: string
+                type:
+                  type: string
+                name:
+                  type: string
+                  nullable: true
+                preview:
+                  type: string
+                widgets:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      group:
+                        type: string
+                        nullable: true
+                      type:
+                        type: string
+                      name:
+                        type: string
+                        nullable: true
+                      visible:
+                        type: boolean
+                      locked:
+                        type: boolean
+                      listener:
+                        type: string
+                        nullable: true
+                      listeners:
+                        type: object
+                        properties:
+                          tip-latest:
+                            type: boolean
+                          subscriber-latest:
+                            type: boolean
+                          follower-latest:
+                            type: boolean
+                          cheer-latest:
+                            type: boolean
+                          host-latest:
+                            type: boolean
+                          raid-latest:
+                            type: boolean
+                          redemption-latest:
+                            type: boolean
+                      css:
+                        type: object
+                        properties:
+                          z-index:
+                            type: integer
+                          width:
+                            type: string
+                          height:
+                            type: string
+                          opacity:
+                            type: integer
+                          top:
+                            type: string
+                          left:
+                            type: string
+                      text:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          value:
+                            type: string
+                            nullable: true
+                          enableShadow:
+                            type: boolean
+                          scrolling:
+                            type: object
+                            properties:
+                              direction:
+                                type: string
+                              speed:
+                                type: integer
+                          css:
+                            type: object
+                            properties:
+                              position:
+                                type: string
+                              z-index:
+                                type: integer
+                              font-family:
+                                type: string
+                              font-size:
+                                type: integer
+                              color:
+                                type: string
+                              font-weight:
+                                type: string
+                              text-shadow:
+                                type: string
+                              text-align:
+                                type: string
+                              line-height:
+                                type: number
+                              scrolling:
+                                type: object
+                                properties:
+                                  direction:
+                                    type: string
+                              message:
+                                type: object
+                                properties:
+                                  enableShadow:
+                                    type: boolean
+                                  font-family:
+                                    type: string
+                                  font-size:
+                                    type: integer
+                                  line-height:
+                                    type: number
+                                  color:
+                                    type: string
+                                  text-align:
+                                    type: string
+                      image:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          css:
+                            type: object
+                            properties:
+                              max-width:
+                                type: string
+                      video:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          volume:
+                            type: number
+                          css:
+                            type: object
+                            properties:
+                              width:
+                                type: integer
+                              height:
+                                type: integer
+                      audio:
+                        type: object
+                        properties:
+                          volume:
+                            type: integer
+                      variables:
+                        type: object
+                        properties:
+                          css:
+                            type: string
+                          html:
+                            type: string
+                          js:
+                            type: string
+                          fields:
+                            type: string
+                          fieldData:
+                            type: object
+                            properties:
+                              textField:
+                                type: string
+                      provider:
+                        type: string
+            examples:
+              Example 1:
+                value:
+                  settings:
+                    width: 1920
+                    height: 1080
+                    name: 1080p
+                  _id: 67638c99061f0a9e57092047
+                  channel: 5f2de5dd9a474a2c20000000
+                  type: regular
+                  name: Test overlay
+                  preview: 'https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-3.jpg'
+                  widgets:
+                    - id: 1
+                      group: null
+                      type: se-widget-custom-event-list
+                      name: null
+                      visible: true
+                      locked: false
+                      listener: null
+                      listeners:
+                        tip-latest: true
+                        subscriber-latest: true
+                        follower-latest: true
+                        cheer-latest: true
+                        host-latest: true
+                        raid-latest: true
+                        redemption-latest: true
+                      css:
+                        z-index: 2
+                        width: 290px
+                        height: 180px
+                        opacity: 1
+                        top: 119.34px
+                        left: 62.65px
+                      text:
+                        type: text
+                        value: null
+                        enableShadow: true
+                        scrolling:
+                          direction: left
+                          speed: 6
+                        css:
+                          position: relative
+                          z-index: 1
+                          font-family: Nunito
+                          font-size: 24
+                          color: '#fff'
+                          font-weight: bold
+                          text-shadow: 'rgb(0, 0, 0) 1px 1px 1px'
+                          text-align: left
+                          line-height: 1.3
+                          scrolling:
+                            direction: left
+                          message:
+                            enableShadow: false
+                            font-family: Nunito
+                            font-size: 16
+                            line-height: 1.3
+                            color: '#fff'
+                            text-align: center
+                      image:
+                        type: image
+                        css:
+                          max-width: 100%
+                      video:
+                        type: video
+                        volume: 0.5
+                        css:
+                          width: 320
+                          height: 240
+                      audio:
+                        volume: 1
+                      variables:
+                        css: |-
+                          .text {
+                            font-size: 4rem;
+                            color: white;
+                          }
+                        html: <div id="text" class="text">15</div>
+                        js: |
+                          window.addEventListener("onWidgetLoad", async (obj) => {
+                            id = obj.detail.channel.id;
+                            apiToken = obj.detail.channel.apiToken;
+                            fieldData = obj.detail.fieldData;
+                            console.log("onWidgetLoad:", obj);
+                          })
+
+
+                          window.addEventListener("onSessionUpdate", async (obj) => {
+                            console.log("onSessionUpdate:", obj);
+                          })
+
+
+                          window.addEventListener("onEventReceived", async (obj) => {
+                            console.log("onEventReceived: ", obj);
+                          })
+                        fields: |-
+                          {
+                            "textField":{
+                              "type": "text",
+                              "label": "Text label",
+                              "value": "example value"
+                            }
+                          }
+                        fieldData:
+                          textField: example value
+                      provider: twitch
+        description: 'Tip: Copy the object response from GET request, modify what you need and add the object to the body'
+    delete:
+      summary: '/:channel/:overlayId'
+      tags:
+        - overlays
+      responses:
+        '204':
+          description: No Content
+      operationId: 'Delete/overlays/:channel/:overlayId'
+      description: Delete overlay
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+            - 'overlays:write'
   '/overlays/{channel}/reload':
     put:
       tags:
         - overlays
       summary: '/:channel/reload'
       description: Reloads overlays for channel
-      operationId: '/:channel/reload'
+      operationId: 'Put/overlays/:channel/reload'
       parameters:
         - name: channel
           in: path
@@ -14375,6 +15764,12 @@ paths:
               example:
                 ok: true
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'overlays:read'
+            - 'overlays:write'
   '/overlays/{channel}/action/{action}':
     put:
       tags:
@@ -14420,7 +15815,7 @@ paths:
                 type: string
                 example: Created
               example: Created
-      deprecated: false
+      deprecated: true
   '/points/{channel}/{user}':
     get:
       tags:
@@ -14815,7 +16210,7 @@ paths:
         - sessions
       summary: '/:channel'
       description: Get session data
-      operationId: 'Get/:channel12345678910'
+      operationId: 'Get/sessions/:channel'
       parameters:
         - name: channel
           in: path
@@ -15530,6 +16925,7 @@ paths:
                 settings:
                   autoReset: true
                   calendar: false
+                  resetOnStart: false
                 provider: twitch
                 lastReset: '2018-06-23T10:25:11.745Z'
                 _id: 5b2e2007760aeb3196487dc3
@@ -15538,12 +16934,15 @@ paths:
                 updatedAt: '2018-12-06T15:54:48.768Z'
                 __v: 1
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
     put:
       tags:
         - sessions
       summary: '/:channel'
       description: Update session data
-      operationId: 'Put/:channel12'
+      operationId: 'Put/sessions/:channel'
       parameters:
         - name: channel
           in: path
@@ -15554,13 +16953,35 @@ paths:
             type: string
             example: 5b2e2007760aeb7729487dab
       requestBody:
-        description: ''
+        description: "You can use one or multiple items of data object from the GET request.\r\n\r\nYou can update each item individually or multiple at the same time.\r\n\r\nExample: \r\n\r\n```json\r\n{\r\n  \"follower-goal\": {\r\n    \"amount\": 77\r\n  },\r\n  \"follower-session\": {\r\n    \"count\": 50\r\n  }\r\n}\r\n```"
         content:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties:
+                follower-goal:
+                  type: object
+                  properties:
+                    amount:
+                      type: integer
+                follower-session:
+                  type: object
+                  properties:
+                    count:
+                      type: integer
+              x-examples:
+                Example 1:
+                  follower-goal:
+                    amount: 77
+                  follower-session:
+                    count: 50
+            examples:
+              Example 1:
+                value:
+                  follower-goal:
+                    amount: 77
+                  follower-session:
+                    count: 50
         required: true
       responses:
         '200':
@@ -16267,6 +17688,7 @@ paths:
                 settings:
                   autoReset: true
                   calendar: false
+                  resetOnStart: false
                 provider: twitch
                 lastReset: '2018-12-07T17:06:55.661Z'
                 _id: 5b2e2007760aeb3196487dc3
@@ -16275,13 +17697,15 @@ paths:
                 updatedAt: '2018-12-07T17:06:55.667Z'
                 __v: 1
       deprecated: false
+      security:
+        - JWTBearer: []
   '/sessions/{channel}/settings':
     get:
       tags:
         - sessions
       summary: '/:channel/settings'
       description: Get session settings
-      operationId: '/:channel/settings'
+      operationId: 'Get/sessions/:channel/settings'
       parameters:
         - name: channel
           in: path
@@ -16314,13 +17738,17 @@ paths:
               example:
                 autoReset: true
                 calendar: false
+                resetOnStart: false
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
     put:
       tags:
         - sessions
       summary: '/:channel/settings'
       description: Update session settings
-      operationId: 'Put/:channel/settings'
+      operationId: 'Put/sessions/:channel/settings'
       parameters:
         - name: channel
           in: path
@@ -16336,8 +17764,24 @@ paths:
           application/json:
             schema:
               type: object
-              example: {}
-            example: {}
+              properties:
+                autoReset:
+                  type: boolean
+                calendar:
+                  type: boolean
+                resetOnStart:
+                  type: boolean
+              x-examples:
+                Example 1:
+                  autoReset: true
+                  calendar: true
+                  resetOnStart: false
+            examples:
+              Example 1:
+                value:
+                  autoReset: true
+                  calendar: true
+                  resetOnStart: false
         required: true
       responses:
         '200':
@@ -16362,6 +17806,7 @@ paths:
               example:
                 autoReset: true
                 calendar: false
+                resetOnStart: false
       deprecated: false
   '/sessions/{channel}/reset':
     put:
@@ -16369,7 +17814,7 @@ paths:
         - sessions
       summary: '/:channel/reset'
       description: Reset session data
-      operationId: '/:channel/reset'
+      operationId: 'Put/sessions/:channel/reset'
       parameters:
         - name: channel
           in: path
@@ -16396,7 +17841,7 @@ paths:
                     type: string
                   example: '12414'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/channel_reset'
               example:
@@ -16930,6 +18375,7 @@ paths:
                 settings:
                   autoReset: true
                   calendar: false
+                  resetOnStart: false
                 _id: 5c0aa930de9a4cf194a14e05
                 provider: twitch
                 lastReset: '2018-12-07T17:09:04.037Z'
@@ -16938,6 +18384,15 @@ paths:
                 updatedAt: '2018-12-07T17:09:04.055Z'
                 __v: 0
       deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: Body is not needed on request
+      security:
+        - JWTBearer: []
   /songrequest/playing:
     get:
       description: TODO - Missing description
@@ -16974,12 +18429,37 @@ paths:
         - sessions
       summary: '/:channel/top'
       description: Get top events from aggregates
-      operationId: 'Get/:channel/top1'
+      operationId: 'Get/sessions/:channel/top'
       parameters:
+        - name: type
+          in: query
+          description: 'string - Possible values: tip, cheer, stars, embers'
+          explode: true
+          schema:
+            example: tip
+            enum:
+              - tip
+              - cheer
+              - stars
+              - embers
+            default: tip
+          style: form
+        - name: interval
+          in: query
+          description: 'string - Possible values: alltime, monthly, weekly, session'
+          explode: true
+          schema:
+            example: alltime
+            enum:
+              - alltime
+              - monthly
+              - weekly
+              - session
+            default: session
+          style: form
         - name: limit
           in: query
           description: integer - Max number of returned events
-          required: true
           style: form
           explode: true
           schema:
@@ -16989,31 +18469,12 @@ paths:
         - name: offset
           in: query
           description: integer - starting element
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 0
-        - name: interval
-          in: query
-          description: 'string - Possible values: alltime, monthly, weekly, session'
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: alltime
-        - name: type
-          in: query
-          description: 'string - Possible values: tip, cheer, stars, embers,'
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: tip
         - name: channel
           in: path
           description: guid - Channel id
@@ -17024,9 +18485,37 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    total:
+                      type: integer
+                x-examples:
+                  Example 1:
+                    - username: joao
+                      total: 50
+                    - username: asdf
+                      total: 20
+                    - username: mrnao
+                      total: 10
+              examples:
+                Example 1:
+                  value:
+                    - username: c4ldas
+                      total: 3
+                    - username: jean
+                      total: 140
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   /songrequest/youtube:
     get:
       tags:
@@ -31489,78 +32978,42 @@ components:
             '1': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/1.0'
             '2': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/1.0'
             '4': 'https://static-cdn.jtvnw.net/emoticons/v1/62836/3.0'
-    Option:
-      title: Option
-      required:
-        - totalAmount
-        - totalUsers
-        - _id
-        - title
-        - command
-      type: object
-      properties:
-        totalAmount:
-          type: integer
-          format: int32
-        totalUsers:
-          type: integer
-          format: int32
-        _id:
-          type: string
-        title:
-          type: string
-        command:
-          type: string
-      example:
-        totalAmount: 0
-        totalUsers: 0
-        _id: 5c0a53cede9a4cc345a14d92
-        title: Win
-        command: win
     Contest:
-      title: Contest
-      required:
-        - botResponses
-        - totalAmount
-        - totalUsers
-        - _id
-        - title
-        - minBet
-        - maxBet
-        - duration
-        - options
-        - channel
-        - state
-        - createdAt
-        - updatedAt
       type: object
       properties:
-        botResponses:
-          type: boolean
-        totalAmount:
-          type: integer
-          format: int32
-        totalUsers:
-          type: integer
-          format: int32
         _id:
           type: string
         title:
+          type: string
+        description:
           type: string
         minBet:
           type: integer
-          format: int32
         maxBet:
           type: integer
-          format: int32
-        duration:
-          type: integer
-          format: int32
+        botResponses:
+          type: boolean
         options:
           type: array
           items:
-            $ref: '#/components/schemas/Option'
-          description: ''
+            type: object
+            properties:
+              command:
+                type: string
+              title:
+                type: string
+              totalAmount:
+                type: integer
+              totalUsers:
+                type: integer
+              _id:
+                type: string
+        totalAmount:
+          type: integer
+        totalUsers:
+          type: integer
+        duration:
+          type: integer
         channel:
           type: string
         state:
@@ -31569,30 +33022,42 @@ components:
           type: string
         updatedAt:
           type: string
-      example:
-        botResponses: true
-        totalAmount: 0
-        totalUsers: 0
-        _id: 5c0a53cede9a4c207fa14d90
-        title: Will I win the next game?
-        minBet: 10
-        maxBet: 10000
-        duration: 5
-        options:
-          - totalAmount: 0
-            totalUsers: 0
-            _id: 5c0a53cede9a4cc345a14d92
-            title: Win
-            command: win
-          - totalAmount: 0
-            totalUsers: 0
-            _id: 5c0a53cede9a4c4b39a14d91
-            title: Lose
-            command: lose
-        channel: 5b2e2007760aeb7729487dab
-        state: created
-        createdAt: '2018-12-07T11:04:46.528Z'
-        updatedAt: '2018-12-07T11:04:46.528Z'
+        startedAt:
+          type: string
+      x-examples:
+        Example 1:
+          _id: 67636896d2ecdbbbe4f7052a
+          title: Contest Title
+          description: Contest Description
+          minBet: 10
+          maxBet: 10000
+          botResponses: true
+          options:
+            - command: firstoption
+              title: 1st option
+              totalAmount: 0
+              totalUsers: 0
+              _id: 67636896d2ecdbbbe4f7052b
+            - command: secondoption
+              title: 2nd option
+              totalAmount: 0
+              totalUsers: 0
+              _id: 67636896d2ecdbbbe4f7052c
+            - command: thirdoption
+              title: 3rd option
+              totalAmount: 0
+              totalUsers: 0
+              _id: 67636896d2ecdbbbe4f7052d
+          totalAmount: 0
+          totalUsers: 0
+          duration: 5
+          channel: 5f2de5dd9a474a2c2aaaaaaa
+          state: running
+          createdAt: '2024-12-19T00:28:06.356Z'
+          updatedAt: '2024-12-19T00:28:06.620Z'
+          startedAt: '2024-12-19T00:28:06.617Z'
+      title: ''
+      description: ''
     Giveaways:
       title: Giveaways
       required:
@@ -31793,6 +33258,7 @@ components:
           name: points
           enabled: false
           amount: 5
+          interval: 10
           subscriberMultiplier: 3
           ignored:
             - streamelements
@@ -31802,32 +33268,7 @@ components:
         updatedAt: '2018-06-23T10:25:11.768Z'
     Loyalty:
       title: Loyalty
-      required:
-        - bonuses
-        - name
-        - enabled
-        - amount
-        - subscriberMultiplier
-        - ignored
       type: object
-      properties:
-        bonuses:
-          $ref: '#/components/schemas/Bonuses'
-        name:
-          type: string
-        enabled:
-          type: boolean
-        amount:
-          type: integer
-          format: int32
-        subscriberMultiplier:
-          type: integer
-          format: int32
-        ignored:
-          type: array
-          items:
-            type: string
-          description: ''
       example:
         bonuses:
           follow: 0
@@ -31838,9 +33279,40 @@ components:
         name: points
         enabled: false
         amount: 5
+        interval: 10
         subscriberMultiplier: 3
         ignored:
           - streamelements
+      required:
+        - bonuses
+        - name
+        - enabled
+        - amount
+        - interval
+        - subscriberMultiplier
+        - ignored
+      properties:
+        bonuses:
+          $ref: '#/components/schemas/Bonuses'
+        name:
+          type: string
+        enabled:
+          type: boolean
+        amount:
+          type: integer
+          format: int32
+        interval:
+          type: integer
+          x-stoplight:
+            id: sqfx5iel4hm8s
+          format: int32
+        subscriberMultiplier:
+          type: integer
+          format: int32
+        ignored:
+          type: array
+          items:
+            type: string
     Bonuses:
       title: Bonuses
       required:
@@ -31874,21 +33346,8 @@ components:
         host: 0
     OverlaysList:
       title: OverlaysList
-      required:
-        - total
-        - docs
       type: object
-      properties:
-        total:
-          type: integer
-          format: int32
-        docs:
-          type: array
-          items:
-            $ref: '#/components/schemas/OverlayData'
-          description: ''
       example:
-        total: 1
         docs:
           - settings:
               width: 1920
@@ -31903,6 +33362,16 @@ components:
             channel: 5b2e2007760aeb7729487dab
             createdAt: '2018-06-23T10:26:09.04Z'
             updatedAt: '2018-06-23T10:34:21.168Z'
+      x-examples: {}
+      required:
+        - docs
+      properties:
+        docs:
+          type: array
+          x-stoplight:
+            id: zrcy72wk6cxh3
+          items:
+            $ref: '#/components/schemas/OverlayData'
     OverlayData:
       title: Overlay Data
       type: object
@@ -31955,6 +33424,10 @@ components:
           type: string
         updatedAt:
           type: string
+        campaign:
+          type: boolean
+          x-stoplight:
+            id: 0igchcqd9eusp
     OverlaySettings:
       title: OverlaySettings
       required:
@@ -34199,6 +35672,7 @@ components:
         settings:
           autoReset: true
           calendar: false
+          resetOnStart: false
         provider: twitch
         lastReset: '2018-06-23T10:25:11.745Z'
         _id: 5b2e2007760aeb3196487dc3
@@ -35334,18 +36808,24 @@ components:
         createdAt: '2018-12-06T15:54:41.618Z'
     SessionSettings:
       title: SessionSettings
+      type: object
+      example:
+        autoReset: true
+        calendar: false
+        resetOnStart: false
       required:
         - autoReset
         - calendar
-      type: object
+        - resetOnStart
       properties:
         autoReset:
           type: boolean
         calendar:
           type: boolean
-      example:
-        autoReset: true
-        calendar: false
+        resetOnStart:
+          type: boolean
+          x-stoplight:
+            id: q5b4akstjdpvc
     channelData:
       title: '/:channel'
       required:
@@ -36064,6 +37544,7 @@ components:
         settings:
           autoReset: true
           calendar: false
+          resetOnStart: false
         provider: twitch
         lastReset: '2018-12-07T17:06:55.661Z'
         _id: 5b2e2007760aeb3196487dc3
@@ -36073,18 +37554,24 @@ components:
         __v: 1
     channel_settings:
       title: '/:channel/settings'
+      type: object
+      example:
+        autoReset: true
+        calendar: false
+        resetOnStart: false
       required:
         - autoReset
         - calendar
-      type: object
+        - resetOnStart
       properties:
         autoReset:
           type: boolean
         calendar:
           type: boolean
-      example:
-        autoReset: true
-        calendar: false
+        resetOnStart:
+          type: boolean
+          x-stoplight:
+            id: 0937udhcffmsp
     channel_reset:
       title: '/:channel/reset'
       required:
@@ -36649,6 +38136,7 @@ components:
         settings:
           autoReset: true
           calendar: false
+          resetOnStart: false
         _id: 5c0aa930de9a4cf194a14e05
         provider: twitch
         lastReset: '2018-12-07T17:09:04.037Z'
@@ -37965,6 +39453,7 @@ components:
           authorizationUrl: 'https://api.streamelements.com/oauth2/authorize'
           tokenUrl: 'https://api.streamelements.com/oauth2/token'
           scopes:
+            'channel:read': Channel information (default)
             'tips:read': Ability read of tips
             'tips:write': Grants create/modify/delete tips
             'activities:read': Grants read of activities
