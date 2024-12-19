@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0",
     "title": "SE API Docs",
-    "description": "## Custom Variable types\n\n`guid` - string that matches pattern: `/^[0-9a-fA-F]{24}$/` (24 character hexadecimal string)\n\n`datetime` - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format\n\n## Global variables\n\n`Authorization` - string:  JWT Token you can obtain here: https://streamelements.com/dashboard/account/channels\n\n`channelId` - guid: obtained by requesting `/channels/me` endpoint with provided JWT token. Also known as `Account ID`: https://streamelements.com/dashboard/account/channels\n\n`channelName` - string: lowercase channel name\n\n`timezone` - integer: timezone index",
+    "description": "## Authorization / Authentication\n\nThis API documentation uses 3 types of Authorization. \n- JWT Token\n- Overlay Token\n- oAuth2\n\nNot all operations accept all types of security authentication. Most of them accept JWT, some work with Oauth2 and a few will support Overlay Token. When trying to use a non-supported authentication, you will receive a `403 - Forbidden`.\nYou can see on each operation which types they support.\n\n### JWT Token \n\nIt is the bearer token, most endpoints use this one and it is focused on personal projects. \n\nUse it with `bearer` prefix in the Authorization header.\n\nExample: `Authorization: bearer TOKEN`\n\nYou can find your JWT Token in https://streamelements.com/dashboard/account/channels\n\n### Overlay Token \n\nThis is the token you can mostly use with endpoints related to overlays and custom widgets. \n\nUse it with `apikey` prefix in the Authorization header\n\nExample: `Authorization: apikey TOKEN`\n\nYou can find your Overlay token in https://streamelements.com/dashboard/account/channels\n\nYou can also find it in a custom widget when using `onWidgetLoad` event listener.\n\n```js\nwindow.addEventListener(\"onWidgetLoad\", (obj) => {\n  const token = obj.detail.channel.apiToken;\n  console.log(\"Overlay token:\", token);\n})\n```\n\n### oAuth2 Token \n\nIt is the oAuth token you can use it after receiving a Client ID and Client Secret. \n\nUse it with `oAuth` or `oauth2` prefix in the Authorization header.\n\nExample: `Authorization: oauth2 TOKEN`\n\nYou can request oAuth access using the form in https://strms.net/oauth2_request\n\n## Custom Variable types\n\n`guid` - string that matches pattern: `/^[0-9a-fA-F]{24}$/` (24 character hexadecimal string)\n\n`datetime` - either timestamp in milliseconds (unix timestamp*1000) or string in ISO 8061 format\n\n## Global variables\n\n`Authorization` - string:  JWT Token / Overlay Token / oAuth2 Token\n\n`channelId` - guid: obtained by requesting `/channels/me` endpoint with provided JWT token. Also known as `Account ID`: https://streamelements.com/dashboard/account/channels\n\n`channelName` - string: lowercase channel name\n\n`timezone` - integer: timezone index",
     "termsOfService": "",
     "contact": {
       "email": "support@streamelements.com",
@@ -13730,8 +13730,8 @@
     "/bot/filters/banphrases/search": {
       "get": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/banphrases/search",
         "description": "Get details for provided banned phrase id",
@@ -13857,8 +13857,8 @@
     "/bot/filters/{channel}": {
       "get": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel",
         "description": "List filters",
@@ -14546,8 +14546,8 @@
       },
       "put": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel",
         "description": "Update channel settings",
@@ -14614,8 +14614,8 @@
     "/bot/filters/{channel}/banphrases": {
       "post": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel/banphrases",
         "description": "Add new banphrases group",
@@ -15893,8 +15893,8 @@
     "/bot/filters/{channel}/test": {
       "post": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel/test",
         "description": "Test a message against filters",
@@ -15960,8 +15960,8 @@
     "/bot/filters/{channel}/banphrases/{groupId}": {
       "put": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel/banphrases/:groupId",
         "description": "Update banphrases group",
@@ -16036,8 +16036,8 @@
       },
       "delete": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel/banphrases/:groupId",
         "description": "Delete banphrases group",
@@ -16097,8 +16097,8 @@
     "/bot/filters/{channel}/{filter}": {
       "put": {
         "tags": [
-          "filters",
-          "pending"
+          "a pending",
+          "filters"
         ],
         "summary": "/:channel/:filter",
         "description": "Update filters",
@@ -17316,9 +17316,8 @@
     "/giveaways/{channel}/{giveawayId}": {
       "get": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nGet giveaway details. ",
@@ -17494,8 +17493,8 @@
       },
       "post": {
         "tags": [
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway",
@@ -17639,8 +17638,8 @@
       },
       "put": {
         "tags": [
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId1",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway details",
@@ -17786,8 +17785,8 @@
       },
       "delete": {
         "tags": [
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDelete Giveaway \r\n",
@@ -17866,9 +17865,8 @@
     "/giveaways/{channel}/{giveawayId}/joined": {
       "get": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/joined",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway",
@@ -17990,9 +17988,8 @@
     "/giveaways/{channel}/{giveawayId}/entries": {
       "get": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/entries",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined entries in giveaway",
@@ -18123,9 +18120,8 @@
     "/giveaways/{channel}/{giveawayId}/start": {
       "put": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/start",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway",
@@ -18256,9 +18252,8 @@
     "/giveaways/{channel}/{giveawayId}/winner": {
       "put": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/winner",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner",
@@ -18345,12 +18340,11 @@
     "/giveaways/{channel}/{giveawayId}/complete": {
       "put": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/complete",
-        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete\r\n",
         "operationId": "/:channel/:giveawayId/complete",
         "parameters": [
           {
@@ -18465,9 +18459,8 @@
     "/giveaways/{channel}/{giveawayId}/reopen": {
       "put": {
         "tags": [
-          "giveaways",
-          "single giveaway",
-          "pending"
+          "a pending",
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/reopen",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway",
@@ -18585,9 +18578,9 @@
     "/giveaways/{channel}/{giveawayId}/refund": {
       "delete": {
         "tags": [
+          "a pending",
           "giveaways",
-          "single giveaway",
-          "pending"
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/refund",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway ",
@@ -18705,9 +18698,9 @@
     "/giveaways/{channel}/{giveawayId}/close": {
       "delete": {
         "tags": [
+          "a pending",
           "giveaways",
-          "single giveaway",
-          "pending"
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/close",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway",
@@ -21626,9 +21619,9 @@
     "/points/{channel}/{user}": {
       "get": {
         "tags": [
+          "a pending",
           "points",
-          "single user",
-          "pending"
+          "single user"
         ],
         "summary": "/:channel/:user",
         "description": "Get userpoints for specific username",
@@ -21686,8 +21679,8 @@
       },
       "delete": {
         "tags": [
-          "single user",
-          "pending"
+          "a pending",
+          "single user"
         ],
         "summary": "/:channel/:user1",
         "description": "Reset user points (remove from table)",
@@ -21747,9 +21740,9 @@
     "/points/{channel}/{user}/rank": {
       "get": {
         "tags": [
+          "a pending",
           "points",
-          "single user",
-          "pending"
+          "single user"
         ],
         "summary": "/:channel/:user/rank",
         "description": "Get current user rank by username",
@@ -21809,9 +21802,9 @@
     "/points/{channel}/{user}/{amount}": {
       "put": {
         "tags": [
+          "a pending",
           "points",
-          "single user",
-          "pending"
+          "single user"
         ],
         "summary": "/:channel/:user/:amount",
         "description": "Add or remove points from user",
@@ -21881,9 +21874,9 @@
     "/points/{channel}/alltime/{user}/{amount}": {
       "put": {
         "tags": [
+          "a pending",
           "points",
-          "single user",
-          "pending"
+          "single user"
         ],
         "summary": "/:channel/alltime/:user/:amount",
         "description": "Update alltime points for user",
@@ -21973,8 +21966,8 @@
     "/points/{channel}/alltime/{user}": {
       "delete": {
         "tags": [
-          "single user",
-          "pending"
+          "a pending",
+          "single user"
         ],
         "summary": "/:channel/alltime/:user",
         "description": "Reset alltime user points (remove from table)",
@@ -22034,8 +22027,8 @@
     "/points/{channel}/alltime": {
       "get": {
         "tags": [
-          "points",
-          "pending"
+          "a pending",
+          "points"
         ],
         "summary": "/:channel/alltime",
         "description": "List alltime userpoints",
@@ -22111,8 +22104,8 @@
     "/points/{channel}/top": {
       "get": {
         "tags": [
-          "points",
-          "pending"
+          "a pending",
+          "points"
         ],
         "summary": "/:channel/top",
         "description": "List top userpoints",
@@ -22188,8 +22181,8 @@
     "/points/{channel}/watchtime": {
       "get": {
         "tags": [
-          "points",
-          "pending"
+          "a pending",
+          "points"
         ],
         "summary": "/:channel/watchtime",
         "description": "List users watchtime",
@@ -22265,8 +22258,8 @@
     "/points/{channel}": {
       "put": {
         "tags": [
-          "points",
-          "pending"
+          "a pending",
+          "points"
         ],
         "summary": "/:channel",
         "description": "Bulk add/set points to users",
@@ -22333,8 +22326,8 @@
     "/points/{channel}/reset/{context}": {
       "delete": {
         "tags": [
-          "points",
-          "pending"
+          "a pending",
+          "points"
         ],
         "summary": "/:channel/reset/:context",
         "description": "TODO - Missing description",
@@ -25927,8 +25920,8 @@
     "/songrequest/playing": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/playing",
         "description": "TODO - Missing description",
@@ -26128,8 +26121,8 @@
     "/songrequest/youtube": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/youtube",
         "description": "Get song details",
@@ -26276,8 +26269,8 @@
     "/songrequest/{channel}/settings": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/settings",
         "description": "Get settings",
@@ -26401,8 +26394,8 @@
     "/songrequest/{channel}/settings/public": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/settings/public",
         "description": "Get public settings",
@@ -26503,8 +26496,8 @@
     "/songrequest/{channel}/queue": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/queue",
         "description": "Get songrequest queue",
@@ -26626,8 +26619,8 @@
       },
       "post": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/queue",
         "description": "Get songrequest queue",
@@ -26772,8 +26765,8 @@
     "/songrequest/{channel}/queue/{song}": {
       "delete": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/queue/:song",
         "description": "Remove song from queue",
@@ -26892,8 +26885,8 @@
     "/songrequest/{channel}/queue/public": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/queue/public",
         "description": "Get songrequest queue for public exposure (without video details)",
@@ -27003,8 +26996,8 @@
     "/songrequest/{channel}/pending": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/pending",
         "description": "Get songs in moderation queue",
@@ -27054,8 +27047,8 @@
     "/songrequest/{channel}/playlist": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/playlist",
         "description": "Get songs on playlist",
@@ -27323,8 +27316,8 @@
     "/songrequest/{channel}/player": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/player",
         "description": "Get current player status",
@@ -27406,8 +27399,8 @@
     "/songrequest/{channel}/player/{state}": {
       "post": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/player/:state",
         "description": "Change current state of media player",
@@ -27533,8 +27526,8 @@
     "/songrequest/{channel}/history": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/history",
         "description": "Get songrequest history",
@@ -27610,8 +27603,8 @@
     "/songrequest/{channel}/playing": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/playing",
         "description": "Get currently playing song",
@@ -27709,8 +27702,8 @@
     "/songrequest/{channel}/next": {
       "get": {
         "tags": [
-          "songrequests",
-          "pending"
+          "a pending",
+          "songrequests"
         ],
         "summary": "/:channel/next",
         "description": "Get details of next song in queue",
@@ -32983,6 +32976,10 @@
   },
   "tags": [
     {
+      "name": "a pending",
+      "description": "Pending endpoints"
+    },
+    {
       "name": "activities",
       "description": "Endpoints to interact with activities collected by StreamElements"
     },
@@ -33029,10 +33026,6 @@
     {
       "name": "overlays",
       "description": "Endpoints to manage overlays assigned to channel"
-    },
-    {
-      "name": "pending",
-      "description": "Pending endpoints"
     },
     {
       "name": "points",
