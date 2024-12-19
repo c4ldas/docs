@@ -8594,8 +8594,8 @@
           "channels"
         ],
         "summary": "/:channel/socket",
-        "description": "Send an event to Streamelements socket",
-        "operationId": "/:channel/socket",
+        "description": "Send an event to Streamelements socket\r\n\r\nIt is useful to send info to be captured Streamelements customwidgets",
+        "operationId": "Post/channels/:channel/socket",
         "parameters": [
           {
             "name": "channel",
@@ -8610,7 +8610,7 @@
           }
         ],
         "requestBody": {
-          "description": "Body should have `event` and `data` object.\r\n\r\nUsing `event: \"event\"` or `event: \"event:test\"` will trigger an event for custom widgets, `onEventReceived`\r\n\r\nYou can put any value you want in `data` object, everything is accepted.\r\n",
+          "description": "Body should have `event` and `data` object.\r\n\r\nUsing `event: \"event\"` or `event: \"event:test\"` will trigger an event for custom widgets, `onEventReceived`\r\n\r\nYou can put any value you want in `data` object, everything is accepted.\r\n\r\n\r\n### Mute/unmute alerts:\r\n\r\nUsing the example below as a body, you can mute and unmute alerts:\r\n\r\n`{\"event\": \"overlay:mute\", \"data\": { \"muted\": true }}` // Mute alerts\r\n\r\n`{\"event\": \"overlay:mute\", \"data\": { \"muted\": false }}` // Unmute alerts\r\n\r\n### Skip current alert:\r\n\r\nUsing the example below as a body, you can skip the current alert:\r\n\r\n`{\"event\": \"event:skip\", \"data\": {}}`\r\n",
           "content": {
             "application/json": {
               "schema": {
@@ -13000,12 +13000,11 @@
     "/contests/{channel}": {
       "get": {
         "tags": [
-          "contests",
-          "pending"
+          "contests"
         ],
         "summary": "/:channel",
         "description": "List contests",
-        "operationId": "Get/:channel123456",
+        "operationId": "Get/contests/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -13196,14 +13195,15 @@
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": []
           }
         ],
         "servers": [
@@ -13219,12 +13219,11 @@
       },
       "post": {
         "tags": [
-          "contests",
-          "pending"
+          "contests"
         ],
         "summary": "/:channel",
         "description": "Create a new contest",
-        "operationId": "Post/:channel12",
+        "operationId": "Post/contests/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -13245,11 +13244,65 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "minBet": {
+                    "type": "integer"
+                  },
+                  "maxBet": {
+                    "type": "integer"
+                  },
+                  "duration": {
+                    "type": "integer"
+                  },
+                  "botResponses": {
+                    "type": "boolean"
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "command": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "title": "Contest Title",
+                    "minBet": 10,
+                    "maxBet": 10000,
+                    "duration": 5,
+                    "botResponses": true,
+                    "options": [
+                      {
+                        "title": "1st option",
+                        "command": "firstoption"
+                      },
+                      {
+                        "title": "2nd option",
+                        "command": "secondoption"
+                      },
+                      {
+                        "command": "thirdoption",
+                        "title": "3rd option"
+                      }
+                    ],
+                    "description": "Contest Description"
+                  }
                 }
               }
             }
@@ -13364,18 +13417,42 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 403,
+                      "error": "Forbidden",
+                      "message": "Not allowed to perform this operation"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -13393,18 +13470,16 @@
     "/contests/{channel}/history": {
       "get": {
         "tags": [
-          "contests",
-          "pending"
+          "contests"
         ],
         "summary": "/:channel/history",
         "description": "List previous contests",
-        "operationId": "/:channel/history",
+        "operationId": "Get/contest/:channel/history",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items per page",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -13417,7 +13492,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -13440,19 +13514,205 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "minBet": {
+                            "type": "integer"
+                          },
+                          "maxBet": {
+                            "type": "integer"
+                          },
+                          "botResponses": {
+                            "type": "boolean"
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "command": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "totalAmount": {
+                                  "type": "integer"
+                                },
+                                "totalUsers": {
+                                  "type": "integer"
+                                },
+                                "_id": {
+                                  "type": "string"
+                                },
+                                "winner": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "totalAmount": {
+                            "type": "integer"
+                          },
+                          "totalUsers": {
+                            "type": "integer"
+                          },
+                          "duration": {
+                            "type": "integer"
+                          },
+                          "channel": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "endedAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 1,
+                      "docs": [
+                        {
+                          "_id": "67635e00613d71e82b8d06f0",
+                          "title": "Will I lose the next game?",
+                          "minBet": 10,
+                          "maxBet": 10000,
+                          "botResponses": true,
+                          "options": [
+                            {
+                              "command": "win",
+                              "title": "Win",
+                              "totalAmount": 0,
+                              "totalUsers": 0,
+                              "_id": "67635e00613d71e82b8d06f1",
+                              "winner": true
+                            },
+                            {
+                              "command": "lose",
+                              "title": "Lose",
+                              "totalAmount": 0,
+                              "totalUsers": 0,
+                              "_id": "67635e00613d71e82b8d06f2"
+                            }
+                          ],
+                          "totalAmount": 0,
+                          "totalUsers": 0,
+                          "duration": 5,
+                          "channel": "5f2de5dd9a474a2c2aaaaaaa",
+                          "state": "completed",
+                          "createdAt": "2024-12-18T23:42:56.826Z",
+                          "updatedAt": "2024-12-18T23:43:02.597Z",
+                          "startedAt": "2024-12-18T23:42:57.116Z",
+                          "endedAt": "2024-12-18T23:43:02.597Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "child \"limit\" fails because [\"limit\" must be larger than or equal to 1]",
+                      "details": [
+                        {
+                          "path": [
+                            "limit"
+                          ],
+                          "message": "\"limit\" must be larger than or equal to 1"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": []
           }
         ],
         "servers": [
@@ -15915,12 +16175,11 @@
     "/contests/{channel}/{contestId}": {
       "get": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId",
-        "description": "List contests",
-        "operationId": "/:channel/:contestId",
+        "description": "List contest",
+        "operationId": "Get/contests/:channel/:contestId",
         "parameters": [
           {
             "name": "channel",
@@ -16029,14 +16288,15 @@
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": []
           }
         ],
         "servers": [
@@ -16052,8 +16312,7 @@
       },
       "put": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId",
         "description": "Update contest",
@@ -16082,17 +16341,19 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "description": "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each command option will replace the old one in the same order. You can also create more options.",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "example": {}
+                "type": "object"
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "title": "Contest new title",
+                    "duration": 20
+                  }
                 }
               }
             }
@@ -16100,19 +16361,149 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "minBet": {
+                      "type": "integer"
+                    },
+                    "maxBet": {
+                      "type": "integer"
+                    },
+                    "botResponses": {
+                      "type": "boolean"
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "command": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "totalAmount": {
+                            "type": "integer"
+                          },
+                          "totalUsers": {
+                            "type": "integer"
+                          },
+                          "_id": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "totalAmount": {
+                      "type": "integer"
+                    },
+                    "totalUsers": {
+                      "type": "integer"
+                    },
+                    "duration": {
+                      "type": "integer"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "startedAt": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_id": "67637038ea1fe69a6ea1afd8",
+                      "title": "Contest new title",
+                      "minBet": 10,
+                      "maxBet": 10000,
+                      "botResponses": true,
+                      "options": [
+                        {
+                          "command": "win",
+                          "title": "Win",
+                          "totalAmount": 0,
+                          "totalUsers": 0,
+                          "_id": "67637038ea1fe69a6ea1afd9"
+                        },
+                        {
+                          "command": "lose",
+                          "title": "Lose",
+                          "totalAmount": 0,
+                          "totalUsers": 0,
+                          "_id": "67637038ea1fe69a6ea1afda"
+                        }
+                      ],
+                      "totalAmount": 0,
+                      "totalUsers": 0,
+                      "duration": 20,
+                      "channel": "5f2de5dd9a474a2c20000000",
+                      "state": "running",
+                      "createdAt": "2024-12-19T01:00:40.003Z",
+                      "updatedAt": "2024-12-19T01:01:03.802Z",
+                      "startedAt": "2024-12-19T01:00:40.271Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 403,
+                      "error": "Forbidden",
+                      "message": "Not allowed to perform this operation"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -16128,12 +16519,11 @@
       },
       "delete": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
-        "summary": "/:channel/:contestId1",
-        "description": "Close contest",
-        "operationId": "/:channel/:contestId1",
+        "summary": "/:channel/:contestId",
+        "description": "Delete contest",
+        "operationId": "Delete/:channel/:contestId",
         "parameters": [
           {
             "name": "channel",
@@ -16159,20 +16549,33 @@
         ],
         "responses": {
           "204": {
-            "description": "",
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
-              "text/plain": {
+              "application/json": {
                 "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "examples": {
-                  "__default_content": {
-                    "value": "Fri, 07 Dec 2018 13:27:43 GMT"
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 403,
+                      "error": "Forbidden",
+                      "message": "Not allowed to perform this operation"
+                    }
                   }
                 }
               }
@@ -16183,12 +16586,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -16206,149 +16603,11 @@
     "/contests/{channel}/{contestId}/bet": {
       "post": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId/bet",
         "description": "Place a bet on selected option",
-        "operationId": "/:channel/:contestId/bet",
-        "parameters": [
-          {
-            "name": "channel",
-            "in": "path",
-            "description": "guid - Channel id",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string",
-              "example": "5b2e2007760aeb7729487dab"
-            }
-          },
-          {
-            "name": "contestId",
-            "in": "path",
-            "description": "guid - Contest id",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "string",
-                "example": "{\"optionID\":,\"amount\":}"
-              },
-              "examples": {
-                "default": {
-                  "value": "{\"optionID\":,\"amount\":}"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "deprecated": false,
-        "security": [
-          {
-            "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://api.streamelements.com/kappa/v2",
-            "description": "V2"
-          },
-          {
-            "url": "https://api.streamelements.com/kappa/v3",
-            "description": "V3"
-          }
-        ]
-      },
-      "get": {
-        "tags": [
-          "single contest",
-          "pending"
-        ],
-        "summary": "/:channel/:contestId/bet",
-        "description": "Get contests bets",
-        "operationId": "Get/:channel/:contestId/bet",
-        "parameters": [
-          {
-            "name": "channel",
-            "in": "path",
-            "description": "guid - Channel Id",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string",
-              "example": "5b2e2007760aeb7729487dab"
-            }
-          },
-          {
-            "name": "contestId",
-            "in": "path",
-            "description": "guid - Contest id",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "deprecated": false,
-        "security": [
-          {
-            "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://api.streamelements.com/kappa/v2",
-            "description": "V2"
-          },
-          {
-            "url": "https://api.streamelements.com/kappa/v3",
-            "description": "V3"
-          }
-        ]
-      }
-    },
-    "/contests/{channel}/{contestId}/start": {
-      "put": {
-        "tags": [
-          "single contest",
-          "pending"
-        ],
-        "summary": "/:channel/:contestId/start",
-        "description": "Start a contest",
-        "operationId": "/:channel/:contestId/start",
+        "operationId": "Post/contests/:channel/:contestId/bet",
         "parameters": [
           {
             "name": "channel",
@@ -16379,11 +16638,21 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "optionId": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "integer"
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "optionId": "676366719c25c7ce1c0df38f",
+                    "amount": 200
+                  }
                 }
               }
             }
@@ -16393,7 +16662,268 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "status": 200,
+                      "message": "Success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "You have already entered the contest"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "JWTBearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "single contest"
+        ],
+        "summary": "/:channel/:contestId/bet",
+        "description": "Get your bet option and amount",
+        "operationId": "Get/contests/:channel/:contestId/bet",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Channel Id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          },
+          {
+            "name": "contestId",
+            "in": "path",
+            "description": "guid - Contest id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "option": {
+                      "type": "string"
+                    },
+                    "bet": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "option": "6763645c613d71e82b8f5cc1",
+                      "bet": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 401,
+                      "error": "Unauthorized",
+                      "message": "No authorization token was found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 404,
+                      "error": "Not Found",
+                      "message": "no bet found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "channel:read"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      }
+    },
+    "/contests/{channel}/{contestId}/start": {
+      "put": {
+        "tags": [
+          "single contest"
+        ],
+        "summary": "/:channel/:contestId/start",
+        "description": "Start a contest",
+        "operationId": "Put/contests/:channel/:contestId/start",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Channel id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          },
+          {
+            "name": "contestId",
+            "in": "path",
+            "description": "guid - Contest id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request does not need a body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Contest"
                 },
@@ -16460,10 +16990,10 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": []
           }
         ],
         "servers": [
@@ -16481,12 +17011,11 @@
     "/contests/{channel}/{contestId}/winner": {
       "put": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId/winner",
         "description": "Draw a winner of contest",
-        "operationId": "/:channel/:contestId/winner",
+        "operationId": "Put/contests/:channel/:contestId/winner",
         "parameters": [
           {
             "name": "channel",
@@ -16517,11 +17046,17 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "winnerId": {
+                    "type": "string"
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "winnerId": "67636896d2ecdbbbe4f7052d"
+                  }
                 }
               }
             }
@@ -16529,34 +17064,15 @@
         },
         "responses": {
           "201": {
-            "description": "",
+            "description": "Created",
             "content": {
-              "text/plain; charset=utf-8": {
+              "text/plain": {
                 "schema": {
-                  "type": "string",
-                  "example": "Created"
+                  "type": "string"
                 },
                 "examples": {
-                  "default": {
+                  "Example 1": {
                     "value": "Created"
-                  }
-                }
-              }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "Fri, 07 Dec 2018 13:25:06 GMT"
-                  }
-                }
-              },
-              "Content-Length": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "7"
                   }
                 }
               }
@@ -16569,10 +17085,10 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": []
           }
         ],
         "servers": [
@@ -16590,12 +17106,11 @@
     "/contests/{channel}/{contestId}/refund": {
       "delete": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId/refund",
         "description": "Refund users participating in contest",
-        "operationId": "/:channel/:contestId/refund",
+        "operationId": "Delete/contests/:channel/:contestId/refund",
         "parameters": [
           {
             "name": "channel",
@@ -16620,20 +17135,56 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": "Created"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 404,
+                      "error": "Not Found",
+                      "message": "No contest found"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -16651,12 +17202,11 @@
     "/contests/{channel}/{contestId}/close": {
       "delete": {
         "tags": [
-          "single contest",
-          "pending"
+          "single contest"
         ],
         "summary": "/:channel/:contestId/close",
         "description": "Close contest",
-        "operationId": "/:channel/:contestId/close",
+        "operationId": "Delete/contests/:channel/:contestId/close",
         "parameters": [
           {
             "name": "channel",
@@ -16684,13 +17234,12 @@
           "201": {
             "description": "",
             "content": {
-              "text/plain; charset=utf-8": {
+              "text/plain": {
                 "schema": {
-                  "type": "string",
-                  "example": "Created"
+                  "type": "string"
                 },
                 "examples": {
-                  "default": {
+                  "Example 1": {
                     "value": "Created"
                   }
                 }
@@ -16714,18 +17263,42 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 404,
+                      "error": "Not Found",
+                      "message": "No contest found"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -16748,7 +17321,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId",
-        "description": "Get giveaway details. This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nGet giveaway details. ",
         "operationId": "/:channel/:giveawayId",
         "parameters": [
           {
@@ -16925,7 +17498,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId",
-        "description": "Create a new Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway",
         "operationId": "Post/:channel/:giveawayId",
         "parameters": [
           {
@@ -17070,7 +17643,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId1",
-        "description": "Update giveaway details This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway details",
         "operationId": "/:channel/:giveawayId1",
         "parameters": [
           {
@@ -17217,7 +17790,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId",
-        "description": "Delete Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDelete Giveaway \r\n",
         "operationId": "Delete/:channel/:giveawayId",
         "parameters": [
           {
@@ -17298,9 +17871,142 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/joined",
-        "description": "List joined users in giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway",
         "operationId": "/:channel/:giveawayId/joined",
         "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Channel id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          },
+          {
+            "name": "giveawayId",
+            "in": "path",
+            "description": "guid - Giveaway id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiveawayUserList"
+                },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "entered": false,
+                      "tickets": 0,
+                      "username": "leeeeex",
+                      "subscriber": false
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Date": {
+                "schema": {},
+                "examples": {
+                  "__default_content": {
+                    "value": "Fri, 07 Dec 2018 12:55:37 GMT"
+                  }
+                }
+              },
+              "Content-Length": {
+                "schema": {},
+                "examples": {
+                  "__default_content": {
+                    "value": "69"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-badrequest"
+                },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "child \"giveawayId\" fails because [\"giveawayId\" with value \"11111111\" fails to match the required pattern: /^[0-9a-fA-F]{24}$/]",
+                      "details": [
+                        {
+                          "path": [
+                            "giveawayId"
+                          ],
+                          "message": "\"giveawayId\" with value \"11111111\" fails to match the required pattern: /^[0-9a-fA-F]{24}$/"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "OAuth2": []
+          },
+          {
+            "ApiKeyBearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      }
+    },
+    "/giveaways/{channel}/{giveawayId}/entries": {
+      "get": {
+        "tags": [
+          "giveaways",
+          "single giveaway",
+          "pending"
+        ],
+        "summary": "/:channel/:giveawayId/entries",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined entries in giveaway",
+        "operationId": "Get/giveaways/:channel/:giveawayId/entries",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "number of entries to show",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          },
           {
             "name": "channel",
             "in": "path",
@@ -17422,7 +18128,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/start",
-        "description": "Start a Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway",
         "operationId": "/:channel/:giveawayId/start",
         "parameters": [
           {
@@ -17555,7 +18261,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/winner",
-        "description": "Draw a Giveaway winner This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner",
         "operationId": "/:channel/:giveawayId/winner",
         "parameters": [
           {
@@ -17644,7 +18350,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/complete",
-        "description": "Mark Giveaway as complete This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete",
         "operationId": "/:channel/:giveawayId/complete",
         "parameters": [
           {
@@ -17764,7 +18470,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/reopen",
-        "description": "Reopen Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway",
         "operationId": "/:channel/:giveawayId/reopen",
         "parameters": [
           {
@@ -17884,7 +18590,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/refund",
-        "description": "Refund Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway ",
         "operationId": "/:channel/:giveawayId/refund",
         "parameters": [
           {
@@ -18004,7 +18710,7 @@
           "pending"
         ],
         "summary": "/:channel/:giveawayId/close",
-        "description": "Close Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway",
         "operationId": "/:channel/:giveawayId/close",
         "parameters": [
           {
@@ -18122,7 +18828,7 @@
           "giveaways"
         ],
         "summary": "/:channel",
-        "description": "List giveaways",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList giveaways",
         "operationId": "Get/:channel1234567",
         "parameters": [
           {
@@ -18203,8 +18909,8 @@
           "giveaways"
         ],
         "summary": "/:channel",
-        "description": "Create a new Giveaway This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
-        "operationId": "Post/:channel123",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway ",
+        "operationId": "Post/giveaways/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -18225,11 +18931,45 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "botResponses": {
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "cost": {
+                    "type": "integer"
+                  },
+                  "subscriberLuck": {
+                    "type": "integer"
+                  },
+                  "subscriberonly": {
+                    "type": "boolean"
+                  },
+                  "freeTicket": {
+                    "type": "boolean"
+                  },
+                  "maxTickets": {
+                    "type": "integer"
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "title": "Giveaway Title",
+                    "botResponses": true,
+                    "description": "Giveaway description",
+                    "cost": 0,
+                    "subscriberLuck": 3,
+                    "subscriberonly": false,
+                    "freeTicket": true,
+                    "maxTickets": 1
+                  }
                 }
               }
             }
@@ -18320,7 +19060,7 @@
           "giveaways"
         ],
         "summary": "/:channel/history",
-        "description": "List previous giveaways This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways",
         "operationId": "Get/:channel/history",
         "parameters": [
           {
@@ -18405,7 +19145,7 @@
         ],
         "summary": "/:channel",
         "description": "Get loyalty settings",
-        "operationId": "Get/:channel12345678",
+        "operationId": "Get/loyalty/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -18423,35 +19163,9 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Success40"
-                },
-                "examples": {
-                  "default": {
-                    "value": {
-                      "loyalty": {
-                        "bonuses": {
-                          "follow": 0,
-                          "tip": 0,
-                          "subscriber": 0,
-                          "cheer": 0,
-                          "host": 0
-                        },
-                        "name": "points",
-                        "enabled": false,
-                        "amount": 5,
-                        "subscriberMultiplier": 3,
-                        "ignored": [
-                          "streamelements"
-                        ]
-                      },
-                      "_id": "5b2e2007760aeb7230487dc1",
-                      "channel": "5b2e2007760aeb7729487dab",
-                      "createdAt": "2018-06-23T10:25:11.768Z",
-                      "updatedAt": "2018-06-23T10:25:11.768Z"
-                    }
-                  }
                 }
               }
             },
@@ -18476,17 +19190,7 @@
           }
         },
         "deprecated": false,
-        "security": [
-          {
-            "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
-          }
-        ],
+        "security": [],
         "servers": [
           {
             "url": "https://api.streamelements.com/kappa/v2",
@@ -18502,9 +19206,9 @@
         "tags": [
           "loyalties"
         ],
-        "summary": "/:channel1",
+        "summary": "/:channel",
         "description": "Update loyalty settings",
-        "operationId": "/:channel1",
+        "operationId": "Put/loyalty/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -18518,6 +19222,86 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "loyalty": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "integer"
+                      },
+                      "subscriberMultiplier": {
+                        "type": "integer"
+                      },
+                      "interval": {
+                        "type": "integer"
+                      },
+                      "ignored": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "bonuses": {
+                        "type": "object",
+                        "properties": {
+                          "follow": {
+                            "type": "integer"
+                          },
+                          "tip": {
+                            "type": "integer"
+                          },
+                          "subscriber": {
+                            "type": "integer"
+                          },
+                          "cheer": {
+                            "type": "integer"
+                          },
+                          "raid": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "loyalty": {
+                      "enabled": true,
+                      "name": "loyalties",
+                      "amount": 10,
+                      "subscriberMultiplier": 2,
+                      "interval": 9,
+                      "ignored": [
+                        "streamelements"
+                      ],
+                      "bonuses": {
+                        "follow": 500,
+                        "tip": 20,
+                        "subscriber": 5000,
+                        "cheer": 100,
+                        "raid": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -18540,6 +19324,7 @@
                         "name": "points",
                         "enabled": false,
                         "amount": 5,
+                        "interval": 10,
                         "subscriberMultiplier": 3,
                         "ignored": [
                           "streamelements"
@@ -18610,7 +19395,7 @@
           {
             "name": "search",
             "in": "query",
-            "description": "Overlay to search (part of the overlay name, description, etc)",
+            "description": "Overlay to search (part of the overlay name)",
             "required": false,
             "style": "form",
             "explode": true,
@@ -18622,7 +19407,6 @@
             "name": "type",
             "in": "query",
             "description": "Regular",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -18646,34 +19430,9 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OverlaysList"
-                },
-                "examples": {
-                  "default": {
-                    "value": {
-                      "total": 1,
-                      "docs": [
-                        {
-                          "settings": {
-                            "width": 1920,
-                            "height": 1080,
-                            "name": "1080p"
-                          },
-                          "type": "regular",
-                          "preview": "https://static-cdn.jtvnw.net/ttv-static/404_boxart-272x380.jpg",
-                          "mobile": false,
-                          "_id": "5b2e2041760aeb87a0487dc7",
-                          "game": null,
-                          "name": "snake",
-                          "channel": "5b2e2007760aeb7729487dab",
-                          "createdAt": "2018-06-23T10:26:09.04Z",
-                          "updatedAt": "2018-06-23T10:34:21.168Z"
-                        }
-                      ]
-                    }
-                  }
                 }
               }
             },
@@ -18703,10 +19462,295 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "overlays"
+        ],
+        "summary": "/:channel",
+        "description": "Create new overlay",
+        "operationId": "Post/overlays/:channel",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Channel id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "preview": {
+                    "type": "string"
+                  },
+                  "settings": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer"
+                      },
+                      "height": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "widgets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "preview": "https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg",
+                    "settings": {
+                      "width": 1920,
+                      "height": 1080,
+                      "name": "1080p"
+                    },
+                    "name": "Unnamed overlay",
+                    "channel": "5f2de5dd9a474a2c20000000",
+                    "widgets": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "preview": {
+                      "type": "string"
+                    },
+                    "settings": {
+                      "type": "object",
+                      "properties": {
+                        "width": {
+                          "type": "integer"
+                        },
+                        "height": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "mobile": {
+                      "type": "boolean"
+                    },
+                    "campaign": {
+                      "type": "boolean"
+                    },
+                    "favorite": {
+                      "type": "boolean"
+                    },
+                    "_id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "channel": "5f2de5dd9a474a2c20000000",
+                      "type": "regular",
+                      "name": "Test overlay",
+                      "preview": "https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-4.jpg",
+                      "settings": {
+                        "width": 1920,
+                        "height": 1080,
+                        "name": "1080p"
+                      },
+                      "widgets": [],
+                      "mobile": false,
+                      "campaign": false,
+                      "favorite": false,
+                      "_id": "6763921b7db81790ab962a08",
+                      "createdAt": "2024-12-19T03:25:15.977Z",
+                      "updatedAt": "2024-12-19T03:25:15.977Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
           },
           {
             "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read",
+              "overlays:write"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      }
+    },
+    "/overlays/{channel}/action": {
+      "put": {
+        "tags": [
+          "overlays"
+        ],
+        "summary": "/:channel/action",
+        "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nOverlay/Alerts control",
+        "operationId": "Put/overlays/:channel/action",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - Channel id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5b2e2007760aeb7729487dab"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Body is one of:\r\n\r\n`{\"action\": \"mute\"}`\r\n\r\n`{\"action\": \"unmute\"}`\r\n\r\n`{\"action\": \"skip\"}`\r\n\r\n`{\"action\": \"pause\"}`\r\n\r\n`{\"action\": \"unpause\"}`",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "action": "mute"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "key": "alerts.muted",
+                      "message": "successfully updated key"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read",
+              "overlays:write"
+            ]
           }
         ],
         "servers": [
@@ -18728,7 +19772,7 @@
         ],
         "summary": "/:channel/:overlayId",
         "description": "Gets overlay details with all widgets on it",
-        "operationId": "/:channel/:overlayId",
+        "operationId": "Get/overlays/:channel/:overlayId",
         "parameters": [
           {
             "name": "channel",
@@ -19881,10 +20925,514 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "overlays"
+        ],
+        "summary": "/:channel/:overlayId",
+        "description": "Modify overlay",
+        "operationId": "Put/overlays/:channel/:overlayId",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - channel id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overlayId",
+            "in": "path",
+            "description": "guid - overlay id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Tip: Copy the object response from GET request, modify what you need and add the object to the body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "settings": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer"
+                      },
+                      "height": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "_id": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "preview": {
+                    "type": "string"
+                  },
+                  "widgets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "group": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "visible": {
+                          "type": "boolean"
+                        },
+                        "locked": {
+                          "type": "boolean"
+                        },
+                        "listener": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "listeners": {
+                          "type": "object",
+                          "properties": {
+                            "tip-latest": {
+                              "type": "boolean"
+                            },
+                            "subscriber-latest": {
+                              "type": "boolean"
+                            },
+                            "follower-latest": {
+                              "type": "boolean"
+                            },
+                            "cheer-latest": {
+                              "type": "boolean"
+                            },
+                            "host-latest": {
+                              "type": "boolean"
+                            },
+                            "raid-latest": {
+                              "type": "boolean"
+                            },
+                            "redemption-latest": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "css": {
+                          "type": "object",
+                          "properties": {
+                            "z-index": {
+                              "type": "integer"
+                            },
+                            "width": {
+                              "type": "string"
+                            },
+                            "height": {
+                              "type": "string"
+                            },
+                            "opacity": {
+                              "type": "integer"
+                            },
+                            "top": {
+                              "type": "string"
+                            },
+                            "left": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "text": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "enableShadow": {
+                              "type": "boolean"
+                            },
+                            "scrolling": {
+                              "type": "object",
+                              "properties": {
+                                "direction": {
+                                  "type": "string"
+                                },
+                                "speed": {
+                                  "type": "integer"
+                                }
+                              }
+                            },
+                            "css": {
+                              "type": "object",
+                              "properties": {
+                                "position": {
+                                  "type": "string"
+                                },
+                                "z-index": {
+                                  "type": "integer"
+                                },
+                                "font-family": {
+                                  "type": "string"
+                                },
+                                "font-size": {
+                                  "type": "integer"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "font-weight": {
+                                  "type": "string"
+                                },
+                                "text-shadow": {
+                                  "type": "string"
+                                },
+                                "text-align": {
+                                  "type": "string"
+                                },
+                                "line-height": {
+                                  "type": "number"
+                                },
+                                "scrolling": {
+                                  "type": "object",
+                                  "properties": {
+                                    "direction": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "message": {
+                                  "type": "object",
+                                  "properties": {
+                                    "enableShadow": {
+                                      "type": "boolean"
+                                    },
+                                    "font-family": {
+                                      "type": "string"
+                                    },
+                                    "font-size": {
+                                      "type": "integer"
+                                    },
+                                    "line-height": {
+                                      "type": "number"
+                                    },
+                                    "color": {
+                                      "type": "string"
+                                    },
+                                    "text-align": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "image": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "css": {
+                              "type": "object",
+                              "properties": {
+                                "max-width": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "video": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "volume": {
+                              "type": "number"
+                            },
+                            "css": {
+                              "type": "object",
+                              "properties": {
+                                "width": {
+                                  "type": "integer"
+                                },
+                                "height": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "audio": {
+                          "type": "object",
+                          "properties": {
+                            "volume": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "variables": {
+                          "type": "object",
+                          "properties": {
+                            "css": {
+                              "type": "string"
+                            },
+                            "html": {
+                              "type": "string"
+                            },
+                            "js": {
+                              "type": "string"
+                            },
+                            "fields": {
+                              "type": "string"
+                            },
+                            "fieldData": {
+                              "type": "object",
+                              "properties": {
+                                "textField": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "settings": {
+                      "width": 1920,
+                      "height": 1080,
+                      "name": "1080p"
+                    },
+                    "_id": "67638c99061f0a9e57092047",
+                    "channel": "5f2de5dd9a474a2c20000000",
+                    "type": "regular",
+                    "name": "Test overlay",
+                    "preview": "https://cdn.streamelements.com/assets/dashboard/my-overlays/overlay-default-preview-3.jpg",
+                    "widgets": [
+                      {
+                        "id": 1,
+                        "group": null,
+                        "type": "se-widget-custom-event-list",
+                        "name": null,
+                        "visible": true,
+                        "locked": false,
+                        "listener": null,
+                        "listeners": {
+                          "tip-latest": true,
+                          "subscriber-latest": true,
+                          "follower-latest": true,
+                          "cheer-latest": true,
+                          "host-latest": true,
+                          "raid-latest": true,
+                          "redemption-latest": true
+                        },
+                        "css": {
+                          "z-index": 2,
+                          "width": "290px",
+                          "height": "180px",
+                          "opacity": 1,
+                          "top": "119.34px",
+                          "left": "62.65px"
+                        },
+                        "text": {
+                          "type": "text",
+                          "value": null,
+                          "enableShadow": true,
+                          "scrolling": {
+                            "direction": "left",
+                            "speed": 6
+                          },
+                          "css": {
+                            "position": "relative",
+                            "z-index": 1,
+                            "font-family": "Nunito",
+                            "font-size": 24,
+                            "color": "#fff",
+                            "font-weight": "bold",
+                            "text-shadow": "rgb(0, 0, 0) 1px 1px 1px",
+                            "text-align": "left",
+                            "line-height": 1.3,
+                            "scrolling": {
+                              "direction": "left"
+                            },
+                            "message": {
+                              "enableShadow": false,
+                              "font-family": "Nunito",
+                              "font-size": 16,
+                              "line-height": 1.3,
+                              "color": "#fff",
+                              "text-align": "center"
+                            }
+                          }
+                        },
+                        "image": {
+                          "type": "image",
+                          "css": {
+                            "max-width": "100%"
+                          }
+                        },
+                        "video": {
+                          "type": "video",
+                          "volume": 0.5,
+                          "css": {
+                            "width": 320,
+                            "height": 240
+                          }
+                        },
+                        "audio": {
+                          "volume": 1
+                        },
+                        "variables": {
+                          "css": ".text {\n  font-size: 4rem;\n  color: white;\n}",
+                          "html": "<div id=\"text\" class=\"text\">15</div>",
+                          "js": "window.addEventListener(\"onWidgetLoad\", async (obj) => {\n  id = obj.detail.channel.id;\n  apiToken = obj.detail.channel.apiToken;\n  fieldData = obj.detail.fieldData;\n  console.log(\"onWidgetLoad:\", obj);\n})\n\n\nwindow.addEventListener(\"onSessionUpdate\", async (obj) => {\n  console.log(\"onSessionUpdate:\", obj);\n})\n\n\nwindow.addEventListener(\"onEventReceived\", async (obj) => {\n  console.log(\"onEventReceived: \", obj);\n})\n",
+                          "fields": "{\n  \"textField\":{\n    \"type\": \"text\",\n    \"label\": \"Text label\",\n    \"value\": \"example value\"\n  }\n}",
+                          "fieldData": {
+                            "textField": "example value"
+                          }
+                        },
+                        "provider": "twitch"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
           },
           {
             "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read",
+              "overlays:write"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.streamelements.com/kappa/v2",
+            "description": "V2"
+          },
+          {
+            "url": "https://api.streamelements.com/kappa/v3",
+            "description": "V3"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "overlays"
+        ],
+        "summary": "/:channel/:overlayId",
+        "description": "Delete overlay",
+        "operationId": "Delete/overlays/:channel/:overlayId",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "description": "guid - channel id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overlayId",
+            "in": "path",
+            "description": "guid - overlay id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "JWTBearer": []
+          },
+          {
+            "ApiKeyBearer": []
+          },
+          {
+            "OAuth2": [
+              "overlays:read",
+              "overlays:write"
+            ]
           }
         ],
         "servers": [
@@ -19906,7 +21454,7 @@
         ],
         "summary": "/:channel/reload",
         "description": "Reloads overlays for channel",
-        "operationId": "/:channel/reload",
+        "operationId": "Put/overlays/:channel/reload",
         "parameters": [
           {
             "name": "channel",
@@ -19963,10 +21511,13 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "overlays:read",
+              "overlays:write"
+            ]
           }
         ],
         "servers": [
@@ -20048,7 +21599,7 @@
             }
           }
         },
-        "deprecated": false,
+        "deprecated": true,
         "security": [
           {
             "JWTBearer": []
@@ -20847,7 +22398,7 @@
         ],
         "summary": "/:channel",
         "description": "Get session data",
-        "operationId": "Get/:channel12345678910",
+        "operationId": "Get/sessions/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -21968,7 +23519,8 @@
                       },
                       "settings": {
                         "autoReset": true,
-                        "calendar": false
+                        "calendar": false,
+                        "resetOnStart": false
                       },
                       "provider": "twitch",
                       "lastReset": "2018-06-23T10:25:11.745Z",
@@ -22008,9 +23560,6 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
             "ApiKeyBearer": []
           }
         ],
@@ -22031,7 +23580,7 @@
         ],
         "summary": "/:channel",
         "description": "Update session data",
-        "operationId": "Put/:channel12",
+        "operationId": "Put/sessions/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -22046,17 +23595,41 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "description": "You can use one or multiple items of data object from the GET request.\r\n\r\nYou can update each item individually or multiple at the same time.\r\n\r\nExample: \r\n\r\n```json\r\n{\r\n  \"follower-goal\": {\r\n    \"amount\": 77\r\n  },\r\n  \"follower-session\": {\r\n    \"count\": 50\r\n  }\r\n}\r\n```",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "follower-goal": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "follower-session": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "follower-goal": {
+                      "amount": 77
+                    },
+                    "follower-session": {
+                      "count": 50
+                    }
+                  }
                 }
               }
             }
@@ -23169,7 +24742,8 @@
                       },
                       "settings": {
                         "autoReset": true,
-                        "calendar": false
+                        "calendar": false,
+                        "resetOnStart": false
                       },
                       "provider": "twitch",
                       "lastReset": "2018-12-07T17:06:55.661Z",
@@ -23207,12 +24781,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -23234,7 +24802,7 @@
         ],
         "summary": "/:channel/settings",
         "description": "Get session settings",
-        "operationId": "/:channel/settings",
+        "operationId": "Get/sessions/:channel/settings",
         "parameters": [
           {
             "name": "channel",
@@ -23260,7 +24828,8 @@
                   "default": {
                     "value": {
                       "autoReset": true,
-                      "calendar": false
+                      "calendar": false,
+                      "resetOnStart": false
                     }
                   }
                 }
@@ -23292,9 +24861,6 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
             "ApiKeyBearer": []
           }
         ],
@@ -23315,7 +24881,7 @@
         ],
         "summary": "/:channel/settings",
         "description": "Update session settings",
-        "operationId": "Put/:channel/settings",
+        "operationId": "Put/sessions/:channel/settings",
         "parameters": [
           {
             "name": "channel",
@@ -23336,11 +24902,25 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "properties": {
+                  "autoReset": {
+                    "type": "boolean"
+                  },
+                  "calendar": {
+                    "type": "boolean"
+                  },
+                  "resetOnStart": {
+                    "type": "boolean"
+                  }
+                }
               },
               "examples": {
-                "default": {
-                  "value": {}
+                "Example 1": {
+                  "value": {
+                    "autoReset": true,
+                    "calendar": true,
+                    "resetOnStart": false
+                  }
                 }
               }
             }
@@ -23358,7 +24938,8 @@
                   "default": {
                     "value": {
                       "autoReset": true,
-                      "calendar": false
+                      "calendar": false,
+                      "resetOnStart": false
                     }
                   }
                 }
@@ -23415,7 +24996,7 @@
         ],
         "summary": "/:channel/reset",
         "description": "Reset session data",
-        "operationId": "/:channel/reset",
+        "operationId": "Put/sessions/:channel/reset",
         "parameters": [
           {
             "name": "channel",
@@ -23429,11 +25010,21 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Body is not needed on request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/channel_reset"
                 },
@@ -24280,7 +25871,8 @@
                       },
                       "settings": {
                         "autoReset": true,
-                        "calendar": false
+                        "calendar": false,
+                        "resetOnStart": false
                       },
                       "_id": "5c0aa930de9a4cf194a14e05",
                       "provider": "twitch",
@@ -24318,12 +25910,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -24407,13 +25993,48 @@
         ],
         "summary": "/:channel/top",
         "description": "Get top events from aggregates",
-        "operationId": "Get/:channel/top1",
+        "operationId": "Get/sessions/:channel/top",
         "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "string - Possible values: tip, cheer, stars, embers",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tip",
+                "cheer",
+                "stars",
+                "embers"
+              ],
+              "default": "tip",
+              "example": "tip"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "description": "string - Possible values: alltime, monthly, weekly, session",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "alltime",
+                "monthly",
+                "weekly",
+                "session"
+              ],
+              "default": "session",
+              "example": "alltime"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Max number of returned events",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -24426,37 +26047,12 @@
             "name": "offset",
             "in": "query",
             "description": "integer - starting element",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "example": 0
-            }
-          },
-          {
-            "name": "interval",
-            "in": "query",
-            "description": "string - Possible values: alltime, monthly, weekly, session",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string",
-              "example": "alltime"
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "description": "string - Possible values: tip, cheer, stars, embers,",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string",
-              "example": "tip"
             }
           },
           {
@@ -24473,16 +26069,45 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "username": "c4ldas",
+                        "total": 3
+                      },
+                      {
+                        "username": "jean",
+                        "total": 140
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
           },
           {
             "ApiKeyBearer": []
@@ -31491,6 +33116,7 @@
           "authorizationCode": {
             "authorizationUrl": "https://api.streamelements.com/oauth2/authorize",
             "scopes": {
+              "channel:read": "Channel information (default)",
               "tips:read": "Ability read of tips",
               "tips:write": "Grants create/modify/delete tips",
               "activities:read": "Grants read of activities",
@@ -42998,42 +44624,56 @@
       },
       "Contest": {
         "type": "object",
-        "title": "Contest",
         "properties": {
-          "botResponses": {
-            "type": "boolean"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalUsers": {
-            "type": "integer",
-            "format": "int32"
-          },
           "_id": {
             "type": "string"
           },
           "title": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          },
           "minBet": {
-            "type": "integer",
-            "format": "int32"
+            "type": "integer"
           },
           "maxBet": {
-            "type": "integer",
-            "format": "int32"
+            "type": "integer"
           },
-          "duration": {
-            "type": "integer",
-            "format": "int32"
+          "botResponses": {
+            "type": "boolean"
           },
           "options": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Option"
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "totalAmount": {
+                  "type": "integer"
+                },
+                "totalUsers": {
+                  "type": "integer"
+                },
+                "_id": {
+                  "type": "string"
+                }
+              }
             }
+          },
+          "totalAmount": {
+            "type": "integer"
+          },
+          "totalUsers": {
+            "type": "integer"
+          },
+          "duration": {
+            "type": "integer"
           },
           "channel": {
             "type": "string"
@@ -43046,89 +44686,10 @@
           },
           "updatedAt": {
             "type": "string"
-          }
-        },
-        "required": [
-          "botResponses",
-          "totalAmount",
-          "totalUsers",
-          "_id",
-          "title",
-          "minBet",
-          "maxBet",
-          "duration",
-          "options",
-          "channel",
-          "state",
-          "createdAt",
-          "updatedAt"
-        ],
-        "example": {
-          "botResponses": true,
-          "totalAmount": 0,
-          "totalUsers": 0,
-          "_id": "5c0a53cede9a4c207fa14d90",
-          "title": "Will I win the next game?",
-          "minBet": 10,
-          "maxBet": 10000,
-          "duration": 5,
-          "options": [
-            {
-              "totalAmount": 0,
-              "totalUsers": 0,
-              "_id": "5c0a53cede9a4cc345a14d92",
-              "title": "Win",
-              "command": "win"
-            },
-            {
-              "totalAmount": 0,
-              "totalUsers": 0,
-              "_id": "5c0a53cede9a4c4b39a14d91",
-              "title": "Lose",
-              "command": "lose"
-            }
-          ],
-          "channel": "5b2e2007760aeb7729487dab",
-          "state": "created",
-          "createdAt": "2018-12-07T11:04:46.528Z",
-          "updatedAt": "2018-12-07T11:04:46.528Z"
-        }
-      },
-      "Option": {
-        "type": "object",
-        "title": "Option",
-        "properties": {
-          "totalAmount": {
-            "type": "integer",
-            "format": "int32"
           },
-          "totalUsers": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "_id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "command": {
+          "startedAt": {
             "type": "string"
           }
-        },
-        "required": [
-          "totalAmount",
-          "totalUsers",
-          "_id",
-          "title",
-          "command"
-        ],
-        "example": {
-          "totalAmount": 0,
-          "totalUsers": 0,
-          "_id": "5c0a53cede9a4cc345a14d92",
-          "title": "Win",
-          "command": "win"
         }
       },
       "Giveaways": {
@@ -43352,6 +44913,7 @@
             "name": "points",
             "enabled": false,
             "amount": 5,
+            "interval": 10,
             "subscriberMultiplier": 3,
             "ignored": [
               "streamelements"
@@ -43380,6 +44942,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "interval": {
+            "type": "integer",
+            "format": "int32"
+          },
           "subscriberMultiplier": {
             "type": "integer",
             "format": "int32"
@@ -43396,6 +44962,7 @@
           "name",
           "enabled",
           "amount",
+          "interval",
           "subscriberMultiplier",
           "ignored"
         ],
@@ -43410,6 +44977,7 @@
           "name": "points",
           "enabled": false,
           "amount": 5,
+          "interval": 10,
           "subscriberMultiplier": 3,
           "ignored": [
             "streamelements"
@@ -43460,10 +45028,6 @@
         "type": "object",
         "title": "OverlaysList",
         "properties": {
-          "total": {
-            "type": "integer",
-            "format": "int32"
-          },
           "docs": {
             "type": "array",
             "items": {
@@ -43472,11 +45036,9 @@
           }
         },
         "required": [
-          "total",
           "docs"
         ],
         "example": {
-          "total": 1,
           "docs": [
             {
               "settings": {
@@ -43534,6 +45096,9 @@
           },
           "updatedAt": {
             "type": "string"
+          },
+          "campaign": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -46603,7 +48168,8 @@
           },
           "settings": {
             "autoReset": true,
-            "calendar": false
+            "calendar": false,
+            "resetOnStart": false
           },
           "provider": "twitch",
           "lastReset": "2018-06-23T10:25:11.745Z",
@@ -48315,15 +49881,20 @@
           },
           "calendar": {
             "type": "boolean"
+          },
+          "resetOnStart": {
+            "type": "boolean"
           }
         },
         "required": [
           "autoReset",
-          "calendar"
+          "calendar",
+          "resetOnStart"
         ],
         "example": {
           "autoReset": true,
-          "calendar": false
+          "calendar": false,
+          "resetOnStart": false
         }
       },
       "channelData": {
@@ -49467,7 +51038,8 @@
           },
           "settings": {
             "autoReset": true,
-            "calendar": false
+            "calendar": false,
+            "resetOnStart": false
           },
           "provider": "twitch",
           "lastReset": "2018-12-07T17:06:55.661Z",
@@ -49487,15 +51059,20 @@
           },
           "calendar": {
             "type": "boolean"
+          },
+          "resetOnStart": {
+            "type": "boolean"
           }
         },
         "required": [
           "autoReset",
-          "calendar"
+          "calendar",
+          "resetOnStart"
         ],
         "example": {
           "autoReset": true,
-          "calendar": false
+          "calendar": false,
+          "resetOnStart": false
         }
       },
       "channel_reset": {
@@ -50383,7 +51960,8 @@
           },
           "settings": {
             "autoReset": true,
-            "calendar": false
+            "calendar": false,
+            "resetOnStart": false
           },
           "_id": "5c0aa930de9a4cf194a14e05",
           "provider": "twitch",
