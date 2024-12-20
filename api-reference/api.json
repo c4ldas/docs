@@ -33,7 +33,7 @@
         ],
         "summary": "/:channel",
         "description": "List channel activities. That's what you see in your Activity Feed",
-        "operationId": "Get/acttivities/:channel",
+        "operationId": "Get/activities/:channel",
         "parameters": [
           {
             "name": "after",
@@ -1681,6 +1681,7 @@
     "/activities/{channel}/{activityId}": {
       "get": {
         "tags": [
+          "void",
           "activities"
         ],
         "summary": "/:channel/:activityId",
@@ -1784,7 +1785,6 @@
             }
           }
         },
-        "deprecated": true,
         "security": [
           {
             "JWTBearer": []
@@ -1809,6 +1809,7 @@
       },
       "post": {
         "tags": [
+          "void",
           "activities"
         ],
         "summary": "/:channel/:activityId",
@@ -9096,14 +9097,13 @@
           "chatstats"
         ],
         "summary": "/:username/epm",
-        "description": "Get channel's \"emotes per minute\"\r\n*",
-        "operationId": "/:username/epm",
+        "description": "Get channel's \"emotes per minute\"",
+        "operationId": "Get/chatstats/:username/epm",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - number of items to be shown",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -9125,7 +9125,55 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "emote": {
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string"
+                      },
+                      "epm": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "id": "88",
+                        "emote": "PogChamp",
+                        "provider": "twitch",
+                        "epm": 0
+                      },
+                      {
+                        "id": "555555628",
+                        "emote": ":)",
+                        "provider": "twitch",
+                        "epm": 0
+                      },
+                      {
+                        "id": "555555585",
+                        "emote": ":/",
+                        "provider": "twitch",
+                        "epm": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
@@ -9149,13 +9197,12 @@
         ],
         "summary": "/:username/stats",
         "description": "Get channels stats",
-        "operationId": "/:username/stats",
+        "operationId": "Get/chatstats/:username/stats",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items to be shown",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -9472,11 +9519,12 @@
     "/chatstats/{username}/{category}/{item}": {
       "get": {
         "tags": [
+          "void",
           "chatstats"
         ],
         "summary": "/:username/:category/:item",
-        "description": "Get channels details linked to provided URL \r\n*",
-        "operationId": "/:username/:category/:item",
+        "description": "Get channels details linked to provided URL",
+        "operationId": "Get/chatstats/:username/:category/:item",
         "parameters": [
           {
             "name": "username",
@@ -9515,7 +9563,6 @@
             "description": ""
           }
         },
-        "deprecated": true,
         "security": [],
         "servers": [
           {
@@ -13474,7 +13521,7 @@
         ],
         "summary": "/:channel/history",
         "description": "List previous contests",
-        "operationId": "Get/contest/:channel/history",
+        "operationId": "Get/contests/:channel/history",
         "parameters": [
           {
             "name": "limit",
@@ -13712,7 +13759,9 @@
             "ApiKeyBearer": []
           },
           {
-            "OAuth2": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -13857,12 +13906,11 @@
     "/bot/filters/{channel}": {
       "get": {
         "tags": [
-          "a pending",
           "filters"
         ],
         "summary": "/:channel",
         "description": "List filters",
-        "operationId": "Get/:channel123",
+        "operationId": "Get/bot/filters/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -14527,10 +14575,9 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "bot:read"
+            ]
           }
         ],
         "servers": [
@@ -15333,7 +15380,7 @@
         ],
         "summary": "/:channel",
         "description": "List modules",
-        "operationId": "Get/:channel2",
+        "operationId": "Get/bot/modules/:channel",
         "parameters": [
           {
             "name": "channel",
@@ -15349,344 +15396,11 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "OK",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BotModules"
-                },
-                "examples": {
-                  "default": {
-                    "value": {
-                      "roulette": {
-                        "cooldown": {
-                          "user": 60,
-                          "global": 0
-                        },
-                        "messages": {
-                          "win": "/me {user} won {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsGoodMan",
-                          "lose": "/me {user} lost {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsBadMan",
-                          "allinWin": "/me PogChamp {user} went all in and won {bet} ${pointsname} PogChamp they now have {points} ${pointsname} FeelsGoodMan",
-                          "allinLose": "/me {user} went all in and lost every single one of their {bet} ${pointsname} LUL"
-                        },
-                        "enabled": false,
-                        "luck": 45,
-                        "minAmount": 1
-                      },
-                      "raffle": {
-                        "single": {
-                          "messages": {
-                            "start": "/me PogChamp a Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing \"!join\" OpieOP",
-                            "running": "/me The Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing \"!join\" FeelsGoodMan",
-                            "end": "/me The Raffle has ended and {winner} won {points} ${pointsname} FeelsGoodMan"
-                          },
-                          "duration": 30,
-                          "maxAmount": 3000
-                        },
-                        "multi": {
-                          "messages": {
-                            "start": "/me PogChamp a Multi-Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing \"!join\" OpieOP",
-                            "running": "/me The Multi-Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing \"!join\" FeelsGoodMan",
-                            "end": "/me The Multi-Raffle has ended and {winner} won {points} ${pointsname} each FeelsGoodMan"
-                          },
-                          "duration": 30,
-                          "maxAmount": 6000
-                        },
-                        "enabled": false
-                      },
-                      "pyramid": {
-                        "enabled": false,
-                        "messages": [
-                          {
-                            "_id": "5b2e2007760aeb7356487db5",
-                            "width": 3,
-                            "message": "/me nice {width}-width {emote} pyramid {user} LUL"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb46e0487db4",
-                            "width": 5,
-                            "message": "/me PogChamp {user} just finished a {width}-width {emote} pyramid, gj KKona"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb39fc487db3",
-                            "width": 9,
-                            "message": "/me {user} just finished a {width}-width {emote} pyramid! Now thats what i call pyramid farming Kappa //"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb22ae487db2",
-                            "width": 15,
-                            "message": "/me {user} just finished a {width}-width {emote} pyramid!!! I almost ran out of memory there MrDestructoid //"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb6219487db1",
-                            "width": 25,
-                            "message": "/me WutFace {user} just finished a {width}-width {emote} pyramid!!! BUFFER OVERFLOW WutFace WutFace WutFace"
-                          }
-                        ]
-                      },
-                      "bingo": {
-                        "enabled": false,
-                        "maxAmount": 4000
-                      },
-                      "slotmachine": {
-                        "cooldown": {
-                          "user": 60,
-                          "global": 0
-                        },
-                        "messages": {
-                          "win": "@{user} you got {emotes} and won {points} ${pointsname} PogChamp //",
-                          "lose": "@{user} you got {emotes} and lost your {points} ${pointsname} LUL"
-                        },
-                        "enabled": false,
-                        "returnAmount": 80,
-                        "minAmount": 100,
-                        "emotes": [
-                          "Kappa",
-                          "PogChamp",
-                          "BibleThump",
-                          "OpieOP",
-                          "4Head"
-                        ]
-                      },
-                      "duel": {
-                        "cooldown": {
-                          "user": 5,
-                          "global": 0
-                        },
-                        "messages": {
-                          "win": "/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //",
-                          "pointsWin": "/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan"
-                        },
-                        "enabled": false
-                      },
-                      "eightball": {
-                        "cooldown": {
-                          "user": 5,
-                          "global": 15
-                        },
-                        "enabled": false,
-                        "messages": [
-                          "sure",
-                          "are you kidding?!",
-                          "yeah",
-                          "no",
-                          "i think so",
-                          "don't bet on it",
-                          "ja",
-                          "doubtful",
-                          "for sure",
-                          "forget about it",
-                          "nein",
-                          "maybe",
-                          "Kappa Keepo PogChamp",
-                          "sure",
-                          "i don't think so",
-                          "it is so",
-                          "leaning towards no",
-                          "look deep in your heart and you will see the answer",
-                          "most definitely",
-                          "most likely",
-                          "my sources say yes",
-                          "never",
-                          "nah m8",
-                          "might actually be yes",
-                          "no.",
-                          "outlook good",
-                          "outlook not so good",
-                          "perhaps",
-                          "mayhaps",
-                          "that's a tough one",
-                          "idk kev",
-                          "don't ask that",
-                          "the answer to that isn't pretty",
-                          "the heavens point to yes",
-                          "who knows?",
-                          "without a doubt",
-                          "yesterday it would've been a yes, but today it's a yep",
-                          "you will have to wait"
-                        ],
-                        "emotes": [
-                          "Kappa",
-                          "Keepo",
-                          "xD",
-                          "KKona",
-                          "4Head",
-                          "EleGiggle",
-                          "DansGame",
-                          "KappaCool",
-                          "BrokeBack",
-                          "OpieOP",
-                          "KappaRoss",
-                          "KappaPride",
-                          "FeelsBadMan",
-                          "FeelsGoodMan",
-                          "FeelsBirthdayMan",
-                          "FeelsAmazingMan",
-                          "PogChamp",
-                          "VisLaud",
-                          "OhMyDog",
-                          "FrankerZ",
-                          "DatSheffy",
-                          "BabyRage",
-                          "VoHiYo",
-                          "haHAA",
-                          "LUL",
-                          "ResidentSleeper",
-                          "SourPls",
-                          "TriHard",
-                          "SMOrc"
-                        ]
-                      },
-                      "emotecombo": {
-                        "enabled": false,
-                        "minCount": 5,
-                        "cooldown": 10,
-                        "messages": [
-                          {
-                            "_id": "5b2e2007760aeb1d7e487dba",
-                            "count": 3,
-                            "message": "{count}x {emote} combo"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb31c3487db9",
-                            "count": 10,
-                            "message": "{count}x {emote} combo PogChamp"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb4b11487db8",
-                            "count": 20,
-                            "message": "/me {user} ruined the {count}x {emote} combo KappaRoss"
-                          },
-                          {
-                            "_id": "5b2e2007760aeb4251487db7",
-                            "count": 50,
-                            "message": "/me you don't ruin {count}x {emote} combos {user} DansGame"
-                          },
-                          {
-                            "_id": "5b2e2007760aebbbe7487db6",
-                            "count": 420,
-                            "message": "/timeout {user} {count} you don't ruin {emote} combos DansGame"
-                          }
-                        ]
-                      },
-                      "twitter": {
-                        "enabled": false,
-                        "replies": false,
-                        "retweets": false,
-                        "template": "/me PogChamp new Tweet from {user}: {tweet}",
-                        "followed": [
-                          "twitchsupport",
-                          "streamelements"
-                        ]
-                      },
-                      "chatalerts": {
-                        "follow": {
-                          "enabled": true,
-                          "messages": [
-                            "Thank you for following {user} :)"
-                          ]
-                        },
-                        "tip": {
-                          "enabled": true,
-                          "messages": [
-                            {
-                              "_id": "5b2e2007760aebcb99487dbb",
-                              "amount": 1,
-                              "message": "{user} just tipped {currency}{amount} PogChamp"
-                            }
-                          ]
-                        },
-                        "host": {
-                          "enabled": true,
-                          "messages": [
-                            {
-                              "_id": "5b2e2007760aebad31487dbc",
-                              "amount": 1,
-                              "message": "{user} just hosted the stream for {amount} viewers PogChamp"
-                            }
-                          ]
-                        },
-                        "subscriber": {
-                          "enabled": true,
-                          "messages": [
-                            {
-                              "_id": "5b2e2007760aeb0830487dbe",
-                              "amount": 1,
-                              "message": "{user} just subscribed PogChamp"
-                            },
-                            {
-                              "_id": "5b2e2007760aebaf00487dbd",
-                              "amount": 2,
-                              "message": "{user} just subscribed for {amount} months in a row PogChamp"
-                            }
-                          ]
-                        },
-                        "cheer": {
-                          "enabled": true,
-                          "messages": [
-                            {
-                              "_id": "5b2e2007760aeb5381487dbf",
-                              "amount": 1,
-                              "message": "{user} just cheered {amount} bits PogChamp"
-                            }
-                          ]
-                        },
-                        "redemption": {
-                          "enabled": true,
-                          "message": "{user} just redeemed {item} PogChamp"
-                        },
-                        "raid": {
-                          "enabled": true,
-                          "messages": [
-                            {
-                              "_id": "5b2e2007760aeb0fed487dc0",
-                              "amount": 1,
-                              "message": "{user} just raided the channel with {amount} viewers PogChamp"
-                            }
-                          ]
-                        },
-                        "enabled": false,
-                        "delay": 0
-                      },
-                      "songrequest": {
-                        "voteskip": {
-                          "enabled": true,
-                          "votesRequired": 5
-                        },
-                        "enabled": true,
-                        "moderation": true,
-                        "minUserLevel": 100,
-                        "cost": 0,
-                        "subscriberDiscount": 50,
-                        "exemptUserLevel": 500
-                      },
-                      "announcements": {
-                        "streamStart": {
-                          "enabled": true,
-                          "message": "${channel.display_name} is now live! Streaming {game}: {title}"
-                        },
-                        "enabled": true
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "Sat, 08 Dec 2018 20:19:23 GMT"
-                  }
-                }
-              },
-              "Content-Length": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "5947"
-                  }
                 }
               }
             }
@@ -15698,10 +15412,9 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "bot:read"
+            ]
           }
         ],
         "servers": [
@@ -15719,6 +15432,7 @@
     "/bot/modules/{channel}/{moduleId}": {
       "put": {
         "tags": [
+          "a pending",
           "modules"
         ],
         "summary": "/:channel/:moduleId",
@@ -16316,7 +16030,7 @@
         ],
         "summary": "/:channel/:contestId",
         "description": "Update contest",
-        "operationId": "Put/:channel/:contestId",
+        "operationId": "Put/contests/:channel/:contestId",
         "parameters": [
           {
             "name": "channel",
@@ -16341,7 +16055,7 @@
           }
         ],
         "requestBody": {
-          "description": "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each command option will replace the old one in the same order. You can also create more options.",
+          "description": "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each item in `options` array will replace the old one in the same order. You can also create more options.",
           "required": true,
           "content": {
             "application/json": {
@@ -16523,7 +16237,7 @@
         ],
         "summary": "/:channel/:contestId",
         "description": "Delete contest",
-        "operationId": "Delete/:channel/:contestId",
+        "operationId": "Delete/contests/:channel/:contestId",
         "parameters": [
           {
             "name": "channel",
@@ -17865,7 +17579,7 @@
     "/giveaways/{channel}/{giveawayId}/joined": {
       "get": {
         "tags": [
-          "a pending",
+          "void",
           "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/joined",
@@ -18340,7 +18054,7 @@
     "/giveaways/{channel}/{giveawayId}/complete": {
       "put": {
         "tags": [
-          "a pending",
+          "void",
           "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/complete",
@@ -18459,7 +18173,7 @@
     "/giveaways/{channel}/{giveawayId}/reopen": {
       "put": {
         "tags": [
-          "a pending",
+          "void",
           "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/reopen",
@@ -19050,11 +18764,12 @@
     "/giveaways/{channel}/history": {
       "get": {
         "tags": [
+          "void",
           "giveaways"
         ],
         "summary": "/:channel/history",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways",
-        "operationId": "Get/:channel/history",
+        "operationId": "Get/giveaways/:channel/history",
         "parameters": [
           {
             "name": "channel",
@@ -21446,7 +21161,7 @@
           "overlays"
         ],
         "summary": "/:channel/reload",
-        "description": "Reloads overlays for channel",
+        "description": "Reload overlays",
         "operationId": "Put/overlays/:channel/reload",
         "parameters": [
           {
@@ -21461,6 +21176,21 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "No body is needed for this request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -21528,6 +21258,7 @@
     "/overlays/{channel}/action/{action}": {
       "put": {
         "tags": [
+          "void",
           "overlays"
         ],
         "summary": "/:channel/action/:action",
@@ -21592,7 +21323,6 @@
             }
           }
         },
-        "deprecated": true,
         "security": [
           {
             "JWTBearer": []
@@ -21619,13 +21349,12 @@
     "/points/{channel}/{user}": {
       "get": {
         "tags": [
-          "a pending",
-          "points",
-          "single user"
+          "single user",
+          "points"
         ],
         "summary": "/:channel/:user",
         "description": "Get userpoints for specific username",
-        "operationId": "/:channel/:user",
+        "operationId": "Get/points/:channel/:user",
         "parameters": [
           {
             "name": "channel",
@@ -21651,19 +21380,61 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "points": {
+                      "type": "integer"
+                    },
+                    "pointsAlltime": {
+                      "type": "integer"
+                    },
+                    "watchtime": {
+                      "type": "integer"
+                    },
+                    "rank": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "channel": "5f2de5dd9a474a2c2daaaaaa",
+                      "username": "username1",
+                      "points": 49020,
+                      "pointsAlltime": 20,
+                      "watchtime": 14090,
+                      "rank": 1
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -21740,13 +21511,12 @@
     "/points/{channel}/{user}/rank": {
       "get": {
         "tags": [
-          "a pending",
-          "points",
-          "single user"
+          "single user",
+          "points"
         ],
         "summary": "/:channel/:user/rank",
         "description": "Get current user rank by username",
-        "operationId": "/:channel/:user/rank",
+        "operationId": "Get/points/:channel/:user/rank",
         "parameters": [
           {
             "name": "channel",
@@ -21772,19 +21542,45 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "rank": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "username": "username",
+                      "rank": 12
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -22027,23 +21823,22 @@
     "/points/{channel}/alltime": {
       "get": {
         "tags": [
-          "a pending",
           "points"
         ],
         "summary": "/:channel/alltime",
         "description": "List alltime userpoints",
-        "operationId": "/:channel/alltime",
+        "operationId": "Get/points/:channel/alltime",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items per page",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
               "type": "integer",
               "format": "int32",
+              "default": 25,
               "example": 25
             }
           },
@@ -22051,7 +21846,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -22074,19 +21868,69 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "points": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 546836,
+                      "users": [
+                        {
+                          "username": "streamelements",
+                          "points": 218002
+                        },
+                        {
+                          "username": "username1",
+                          "points": 174707
+                        },
+                        {
+                          "username": "username2",
+                          "points": 166838
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -22104,23 +21948,24 @@
     "/points/{channel}/top": {
       "get": {
         "tags": [
-          "a pending",
           "points"
         ],
         "summary": "/:channel/top",
         "description": "List top userpoints",
-        "operationId": "Get/:channel/top1234",
+        "operationId": "Get/points/channel/:channel/top",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items per page",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
               "type": "integer",
               "format": "int32",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100,
               "example": 25
             }
           },
@@ -22128,7 +21973,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -22151,19 +21995,69 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "points": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 9,
+                      "users": [
+                        {
+                          "username": "streamelements",
+                          "points": 49020
+                        },
+                        {
+                          "username": "username1",
+                          "points": 30700
+                        },
+                        {
+                          "username": "username2",
+                          "points": 9000
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -22181,23 +22075,24 @@
     "/points/{channel}/watchtime": {
       "get": {
         "tags": [
-          "a pending",
           "points"
         ],
         "summary": "/:channel/watchtime",
         "description": "List users watchtime",
-        "operationId": "/:channel/watchtime",
+        "operationId": "Get/points/:channel/watchtime",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items per page",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
               "type": "integer",
               "format": "int32",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100,
               "example": 25
             }
           },
@@ -22205,7 +22100,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -22228,19 +22122,69 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "minutes": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 546854,
+                      "users": [
+                        {
+                          "username": "streamelements",
+                          "minutes": 728750
+                        },
+                        {
+                          "username": "username1",
+                          "minutes": 668680
+                        },
+                        {
+                          "username": "username2",
+                          "minutes": 593970
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -25004,7 +24948,7 @@
           }
         ],
         "requestBody": {
-          "description": "Body is not needed on request",
+          "description": "Body is not needed on this request",
           "content": {
             "application/json": {
               "schema": {
@@ -25920,18 +25864,17 @@
     "/songrequest/playing": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "void",
+          "songrequest"
         ],
         "summary": "/playing",
-        "description": "TODO - Missing description",
-        "operationId": "/playing",
+        "description": "TODO - Description missing",
+        "operationId": "Get/songrequest/playing",
         "parameters": [
           {
             "name": "provider",
             "in": "query",
             "description": "provider",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -25942,7 +25885,6 @@
             "name": "room",
             "in": "query",
             "description": "room",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -25955,7 +25897,7 @@
             "description": ""
           }
         },
-        "deprecated": false,
+        "deprecated": true,
         "security": [
           {
             "JWTBearer": []
@@ -26121,39 +26063,38 @@
     "/songrequest/youtube": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/youtube",
-        "description": "Get song details",
-        "operationId": "/youtube",
+        "description": "Get song details\r\n\r\n`search` and `videoId` are not required at the same time, but at least one of them need to be present on the query.\r\n\r\nIf both are used, the result will be based on `search` parameter.",
+        "operationId": "Get/songrequest/youtube",
         "parameters": [
           {
             "name": "videoId",
             "in": "query",
-            "description": "string - YouTube video ID",
-            "required": true,
+            "description": "string - YouTube video ID or URL",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             }
           },
           {
             "name": "search",
             "in": "query",
             "description": "string - phrase to search",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "Never gonna give you up"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "There are two response formats, depending on which query you used.\r\n\r\nWhen using `videoId`, this is the response example:\r\n\r\n```json\r\n{\r\n  \"videoId\": \"dQw4w9WgXcQ\",\r\n  \"title\": \"Rick Astley - Never Gonna Give You Up (Official Music Video)\",\r\n  \"channel\": \"Rick Astley\",\r\n  \"duration\": 213,\r\n  \"tags\": [\r\n    \"rick astley\",\r\n    \"never gonna give you up\",\r\n    \"nggyu\",\r\n    \"never gonna give you up lyrics\",\r\n    \"[...]\"\r\n  ],\r\n  \"categoryId\": 10,\r\n  \"status\": {\r\n    \"uploadStatus\": \"processed\",\r\n    \"privacyStatus\": \"public\",\r\n    \"license\": \"youtube\",\r\n    \"embeddable\": true,\r\n    \"publicStatsViewable\": true,\r\n    \"madeForKids\": false\r\n  },\r\n  \"statistics\": {\r\n    \"viewCount\": 654321,\r\n    \"likeCount\": 123456,\r\n    \"dislikeCount\": 0\r\n  }\r\n}\r\n```\r\n\r\nWhen using `search`, this is the response example:\r\n\r\n```json\r\n[\r\n  {\r\n    \"videoId\": \"dQw4w9WgXcQ\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg\",\r\n    \"title\": \"Rick Astley - Never Gonna Give You Up (Official Music Video)\"\r\n  },\r\n  {\r\n    \"videoId\": \"3BFTio5296w\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/3BFTio5296w/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up (2022 Remaster)\"\r\n  },\r\n  {\r\n    \"videoId\": \"o-YBDTqX_ZU\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/o-YBDTqX_ZU/default.jpg\",\r\n    \"title\": \"Rick Astley - Never Gonna Give You Up (Remastered 4K 60fps,AI)\"\r\n  },\r\n  {\r\n    \"videoId\": \"SbYXkOAoZpI\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/SbYXkOAoZpI/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up (Lyrics) - Rick Astley\"\r\n  },\r\n  {\r\n    \"videoId\": \"XGxIE1hr0w4\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/XGxIE1hr0w4/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up | Rick Astley Rocks New Year&#39;s Eve - BBC\"\r\n  }\r\n]\r\n```",
             "content": {
               "application/json; charset=utf-8": {
                 "schema": {
@@ -26240,18 +26181,51 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 404,
+                      "error": "Not Found",
+                      "message": "No videoes found with videoId: 4w9WgXcQaaa"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -26269,12 +26243,11 @@
     "/songrequest/{channel}/settings": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/settings",
-        "description": "Get settings",
-        "operationId": "Get/:channel/settings",
+        "description": "Get songrequest settings",
+        "operationId": "Get/channelrequest/:channel/settings",
         "parameters": [
           {
             "name": "channel",
@@ -26292,7 +26265,7 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MediaRequestData"
                 },
@@ -26373,9 +26346,6 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
             "ApiKeyBearer": []
           }
         ],
@@ -26394,12 +26364,11 @@
     "/songrequest/{channel}/settings/public": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/settings/public",
         "description": "Get public settings",
-        "operationId": "/:channel/settings/public",
+        "operationId": "Get/songrequest/:channel/settings/public",
         "parameters": [
           {
             "name": "channel",
@@ -26470,17 +26439,7 @@
           }
         },
         "deprecated": false,
-        "security": [
-          {
-            "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
-          }
-        ],
+        "security": [],
         "servers": [
           {
             "url": "https://api.streamelements.com/kappa/v2",
@@ -26496,12 +26455,11 @@
     "/songrequest/{channel}/queue": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/queue",
         "description": "Get songrequest queue",
-        "operationId": "/:channel/queue",
+        "operationId": "Get/songrequest/:channel/queue",
         "parameters": [
           {
             "name": "channel",
@@ -26517,77 +26475,144 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "OK",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Song"
-                  },
-                  "example": [
-                    {
-                      "duration": 213,
-                      "tags": [],
-                      "_id": "5c0ba7b3de9a4c7036a15040",
-                      "videoId": "dQw4w9WgXcQ",
-                      "title": "Rick Astley - Never Gonna Give You Up (Video)",
-                      "channel": "RickAstleyVEVO",
-                      "statistics": {
-                        "viewCount": 504489596,
-                        "likeCount": 3380238,
-                        "dislikeCount": 154269
+                    "type": "object",
+                    "properties": {
+                      "videoId": {
+                        "type": "string"
                       },
-                      "source": "site",
+                      "title": {
+                        "type": "string"
+                      },
+                      "duration": {
+                        "type": "integer"
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
                       "user": {
-                        "username": "leeeeex",
-                        "providerId": "85827806"
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      "voteskips": []
+                      "source": {
+                        "type": "string"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "statistics": {
+                        "type": "object",
+                        "properties": {
+                          "viewCount": {
+                            "type": "integer"
+                          },
+                          "likeCount": {
+                            "type": "integer"
+                          },
+                          "dislikeCount": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "voteskips": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
                     }
-                  ]
+                  }
                 },
                 "examples": {
-                  "default": {
+                  "Example 1": {
                     "value": [
                       {
-                        "duration": 213,
-                        "tags": [],
-                        "_id": "5c0ba7b3de9a4c7036a15040",
                         "videoId": "dQw4w9WgXcQ",
-                        "title": "Rick Astley - Never Gonna Give You Up (Video)",
-                        "channel": "RickAstleyVEVO",
-                        "statistics": {
-                          "viewCount": 504489596,
-                          "likeCount": 3380238,
-                          "dislikeCount": 154269
+                        "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+                        "duration": 213,
+                        "channel": "Rick Astley",
+                        "user": {
+                          "username": "usernam3",
+                          "providerId": "7654321"
                         },
                         "source": "site",
-                        "user": {
-                          "username": "leeeeex",
-                          "providerId": "85827806"
+                        "tags": [],
+                        "statistics": {
+                          "viewCount": 1604008711,
+                          "likeCount": 18061877,
+                          "dislikeCount": 0
                         },
+                        "_id": "676472fccbb481a8770f1c97",
+                        "voteskips": []
+                      },
+                      {
+                        "videoId": "d2smz_1L2_0",
+                        "title": "Lady Gaga - Paparazzi (Official Music Video)",
+                        "duration": 432,
+                        "channel": "LadyGagaVEVO",
+                        "user": {
+                          "username": "username1",
+                          "providerId": "1234567"
+                        },
+                        "source": "site",
+                        "tags": [],
+                        "statistics": {
+                          "viewCount": 328870190,
+                          "likeCount": 1994386,
+                          "dislikeCount": 0
+                        },
+                        "_id": "6764730ce62f91dbcc5990ef",
                         "voteskips": []
                       }
                     ]
                   }
                 }
               }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "Sat, 08 Dec 2018 11:15:04 GMT"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
                   }
-                }
-              },
-              "Content-Length": {
-                "schema": {},
+                },
                 "examples": {
-                  "__default_content": {
-                    "value": "332"
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 403,
+                      "error": "Forbidden",
+                      "message": "Not allowed to perform this operation"
+                    }
                   }
                 }
               }
@@ -26598,9 +26623,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
           },
           {
             "ApiKeyBearer": []
@@ -26620,7 +26642,7 @@
       "post": {
         "tags": [
           "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/queue",
         "description": "Get songrequest queue",
@@ -26762,15 +26784,14 @@
         ]
       }
     },
-    "/songrequest/{channel}/queue/{song}": {
+    "/songrequest/{channel}/queue/{songId}": {
       "delete": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
-        "summary": "/:channel/queue/:song",
+        "summary": "/:channel/queue/:songId",
         "description": "Remove song from queue",
-        "operationId": "/:channel/queue/:song",
+        "operationId": "Delete/songrequest/:channel/queue/:songId",
         "parameters": [
           {
             "name": "channel",
@@ -26784,7 +26805,7 @@
             }
           },
           {
-            "name": "song",
+            "name": "songId",
             "in": "path",
             "description": "guid - Song id",
             "required": true,
@@ -26830,27 +26851,30 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/400-badrequest"
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "examples": {
-                  "default": {
+                  "Example 1": {
                     "value": {
-                      "statusCode": 400,
-                      "error": "Bad Request",
-                      "message": "child \"songId\" fails because [\"songId\" with value \"truncated\" fails to match the required pattern: /^[0-9a-fA-F]{24}$/]",
-                      "details": [
-                        {
-                          "path": [
-                            "songId"
-                          ],
-                          "message": "\"songId\" with value \"truncated\" fails to match the required pattern: /^[0-9a-fA-F]{24}$/"
-                        }
-                      ]
+                      "statusCode": 500,
+                      "error": "Internal Server Error",
+                      "message": "An internal server error occurred"
                     }
                   }
                 }
@@ -26862,12 +26886,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -26885,12 +26903,11 @@
     "/songrequest/{channel}/queue/public": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/queue/public",
         "description": "Get songrequest queue for public exposure (without video details)",
-        "operationId": "/:channel/queue/public",
+        "operationId": "Get/songrequest/:channel/queue/public",
         "parameters": [
           {
             "name": "channel",
@@ -26970,17 +26987,7 @@
           }
         },
         "deprecated": false,
-        "security": [
-          {
-            "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
-          }
-        ],
+        "security": [],
         "servers": [
           {
             "url": "https://api.streamelements.com/kappa/v2",
@@ -26996,12 +27003,11 @@
     "/songrequest/{channel}/pending": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/pending",
         "description": "Get songs in moderation queue",
-        "operationId": "/:channel/pending",
+        "operationId": "Get/songrequest/:channel/pending",
         "parameters": [
           {
             "name": "channel",
@@ -27017,16 +27023,136 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "videoId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "duration": {
+                        "type": "integer"
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          },
+                          "subscriber": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "statistics": {
+                        "type": "object",
+                        "properties": {
+                          "viewCount": {
+                            "type": "integer"
+                          },
+                          "likeCount": {
+                            "type": "integer"
+                          },
+                          "dislikeCount": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "voteskips": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "videoId": "jJYHPQi12jU",
+                        "title": "Perry - Storm",
+                        "duration": 209,
+                        "channel": "Chousho",
+                        "user": {
+                          "username": "username1",
+                          "providerId": "7654321",
+                          "subscriber": false
+                        },
+                        "source": "bot",
+                        "tags": [
+                          "perry",
+                          "storm"
+                        ],
+                        "statistics": {
+                          "viewCount": 19806,
+                          "likeCount": 67,
+                          "dislikeCount": 0
+                        },
+                        "_id": "67648da8712b15e637ca71cd",
+                        "voteskips": []
+                      },
+                      {
+                        "videoId": "dQw4w9WgXcQ",
+                        "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+                        "duration": 213,
+                        "channel": "Rick Astley",
+                        "user": {
+                          "username": "username2",
+                          "providerId": "1234567",
+                          "subscriber": false
+                        },
+                        "source": "bot",
+                        "tags": [
+                          "rick astley",
+                          "never gonna give you up",
+                          "nggyu"
+                        ],
+                        "statistics": {
+                          "viewCount": 1604050280,
+                          "likeCount": 18062060,
+                          "dislikeCount": 0
+                        },
+                        "_id": "67648e3ea62fa5ae48a79da5",
+                        "voteskips": []
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
           },
           {
             "ApiKeyBearer": []
@@ -27047,12 +27173,11 @@
     "/songrequest/{channel}/playlist": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/playlist",
-        "description": "Get songs on playlist",
-        "operationId": "/:channel/playlist",
+        "description": "Get songs on backup playlist",
+        "operationId": "Get/songrequest/:channel/playlist",
         "parameters": [
           {
             "name": "limit",
@@ -27064,6 +27189,8 @@
             "schema": {
               "type": "integer",
               "format": "int32",
+              "minimum": 1,
+              "maximum": 100,
               "example": 25
             }
           },
@@ -27071,7 +27198,6 @@
             "name": "page",
             "in": "query",
             "description": "string - page identifier as in nextPage",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -27094,7 +27220,7 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MediaRequestQueue"
                 },
@@ -27255,33 +27381,30 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/400-badrequest"
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "examples": {
-                  "default": {
+                  "Example 1": {
                     "value": {
-                      "statusCode": 400,
-                      "error": "Bad Request",
-                      "message": "child \"limit\" fails because [\"limit\" must be a number]. child \"page\" fails because [\"page\" is not allowed to be empty]",
-                      "details": [
-                        {
-                          "path": [
-                            "limit"
-                          ],
-                          "message": "\"limit\" must be a number"
-                        },
-                        {
-                          "path": [
-                            "page"
-                          ],
-                          "message": "\"page\" is not allowed to be empty"
-                        }
-                      ]
+                      "statusCode": 404,
+                      "error": "Not Found",
+                      "message": "The backup playlist is not set"
                     }
                   }
                 }
@@ -27293,9 +27416,6 @@
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
           },
           {
             "ApiKeyBearer": []
@@ -27316,12 +27436,11 @@
     "/songrequest/{channel}/player": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/player",
         "description": "Get current player status",
-        "operationId": "/:channel/player",
+        "operationId": "Get/songrequest/:channel/player",
         "parameters": [
           {
             "name": "channel",
@@ -27339,14 +27458,15 @@
           "200": {
             "description": "",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Success53"
                 },
                 "examples": {
                   "default": {
                     "value": {
-                      "state": "paused"
+                      "state": "paused",
+                      "volume": 50
                     }
                   }
                 }
@@ -27378,9 +27498,6 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
             "ApiKeyBearer": []
           }
         ],
@@ -27399,12 +27516,11 @@
     "/songrequest/{channel}/player/{state}": {
       "post": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/player/:state",
         "description": "Change current state of media player",
-        "operationId": "/:channel/player/:state",
+        "operationId": "Post/songrequest/:channel/player/:state",
         "parameters": [
           {
             "name": "channel",
@@ -27420,7 +27536,7 @@
           {
             "name": "state",
             "in": "path",
-            "description": "string - one of play, pause",
+            "description": "string - one of `play` or `pause`",
             "required": true,
             "style": "simple",
             "schema": {
@@ -27428,11 +27544,26 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Body is not needed for this request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": "",
+            "description": "Created",
             "content": {
-              "text/plain; charset=utf-8": {
+              "text/plain": {
                 "schema": {
                   "type": "string",
                   "example": "Created"
@@ -27440,32 +27571,6 @@
                 "examples": {
                   "default": {
                     "value": "Created"
-                  }
-                }
-              }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "Tue, 11 Dec 2018 08:31:47 GMT"
-                  }
-                }
-              },
-              "Content-Length": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "7"
-                  }
-                }
-              },
-              "Vary": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "X-HTTP-Method-Override"
                   }
                 }
               }
@@ -27505,9 +27610,6 @@
             "JWTBearer": []
           },
           {
-            "OAuth2": []
-          },
-          {
             "ApiKeyBearer": []
           }
         ],
@@ -27526,23 +27628,23 @@
     "/songrequest/{channel}/history": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/history",
         "description": "Get songrequest history",
-        "operationId": "Get/:channel/history1",
+        "operationId": "Get/songrequest/:channel/history",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "integer - Number of items per page",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
               "type": "integer",
               "format": "int32",
+              "minimum": 1,
+              "maximum": 100,
               "example": 25
             }
           },
@@ -27550,7 +27652,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -27573,19 +27674,188 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "song": {
+                            "type": "object",
+                            "properties": {
+                              "videoId": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "duration": {
+                                "type": "integer"
+                              },
+                              "channel": {
+                                "type": "string"
+                              },
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "providerId": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "source": {
+                                "type": "string"
+                              },
+                              "voteskips": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              },
+                              "statistics": {
+                                "type": "object",
+                                "properties": {
+                                  "viewCount": {
+                                    "type": "integer"
+                                  },
+                                  "likeCount": {
+                                    "type": "integer"
+                                  },
+                                  "dislikeCount": {
+                                    "type": "integer"
+                                  }
+                                }
+                              },
+                              "_id": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "limit": 0,
+                      "offset": 0,
+                      "total": 3,
+                      "history": [
+                        {
+                          "_id": "67648564e0264de640535e91",
+                          "song": {
+                            "videoId": "dQw4w9WgXcQ",
+                            "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+                            "duration": 213,
+                            "channel": "Rick Astley",
+                            "user": {
+                              "username": "username1",
+                              "providerId": "5643217"
+                            },
+                            "voteskips": [],
+                            "tags": [],
+                            "_id": "67648543e62f91dbcc612fc8"
+                          },
+                          "createdAt": "2024-12-19T20:43:16.472Z"
+                        },
+                        {
+                          "_id": "6501785b57252e2549d59885",
+                          "song": {
+                            "duration": 179,
+                            "tags": [],
+                            "_id": "65017603eb7974a8b521a2a8",
+                            "user": {
+                              "username": "otherusername",
+                              "providerId": "7654321"
+                            },
+                            "statistics": {
+                              "viewCount": 250901494,
+                              "likeCount": 3021760,
+                              "dislikeCount": 0
+                            },
+                            "voteskips": [],
+                            "videoId": "r6zIGXun57U",
+                            "title": "Legends Never Die (ft. Against The Current) | Worlds 2017 - League of Legends",
+                            "channel": "League of Legends",
+                            "source": "site"
+                          },
+                          "createdAt": "2023-09-13T08:52:43.998Z"
+                        },
+                        {
+                          "_id": "65cbdbe23daaead75bc44a1e",
+                          "song": {
+                            "videoId": "0AvWV6Mk374",
+                            "title": "The Curse of the Sad Mummy | Amumu Music Video - League of Legends",
+                            "duration": 259,
+                            "channel": "League of Legends",
+                            "user": {
+                              "username": "exampleusername",
+                              "providerId": "1234567"
+                            },
+                            "source": "site",
+                            "voteskips": [],
+                            "tags": [],
+                            "statistics": {
+                              "viewCount": 29582388,
+                              "likeCount": 442179,
+                              "dislikeCount": 0
+                            },
+                            "_id": "65cbdb72ad5ab977f648a967"
+                          },
+                          "createdAt": "2024-02-13T21:15:14.302Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "JWTBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -27603,12 +27873,11 @@
     "/songrequest/{channel}/playing": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/playing",
-        "description": "Get currently playing song",
-        "operationId": "/:channel/playing",
+        "description": "Get currently playing song. If no song is playing, gets the one ready to be played",
+        "operationId": "Get/songrequest/:channel/playing",
         "parameters": [
           {
             "name": "channel",
@@ -27624,51 +27893,67 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "OK",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Song"
-                },
-                "examples": {
-                  "default": {
-                    "value": {
-                      "user": {
-                        "username": "leeeeex",
-                        "providerId": "85827806"
-                      },
-                      "statistics": {
-                        "viewCount": 504489596,
-                        "likeCount": 3380238,
-                        "dislikeCount": 154269
-                      },
-                      "duration": 213,
-                      "tags": [],
-                      "_id": "5c0ba73fde9a4c1385a1503b",
-                      "voteskips": [],
-                      "videoId": "dQw4w9WgXcQ",
-                      "title": "Rick Astley - Never Gonna Give You Up (Video)",
-                      "channel": "RickAstleyVEVO",
-                      "source": "site"
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "providerId": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "videoId": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "duration": {
+                      "type": "integer"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "_id": {
+                      "type": "string"
+                    },
+                    "voteskips": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
-                }
-              }
-            },
-            "headers": {
-              "Date": {
-                "schema": {},
+                },
                 "examples": {
-                  "__default_content": {
-                    "value": "Sat, 08 Dec 2018 11:21:33 GMT"
-                  }
-                }
-              },
-              "Content-Length": {
-                "schema": {},
-                "examples": {
-                  "__default_content": {
-                    "value": "330"
+                  "Example 1": {
+                    "value": {
+                      "user": {
+                        "username": "username",
+                        "providerId": "1234567"
+                      },
+                      "videoId": "iBHNgV6_znU",
+                      "title": "Ciara - 1, 2 Step (Official Video) ft. Missy Elliott",
+                      "duration": 205,
+                      "channel": "CiaraVEVO",
+                      "tags": [],
+                      "_id": "674bd372e9c0d483dafb1d9e",
+                      "voteskips": []
+                    }
                   }
                 }
               }
@@ -27677,14 +27962,17 @@
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -27702,12 +27990,11 @@
     "/songrequest/{channel}/next": {
       "get": {
         "tags": [
-          "a pending",
-          "songrequests"
+          "songrequest"
         ],
         "summary": "/:channel/next",
         "description": "Get details of next song in queue",
-        "operationId": "/:channel/next",
+        "operationId": "Get/songrequest/:channel/next",
         "parameters": [
           {
             "name": "channel",
@@ -27778,14 +28065,17 @@
         },
         "deprecated": false,
         "security": [
+          {},
           {
             "JWTBearer": []
           },
           {
-            "OAuth2": []
+            "ApiKeyBearer": []
           },
           {
-            "ApiKeyBearer": []
+            "OAuth2": [
+              "channel:read"
+            ]
           }
         ],
         "servers": [
@@ -28631,13 +28921,12 @@
         ],
         "summary": "/:channel/redemptions",
         "description": "List redemptions",
-        "operationId": "/:channel/redemptions",
+        "operationId": "Get/store/:channel/redemptions",
         "parameters": [
           {
             "name": "offset",
             "in": "query",
             "description": "integer - items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -28650,7 +28939,6 @@
             "name": "limit",
             "in": "query",
             "description": "integer - limit items",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -28662,12 +28950,12 @@
           {
             "name": "pending",
             "in": "query",
-            "description": "boolean",
-            "required": true,
+            "description": "boolean - Pending items",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -28684,19 +28972,154 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string"
+                          },
+                          "redeemerType": {
+                            "type": "string"
+                          },
+                          "redeemer": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string"
+                              },
+                              "avatar": {
+                                "type": "string"
+                              },
+                              "username": {
+                                "type": "string"
+                              },
+                              "inactive": {
+                                "type": "boolean"
+                              },
+                              "isPartner": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "item": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string"
+                              },
+                              "userInput": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "completed": {
+                            "type": "boolean"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "input": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 2649,
+                      "docs": [
+                        {
+                          "_id": "6743dc12e38eb16c7c28e579",
+                          "channel": "5f2de5dd9a474a2c2aaaaaaa",
+                          "redeemerType": "Channel",
+                          "redeemer": {
+                            "_id": "5f2de5dd9a474a2c2d000000",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "username": "username1",
+                            "inactive": false,
+                            "isPartner": true
+                          },
+                          "item": {
+                            "_id": "5feaf146d07f8725e3f10c0d",
+                            "userInput": [],
+                            "name": "Message"
+                          },
+                          "completed": false,
+                          "source": "website",
+                          "input": [],
+                          "message": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                          "createdAt": "2024-11-25T02:08:18.259Z",
+                          "updatedAt": "2024-11-25T02:08:18.259Z"
+                        },
+                        {
+                          "_id": "6737d07a18403d790bb9884f",
+                          "channel": "5f2de5dd9a474a2c2aaaaaaa",
+                          "redeemerType": "Channel",
+                          "redeemer": {
+                            "_id": "5f9f41667bfa5e81eeaaaaaa",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "username": "username2",
+                            "inactive": false,
+                            "isPartner": true
+                          },
+                          "item": {
+                            "_id": "64fe4286be5cb0835e9a2eb1",
+                            "userInput": [],
+                            "name": "Test Item"
+                          },
+                          "completed": false,
+                          "source": "website",
+                          "input": [],
+                          "createdAt": "2024-11-15T22:51:38.267Z",
+                          "updatedAt": "2024-11-15T22:51:38.267Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -28718,13 +29141,12 @@
         ],
         "summary": "/:channel/redemptions/me",
         "description": "Get own redemptions",
-        "operationId": "/:channel/redemptions/me",
+        "operationId": "Get/store/:channel/redemptions/me",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "integer - Number of items per page",
-            "required": true,
+            "description": "integer - Number of items per page. Omit it to show all items",
             "style": "form",
             "explode": true,
             "schema": {
@@ -28737,7 +29159,6 @@
             "name": "offset",
             "in": "query",
             "description": "integer - Number of items to be skipped",
-            "required": true,
             "style": "form",
             "explode": true,
             "schema": {
@@ -28760,19 +29181,161 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer"
+                    },
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string"
+                              },
+                              "avatar": {
+                                "type": "string"
+                              },
+                              "username": {
+                                "type": "string"
+                              },
+                              "displayName": {
+                                "type": "string"
+                              },
+                              "inactive": {
+                                "type": "boolean"
+                              },
+                              "isPartner": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "redeemerType": {
+                            "type": "string"
+                          },
+                          "redeemer": {
+                            "type": "string"
+                          },
+                          "item": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "cost": {
+                                "type": "integer"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "completed": {
+                            "type": "boolean"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "input": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "total": 2921,
+                      "docs": [
+                        {
+                          "_id": "67574b500a95aa7751740797",
+                          "channel": {
+                            "_id": "5f2de5dd9a474a2c21234567",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "username": "username1",
+                            "displayName": "userName1",
+                            "inactive": false,
+                            "isPartner": true
+                          },
+                          "redeemerType": "Channel",
+                          "redeemer": "5f2de5dd9a474a2c20000000",
+                          "item": {
+                            "_id": "64fe4286be5cb0835e9a2eb1",
+                            "name": "Test Item",
+                            "cost": 0,
+                            "createdAt": "2023-09-10T22:26:14.975Z"
+                          },
+                          "completed": false,
+                          "source": "website",
+                          "input": [],
+                          "createdAt": "2024-12-09T19:56:00.789Z",
+                          "updatedAt": "2024-12-09T19:56:00.789Z"
+                        },
+                        {
+                          "_id": "67574aea6653cd743b70d36d",
+                          "channel": {
+                            "_id": "5f2de5dd9a474a2c23456789",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "username": "username1",
+                            "displayName": "userName1",
+                            "inactive": false,
+                            "isPartner": true
+                          },
+                          "redeemerType": "Channel",
+                          "redeemer": "5f2de5dd9a474a2c20000000",
+                          "item": {
+                            "_id": "5feaf146d07f8725e3f10c0d",
+                            "name": "Mensagem",
+                            "cost": 0,
+                            "createdAt": "2020-12-29T09:05:10.916Z"
+                          },
+                          "completed": false,
+                          "source": "website",
+                          "input": [],
+                          "message": "This is a message",
+                          "createdAt": "2024-12-09T19:54:18.121Z",
+                          "updatedAt": "2024-12-09T19:54:18.121Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -28794,7 +29357,7 @@
         ],
         "summary": "/:channel/redemptions/search",
         "description": "Search for redemptions",
-        "operationId": "/:channel/redemptions/search",
+        "operationId": "Get/store/:channel/redemptions/search",
         "parameters": [
           {
             "name": "offset",
@@ -28825,8 +29388,7 @@
           {
             "name": "search",
             "in": "query",
-            "description": "Search",
-            "required": true,
+            "description": "Search term (no spaces allowed)",
             "style": "form",
             "explode": true,
             "schema": {
@@ -28836,56 +29398,63 @@
           {
             "name": "searchBy",
             "in": "query",
-            "description": "One of `item.name`, `redeemer.username`, `input`",
-            "required": true,
+            "description": "string - Item to be searched. One of `item.name`, `redeemer.username`, `input`",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "item.name",
+                "redeemer.username",
+                "input"
+              ],
+              "default": "redeemer.username"
             }
           },
           {
             "name": "from",
             "in": "query",
-            "description": "From",
-            "required": true,
+            "description": "date or timestamp - Initial date",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-02-01T12:00:00Z"
             }
           },
           {
             "name": "to",
             "in": "query",
-            "description": "To",
-            "required": true,
+            "description": "date or timestamp- End date",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-03-01T12:00:00Z"
             }
           },
           {
             "name": "pending",
             "in": "query",
-            "description": "Pending",
-            "required": true,
+            "description": "boolean - filter based on pending items",
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "boolean",
+              "default": false
             }
           },
           {
             "name": "sort",
             "in": "query",
-            "description": "sort",
+            "description": "object - Sort items by key/value. Possible keys: `item.name`, `redeemer.username`, `input`, `updatedAt`. Possible values: `-1` (descending), `1` (ascending)",
             "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "example": "{ \"updatedAt\": -1 }"
             }
           },
           {
@@ -28901,19 +29470,190 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_total": {
+                      "type": "integer"
+                    },
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "redeemer": {
+                            "type": "object",
+                            "properties": {
+                              "username": {
+                                "type": "string"
+                              },
+                              "avatar": {
+                                "type": "string"
+                              },
+                              "inactive": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "item": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "userInput": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                }
+                              }
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "_id": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "boolean"
+                          },
+                          "rejected": {
+                            "type": "boolean"
+                          },
+                          "redeemerType": {
+                            "type": "string"
+                          },
+                          "input": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_total": 726,
+                      "docs": [
+                        {
+                          "redeemer": {
+                            "username": "username1",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "inactive": false
+                          },
+                          "item": {
+                            "name": "Message",
+                            "userInput": []
+                          },
+                          "createdAt": "2024-12-09T19:54:18.121Z",
+                          "updatedAt": "2024-12-19T23:58:54.758Z",
+                          "_id": "67574aea6653cd743b70d36d",
+                          "channel": "5f2de5dd9a474a2c20000000",
+                          "completed": true,
+                          "rejected": false,
+                          "redeemerType": "Channel",
+                          "input": []
+                        },
+                        {
+                          "redeemer": {
+                            "username": "usernam2",
+                            "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                            "inactive": false
+                          },
+                          "item": {
+                            "name": "Test Item",
+                            "userInput": []
+                          },
+                          "createdAt": "2024-12-09T03:31:22.701Z",
+                          "updatedAt": "2024-12-19T23:58:54.003Z",
+                          "_id": "6756648a97e5b1adc27f53a3",
+                          "channel": "5f2de5dd9a474a2c20000000",
+                          "completed": true,
+                          "rejected": false,
+                          "redeemerType": "Channel",
+                          "input": []
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "child \"sort\" fails because [\"sort\" must be an object]",
+                      "details": [
+                        {
+                          "path": [
+                            "sort"
+                          ],
+                          "message": "\"sort\" must be an object"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -28931,6 +29671,7 @@
     "/store/{channel}/redemptions/{redemptionId}": {
       "put": {
         "tags": [
+          "a pending",
           "redemptions"
         ],
         "summary": "/:channel/redemptions/:redemptionId",
@@ -29006,6 +29747,7 @@
       },
       "delete": {
         "tags": [
+          "a pending",
           "redemptions"
         ],
         "summary": "/:channel/redemptions/:redemptionId",
@@ -29066,19 +29808,19 @@
         "tags": [
           "redemptions"
         ],
-        "summary": "/:channel/redemptions/:redemptionId1",
+        "summary": "/:channel/redemptions/:redemptionId",
         "description": "Get redemption details",
-        "operationId": "/:channel/redemptions/:redemptionId1",
+        "operationId": "Get/store/:channel/redemptions/:redemptionId",
         "parameters": [
           {
             "name": "channel",
             "in": "path",
-            "description": "guid - Channel name",
+            "description": "guid - Channel id",
             "required": true,
             "style": "simple",
             "schema": {
               "type": "string",
-              "example": "leeeeex"
+              "example": "5b2e2007760aeb7729487dab"
             }
           },
           {
@@ -29094,19 +29836,142 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "redeemerType": {
+                      "type": "string"
+                    },
+                    "redeemer": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "inactive": {
+                          "type": "boolean"
+                        },
+                        "isPartner": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "item": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "userInput": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "completed": {
+                      "type": "boolean"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "_id": "6743dc12e38eb16c7c28e579",
+                      "channel": "5f2de5dd9a474a2c2aaaaaaa",
+                      "redeemerType": "Channel",
+                      "redeemer": {
+                        "_id": "5f2de5dd9a474a2c20000000",
+                        "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png",
+                        "username": "username1",
+                        "inactive": false,
+                        "isPartner": true
+                      },
+                      "item": {
+                        "_id": "5feaf146d07f8725e3f10c0d",
+                        "userInput": [],
+                        "name": "Message"
+                      },
+                      "completed": false,
+                      "source": "website",
+                      "input": [],
+                      "message": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                      "createdAt": "2024-11-25T02:08:18.259Z",
+                      "updatedAt": "2024-11-25T02:08:18.259Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "statusCode": 404,
+                      "error": "Not Found"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "deprecated": false,
         "security": [
           {
             "JWTBearer": []
-          },
-          {
-            "OAuth2": []
-          },
-          {
-            "ApiKeyBearer": []
           }
         ],
         "servers": [
@@ -32299,7 +33164,7 @@
         ],
         "summary": "/:channel/tiltify",
         "description": "Get information on Tiltify integration",
-        "operationId": "Get/:channel/tiltify",
+        "operationId": "Get/integrations/:channel/tiltify",
         "parameters": [
           {
             "name": "channel",
@@ -32456,7 +33321,7 @@
         ],
         "summary": "/:channel/tiltify/disconnect",
         "description": "Remove Tiltify integration",
-        "operationId": "Post/:channel/tiltify/disconnect",
+        "operationId": "Post/integrations/:channel/tiltify/disconnect",
         "parameters": [
           {
             "name": "channel",
@@ -32470,6 +33335,21 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "No body is needed for this request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -32521,7 +33401,7 @@
         ],
         "summary": "/:channel/donordrive/disconnect",
         "description": "Remove DonorDrive integration",
-        "operationId": "Post/:channel/donordrive/disconnect",
+        "operationId": "Post/integrations/:channel/donordrive/disconnect",
         "parameters": [
           {
             "name": "channel",
@@ -32535,6 +33415,21 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "No body is needed for this request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -32585,8 +33480,8 @@
           "integrations"
         ],
         "summary": "/:channel/donordrive/settings",
-        "description": "Get infoormation on DonorDrive integration",
-        "operationId": "Post/:channel/donordrive/settings",
+        "description": "Get information on DonorDrive integration",
+        "operationId": "Post/integrations/:channel/donordrive/settings",
         "parameters": [
           {
             "name": "channel",
@@ -32674,7 +33569,7 @@
         ],
         "summary": "/:channel/donordrive/connect",
         "description": "Integrate with DonorDrive",
-        "operationId": "Post/:channel/donordrive/connect",
+        "operationId": "Post/integrations/:channel/donordrive/connect",
         "parameters": [
           {
             "name": "channel",
@@ -33052,7 +33947,7 @@
       "description": "Endpoints to manage single user points data "
     },
     {
-      "name": "songrequests",
+      "name": "songrequest",
       "description": "Endpoints to interact with StreamElements Mediashare"
     },
     {
@@ -33086,6 +33981,10 @@
     {
       "name": "users",
       "description": "Folder for loyalty"
+    },
+    {
+      "name": "void",
+      "description": "Endpoints not working or without explanation"
     }
   ],
   "components": {
@@ -43138,6 +44037,9 @@
         "type": "object",
         "title": "BotModules",
         "properties": {
+          "ai": {
+            "$ref": "#/components/schemas/Ai"
+          },
           "roulette": {
             "$ref": "#/components/schemas/Roulette"
           },
@@ -43173,9 +44075,19 @@
           },
           "announcements": {
             "$ref": "#/components/schemas/Announcements"
+          },
+          "fourthwall": {
+            "$ref": "#/components/schemas/Fourthwall"
+          },
+          "votekick": {
+            "$ref": "#/components/schemas/VoteKick"
+          },
+          "audienceQueue": {
+            "$ref": "#/components/schemas/AudienceQueue"
           }
         },
         "required": [
+          "ai",
           "roulette",
           "raffle",
           "pyramid",
@@ -43187,9 +44099,17 @@
           "twitter",
           "chatalerts",
           "songrequest",
-          "announcements"
+          "announcements",
+          "votekick",
+          "audienceQueue"
         ],
         "example": {
+          "ai": {
+            "enabled": false,
+            "model": "default",
+            "persona": "default",
+            "temperature": 0.7
+          },
           "roulette": {
             "cooldown": {
               "user": 60,
@@ -43498,7 +44418,52 @@
               "message": "${channel.display_name} is now live! Streaming {game}: {title}"
             },
             "enabled": true
+          },
+          "votekick": {
+            "chatKeywords": {
+              "yay": "VoteYea",
+              "nay": "VoteNay"
+            },
+            "enabled": false,
+            "kickDuration": 10,
+            "minVotes": 1,
+            "nativePoll": true,
+            "voteDuration": 30
+          },
+          "audienceQueue": {
+            "enabled": true,
+            "startMessage": "A {title} queue has been opened. Type \\\"!queue join\\\" to enter the queue"
           }
+        }
+      },
+      "Ai": {
+        "type": "object",
+        "title": "Ai",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "model": {
+            "type": "string"
+          },
+          "persona": {
+            "type": "string"
+          },
+          "temperature": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "enabled",
+          "model",
+          "persona",
+          "temperature"
+        ],
+        "example": {
+          "enabled": false,
+          "model": "default",
+          "persona": "default",
+          "temperature": 0.7
         }
       },
       "Roulette": {
@@ -44613,6 +45578,69 @@
         "example": {
           "enabled": true,
           "message": "${channel.display_name} is now live! Streaming {game}: {title}"
+        }
+      },
+      "Fourthwall": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "joinKeyword": {
+            "type": "string"
+          }
+        }
+      },
+      "VoteKick": {
+        "type": "object",
+        "properties": {
+          "chatKeywords": {
+            "type": "object",
+            "properties": {
+              "string1": {
+                "type": "string"
+              },
+              "string2": {
+                "type": "string"
+              }
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "kickDuration": {
+            "type": "integer"
+          },
+          "minVotes": {
+            "type": "integer"
+          },
+          "nativePoll": {
+            "type": "boolean"
+          },
+          "voteDuration": {
+            "type": "integer"
+          }
+        }
+      },
+      "AudienceQueue": {
+        "type": "object",
+        "title": "AudienceQueue",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "startMessage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "example": {
+          "enabled": false,
+          "model": "default",
+          "persona": "default",
+          "temperature": 0.7
         }
       },
       "Contest": {
@@ -52347,6 +53375,21 @@
           }
         }
       },
+      "channel_queuerequest": {
+        "type": "object",
+        "title": "/:channel/queuerequest",
+        "properties": {
+          "video": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "video"
+        ],
+        "example": {
+          "video": "youtube-Identifier"
+        }
+      },
       "Song": {
         "type": "object",
         "properties": {
@@ -52410,21 +53453,6 @@
               }
             }
           }
-        }
-      },
-      "channel_queuerequest": {
-        "type": "object",
-        "title": "/:channel/queuerequest",
-        "properties": {
-          "video": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "video"
-        ],
-        "example": {
-          "video": "youtube-Identifier"
         }
       },
       "MediaRequestQueue": {
@@ -52619,13 +53647,19 @@
         "properties": {
           "state": {
             "type": "string"
+          },
+          "volume": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "required": [
-          "state"
+          "state",
+          "volume"
         ],
         "example": {
-          "state": "paused"
+          "state": "paused",
+          "volume": 50
         }
       },
       "LoyaltyItem": {
