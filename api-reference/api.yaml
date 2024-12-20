@@ -89,7 +89,7 @@ paths:
         - activities
       summary: '/:channel'
       description: List channel activities. That's what you see in your Activity Feed
-      operationId: 'Get/acttivities/:channel'
+      operationId: 'Get/activities/:channel'
       security:
         - JWTBearer: []
         - OAuth2:
@@ -1246,6 +1246,7 @@ paths:
   '/activities/{channel}/{activityId}':
     get:
       tags:
+        - void
         - activities
       summary: '/:channel/:activityId'
       description: Get activity details by id
@@ -1312,9 +1313,9 @@ paths:
                   - path:
                       - activityId
                     message: '"activityId" with value "test" fails to match the required pattern: /^[0-9a-fA-F]{24}$/'
-      deprecated: true
     post:
       tags:
+        - void
         - activities
       summary: '/:channel/:activityId'
       description: Update activity id
@@ -6866,13 +6867,12 @@ paths:
       tags:
         - chatstats
       summary: '/:username/epm'
-      description: "Get channel's \"emotes per minute\"\r\n*"
-      operationId: '/:username/epm'
+      description: Get channel's "emotes per minute"
+      operationId: 'Get/chatstats/:username/epm'
       parameters:
         - name: limit
           in: query
           description: integer - number of items to be shown
-          required: true
           style: form
           explode: true
           schema:
@@ -6890,6 +6890,50 @@ paths:
         '200':
           description: ''
           headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    emote:
+                      type: string
+                    provider:
+                      type: string
+                    epm:
+                      type: integer
+                x-examples:
+                  Example 1:
+                    - id: '304603634'
+                      emote: c4ldasCavaco
+                      provider: twitch
+                      epm: 24
+                    - id: '304510607'
+                      emote: coreanGG
+                      provider: twitch
+                      epm: 7
+                    - id: '304510623'
+                      emote: coreanLove
+                      provider: twitch
+                      epm: 4
+              examples:
+                Example 1:
+                  value:
+                    - id: '88'
+                      emote: PogChamp
+                      provider: twitch
+                      epm: 0
+                    - id: '555555628'
+                      emote: ':)'
+                      provider: twitch
+                      epm: 0
+                    - id: '555555585'
+                      emote: ':/'
+                      provider: twitch
+                      epm: 0
       deprecated: false
       security: []
   '/chatstats/{username}/stats':
@@ -6898,12 +6942,11 @@ paths:
         - chatstats
       summary: '/:username/stats'
       description: Get channels stats
-      operationId: '/:username/stats'
+      operationId: 'Get/chatstats/:username/stats'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items to be shown
-          required: true
           style: form
           explode: true
           schema:
@@ -7168,10 +7211,11 @@ paths:
   '/chatstats/{username}/{category}/{item}':
     get:
       tags:
+        - void
         - chatstats
       summary: '/:username/:category/:item'
-      description: "Get channels details linked to provided URL \r\n*"
-      operationId: '/:username/:category/:item'
+      description: Get channels details linked to provided URL
+      operationId: 'Get/chatstats/:username/:category/:item'
       parameters:
         - name: username
           in: path
@@ -7199,7 +7243,6 @@ paths:
         '200':
           description: ''
           headers: {}
-      deprecated: true
       security: []
   '/bot/commands/{channel}':
     get:
@@ -10214,7 +10257,7 @@ paths:
         - contests
       summary: '/:channel/history'
       description: List previous contests
-      operationId: 'Get/contest/:channel/history'
+      operationId: 'Get/contests/:channel/history'
       parameters:
         - name: limit
           in: query
@@ -10412,7 +10455,8 @@ paths:
         - {}
         - JWTBearer: []
         - ApiKeyBearer: []
-        - OAuth2: []
+        - OAuth2:
+            - 'channel:read'
   /bot/filters/banphrases/search:
     get:
       tags:
@@ -10491,11 +10535,10 @@ paths:
   '/bot/filters/{channel}':
     get:
       tags:
-        - a pending
         - filters
       summary: '/:channel'
       description: List filters
-      operationId: 'Get/:channel123'
+      operationId: 'Get/bot/filters/:channel'
       parameters:
         - name: channel
           in: path
@@ -11103,6 +11146,10 @@ paths:
                 createdAt: '2018-06-23T10:25:11.768Z'
                 updatedAt: '2018-06-23T10:25:11.768Z'
       deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
     put:
       tags:
         - a pending
@@ -11578,7 +11625,7 @@ paths:
         - modules
       summary: '/:channel'
       description: List modules
-      operationId: 'Get/:channel2'
+      operationId: 'Get/bot/modules/:channel'
       parameters:
         - name: channel
           in: path
@@ -11590,259 +11637,16 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Sat, 08 Dec 2018 20:19:23 GMT'
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '5947'
+          description: OK
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/BotModules'
-              example:
-                roulette:
-                  cooldown:
-                    user: 60
-                    global: 0
-                  messages:
-                    win: '/me {user} won {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsGoodMan'
-                    lose: '/me {user} lost {bet} ${pointsname} in roulette and now has {points} ${pointsname}! FeelsBadMan'
-                    allinWin: '/me PogChamp {user} went all in and won {bet} ${pointsname} PogChamp they now have {points} ${pointsname} FeelsGoodMan'
-                    allinLose: '/me {user} went all in and lost every single one of their {bet} ${pointsname} LUL'
-                  enabled: false
-                  luck: 45
-                  minAmount: 1
-                raffle:
-                  single:
-                    messages:
-                      start: '/me PogChamp a Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
-                      running: '/me The Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
-                      end: '/me The Raffle has ended and {winner} won {points} ${pointsname} FeelsGoodMan'
-                    duration: 30
-                    maxAmount: 3000
-                  multi:
-                    messages:
-                      start: '/me PogChamp a Multi-Raffle has begun for {points} ${pointsname} PogChamp it will end in {time} Seconds. Enter by typing "!join" OpieOP'
-                      running: '/me The Multi-Raffle for {points} ${pointsname} will end in {time} Seconds. Enter by typing "!join" FeelsGoodMan'
-                      end: '/me The Multi-Raffle has ended and {winner} won {points} ${pointsname} each FeelsGoodMan'
-                    duration: 30
-                    maxAmount: 6000
-                  enabled: false
-                pyramid:
-                  enabled: false
-                  messages:
-                    - _id: 5b2e2007760aeb7356487db5
-                      width: 3
-                      message: '/me nice {width}-width {emote} pyramid {user} LUL'
-                    - _id: 5b2e2007760aeb46e0487db4
-                      width: 5
-                      message: '/me PogChamp {user} just finished a {width}-width {emote} pyramid, gj KKona'
-                    - _id: 5b2e2007760aeb39fc487db3
-                      width: 9
-                      message: '/me {user} just finished a {width}-width {emote} pyramid! Now thats what i call pyramid farming Kappa //'
-                    - _id: 5b2e2007760aeb22ae487db2
-                      width: 15
-                      message: '/me {user} just finished a {width}-width {emote} pyramid!!! I almost ran out of memory there MrDestructoid //'
-                    - _id: 5b2e2007760aeb6219487db1
-                      width: 25
-                      message: '/me WutFace {user} just finished a {width}-width {emote} pyramid!!! BUFFER OVERFLOW WutFace WutFace WutFace'
-                bingo:
-                  enabled: false
-                  maxAmount: 4000
-                slotmachine:
-                  cooldown:
-                    user: 60
-                    global: 0
-                  messages:
-                    win: '@{user} you got {emotes} and won {points} ${pointsname} PogChamp //'
-                    lose: '@{user} you got {emotes} and lost your {points} ${pointsname} LUL'
-                  enabled: false
-                  returnAmount: 80
-                  minAmount: 100
-                  emotes:
-                    - Kappa
-                    - PogChamp
-                    - BibleThump
-                    - OpieOP
-                    - 4Head
-                duel:
-                  cooldown:
-                    user: 5
-                    global: 0
-                  messages:
-                    win: '/me {winner} won the Duel vs {loser} PogChamp gj {winner} Kappa //'
-                    pointsWin: '/me {winner} won the Duel vs {loser} PogChamp {winner} won {points} ${pointsname} FeelsGoodMan'
-                  enabled: false
-                eightball:
-                  cooldown:
-                    user: 5
-                    global: 15
-                  enabled: false
-                  messages:
-                    - sure
-                    - are you kidding?!
-                    - yeah
-                    - 'no'
-                    - i think so
-                    - don't bet on it
-                    - ja
-                    - doubtful
-                    - for sure
-                    - forget about it
-                    - nein
-                    - maybe
-                    - Kappa Keepo PogChamp
-                    - sure
-                    - i don't think so
-                    - it is so
-                    - leaning towards no
-                    - look deep in your heart and you will see the answer
-                    - most definitely
-                    - most likely
-                    - my sources say yes
-                    - never
-                    - nah m8
-                    - might actually be yes
-                    - no.
-                    - outlook good
-                    - outlook not so good
-                    - perhaps
-                    - mayhaps
-                    - that's a tough one
-                    - idk kev
-                    - don't ask that
-                    - the answer to that isn't pretty
-                    - the heavens point to yes
-                    - who knows?
-                    - without a doubt
-                    - 'yesterday it would''ve been a yes, but today it''s a yep'
-                    - you will have to wait
-                  emotes:
-                    - Kappa
-                    - Keepo
-                    - xD
-                    - KKona
-                    - 4Head
-                    - EleGiggle
-                    - DansGame
-                    - KappaCool
-                    - BrokeBack
-                    - OpieOP
-                    - KappaRoss
-                    - KappaPride
-                    - FeelsBadMan
-                    - FeelsGoodMan
-                    - FeelsBirthdayMan
-                    - FeelsAmazingMan
-                    - PogChamp
-                    - VisLaud
-                    - OhMyDog
-                    - FrankerZ
-                    - DatSheffy
-                    - BabyRage
-                    - VoHiYo
-                    - haHAA
-                    - LUL
-                    - ResidentSleeper
-                    - SourPls
-                    - TriHard
-                    - SMOrc
-                emotecombo:
-                  enabled: false
-                  minCount: 5
-                  cooldown: 10
-                  messages:
-                    - _id: 5b2e2007760aeb1d7e487dba
-                      count: 3
-                      message: '{count}x {emote} combo'
-                    - _id: 5b2e2007760aeb31c3487db9
-                      count: 10
-                      message: '{count}x {emote} combo PogChamp'
-                    - _id: 5b2e2007760aeb4b11487db8
-                      count: 20
-                      message: '/me {user} ruined the {count}x {emote} combo KappaRoss'
-                    - _id: 5b2e2007760aeb4251487db7
-                      count: 50
-                      message: '/me you don''t ruin {count}x {emote} combos {user} DansGame'
-                    - _id: 5b2e2007760aebbbe7487db6
-                      count: 420
-                      message: '/timeout {user} {count} you don''t ruin {emote} combos DansGame'
-                twitter:
-                  enabled: false
-                  replies: false
-                  retweets: false
-                  template: '/me PogChamp new Tweet from {user}: {tweet}'
-                  followed:
-                    - twitchsupport
-                    - streamelements
-                chatalerts:
-                  follow:
-                    enabled: true
-                    messages:
-                      - 'Thank you for following {user} :)'
-                  tip:
-                    enabled: true
-                    messages:
-                      - _id: 5b2e2007760aebcb99487dbb
-                        amount: 1
-                        message: '{user} just tipped {currency}{amount} PogChamp'
-                  host:
-                    enabled: true
-                    messages:
-                      - _id: 5b2e2007760aebad31487dbc
-                        amount: 1
-                        message: '{user} just hosted the stream for {amount} viewers PogChamp'
-                  subscriber:
-                    enabled: true
-                    messages:
-                      - _id: 5b2e2007760aeb0830487dbe
-                        amount: 1
-                        message: '{user} just subscribed PogChamp'
-                      - _id: 5b2e2007760aebaf00487dbd
-                        amount: 2
-                        message: '{user} just subscribed for {amount} months in a row PogChamp'
-                  cheer:
-                    enabled: true
-                    messages:
-                      - _id: 5b2e2007760aeb5381487dbf
-                        amount: 1
-                        message: '{user} just cheered {amount} bits PogChamp'
-                  redemption:
-                    enabled: true
-                    message: '{user} just redeemed {item} PogChamp'
-                  raid:
-                    enabled: true
-                    messages:
-                      - _id: 5b2e2007760aeb0fed487dc0
-                        amount: 1
-                        message: '{user} just raided the channel with {amount} viewers PogChamp'
-                  enabled: false
-                  delay: 0
-                songrequest:
-                  voteskip:
-                    enabled: true
-                    votesRequired: 5
-                  enabled: true
-                  moderation: true
-                  minUserLevel: 100
-                  cost: 0
-                  subscriberDiscount: 50
-                  exemptUserLevel: 500
-                announcements:
-                  streamStart:
-                    enabled: true
-                    message: '${channel.display_name} is now live! Streaming {game}: {title}'
-                  enabled: true
       deprecated: false
+      security:
+        - JWTBearer: []
+        - OAuth2:
+            - 'bot:read'
     parameters:
       - schema:
           type: string
@@ -11853,6 +11657,7 @@ paths:
   '/bot/modules/{channel}/{moduleId}':
     put:
       tags:
+        - a pending
         - modules
       summary: '/:channel/:moduleId'
       description: Update module
@@ -12199,7 +12004,7 @@ paths:
         - single contest
       summary: '/:channel/:contestId'
       description: Update contest
-      operationId: 'Put/:channel/:contestId'
+      operationId: 'Put/contests/:channel/:contestId'
       parameters:
         - name: channel
           in: path
@@ -12217,7 +12022,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each command option will replace the old one in the same order. You can also create more options."
+        description: "Body is an object with one or more of the options below:\r\n\r\n- title\r\n- minBet\r\n- maxBet\r\n- botResponses\r\n- duration\r\n- options: [\r\n    {\"command\": \"option1\",\"title\": \"Option 1\"},{\"command\": \"option2\",\"title\": \"Option 2\"}\r\n  ]\r\n\r\nOBS: Each item in `options` array will replace the old one in the same order. You can also create more options."
         content:
           application/json:
             schema:
@@ -12363,7 +12168,7 @@ paths:
         - single contest
       summary: '/:channel/:contestId'
       description: Delete contest
-      operationId: 'Delete/:channel/:contestId'
+      operationId: 'Delete/contests/:channel/:contestId'
       parameters:
         - name: channel
           in: path
@@ -13176,7 +12981,7 @@ paths:
   '/giveaways/{channel}/{giveawayId}/joined':
     get:
       tags:
-        - a pending
+        - void
         - single giveaway
       summary: '/:channel/:giveawayId/joined'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway"
@@ -13441,7 +13246,7 @@ paths:
   '/giveaways/{channel}/{giveawayId}/complete':
     put:
       tags:
-        - a pending
+        - void
         - single giveaway
       summary: '/:channel/:giveawayId/complete'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete\r\n"
@@ -13502,7 +13307,7 @@ paths:
   '/giveaways/{channel}/{giveawayId}/reopen':
     put:
       tags:
-        - a pending
+        - void
         - single giveaway
       summary: '/:channel/:giveawayId/reopen'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway"
@@ -13826,10 +13631,11 @@ paths:
   '/giveaways/{channel}/history':
     get:
       tags:
+        - void
         - giveaways
       summary: '/:channel/history'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways"
-      operationId: 'Get/:channel/history'
+      operationId: 'Get/giveaways/:channel/history'
       parameters:
         - name: channel
           in: path
@@ -15772,7 +15578,7 @@ paths:
       tags:
         - overlays
       summary: '/:channel/reload'
-      description: Reloads overlays for channel
+      description: Reload overlays
       operationId: 'Put/overlays/:channel/reload'
       parameters:
         - name: channel
@@ -15812,9 +15618,20 @@ paths:
         - OAuth2:
             - 'overlays:read'
             - 'overlays:write'
+      requestBody:
+        description: No body is needed for this request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              Example 1:
+                value: {}
   '/overlays/{channel}/action/{action}':
     put:
       tags:
+        - void
         - overlays
       summary: '/:channel/action/:action'
       description: Overlay/Alerts control
@@ -15857,16 +15674,14 @@ paths:
                 type: string
                 example: Created
               example: Created
-      deprecated: true
   '/points/{channel}/{user}':
     get:
       tags:
-        - a pending
-        - points
         - single user
+        - points
       summary: '/:channel/:user'
       description: Get userpoints for specific username
-      operationId: '/:channel/:user'
+      operationId: 'Get/points/:channel/:user'
       parameters:
         - name: channel
           in: path
@@ -15885,9 +15700,48 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                  username:
+                    type: string
+                  points:
+                    type: integer
+                  pointsAlltime:
+                    type: integer
+                  watchtime:
+                    type: integer
+                  rank:
+                    type: integer
+                x-examples:
+                  Example 1:
+                    channel: 5f2de5dd9a474a2c2daaaaaa
+                    username: username1
+                    points: 49020
+                    pointsAlltime: 20
+                    watchtime: 14090
+                    rank: 1
+              examples:
+                Example 1:
+                  value:
+                    channel: 5f2de5dd9a474a2c2daaaaaa
+                    username: username1
+                    points: 49020
+                    pointsAlltime: 20
+                    watchtime: 14090
+                    rank: 1
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
     delete:
       tags:
         - a pending
@@ -15919,12 +15773,11 @@ paths:
   '/points/{channel}/{user}/rank':
     get:
       tags:
-        - a pending
-        - points
         - single user
+        - points        
       summary: '/:channel/:user/rank'
       description: Get current user rank by username
-      operationId: '/:channel/:user/rank'
+      operationId: 'Get/points/:channel/:user/rank'
       parameters:
         - name: channel
           in: path
@@ -15943,9 +15796,32 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  rank:
+                    type: integer
+                x-examples:
+                  Example 1:
+                    username: username
+                    rank: 12
+              examples:
+                Example 1:
+                  value:
+                    username: username
+                    rank: 12
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/points/{channel}/{user}/{amount}':
     put:
       tags:
@@ -16064,26 +15940,24 @@ paths:
   '/points/{channel}/alltime':
     get:
       tags:
-        - a pending
         - points
       summary: '/:channel/alltime'
       description: List alltime userpoints
-      operationId: '/:channel/alltime'
+      operationId: 'Get/points/:channel/alltime'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items per page
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+            default: 25
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -16100,32 +15974,74 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        points:
+                          type: integer
+                x-examples:
+                  Example 1:
+                    _total: 546836
+                    users:
+                      - username: coreano
+                        points: 2180020
+                      - username: shenis0p
+                        points: 1747070
+                      - username: sterbez
+                        points: 1668380
+              examples:
+                Example 1:
+                  value:
+                    _total: 546836
+                    users:
+                      - username: streamelements
+                        points: 218002
+                      - username: username1
+                        points: 174707
+                      - username: username2
+                        points: 166838
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/points/{channel}/top':
     get:
       tags:
-        - a pending
         - points
       summary: '/:channel/top'
       description: List top userpoints
-      operationId: 'Get/:channel/top1234'
+      operationId: 'Get/points/channel/:channel/top'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items per page
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+            default: 100
+            maximum: 1000
+            minimum: 1
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -16142,32 +16058,74 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        points:
+                          type: integer
+                x-examples:
+                  Example 1:
+                    _total: 9
+                    users:
+                      - username: c4ldas
+                        points: 49020
+                      - username: mrsim
+                        points: 30700
+                      - username: c4ldasbot
+                        points: 9000
+              examples:
+                Example 1:
+                  value:
+                    _total: 9
+                    users:
+                      - username: streamelements
+                        points: 49020
+                      - username: username1
+                        points: 30700
+                      - username: username2
+                        points: 9000
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/points/{channel}/watchtime':
     get:
       tags:
-        - a pending
         - points
       summary: '/:channel/watchtime'
       description: List users watchtime
-      operationId: '/:channel/watchtime'
+      operationId: 'Get/points/:channel/watchtime'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items per page
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+            default: 100
+            minimum: 1
+            maximum: 1000
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -16184,9 +16142,51 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        minutes:
+                          type: integer
+                x-examples:
+                  Example 1:
+                    _total: 546854
+                    users:
+                      - username: streamelements
+                        minutes: 728750
+                      - username: username1
+                        minutes: 668680
+                      - username: username2
+                        minutes: 593970
+              examples:
+                Example 1:
+                  value:
+                    _total: 546854
+                    users:
+                      - username: streamelements
+                        minutes: 728750
+                      - username: username1
+                        minutes: 668680
+                      - username: username2
+                        minutes: 593970
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/points/{channel}':
     put:
       tags:
@@ -18432,22 +18432,21 @@ paths:
             schema:
               type: object
               properties: {}
-        description: Body is not needed on request
+        description: Body is not needed on this request
       security:
         - JWTBearer: []
   /songrequest/playing:
     get:
-      description: TODO - Missing description
+      description: TODO - Description missing
       tags:
-        - a pending
-        - songrequests
+        - void
+        - songrequest
       summary: /playing
-      operationId: /playing
+      operationId: Get/songrequest/playing
       parameters:
         - name: provider
           in: query
           description: provider
-          required: true
           style: form
           explode: true
           schema:
@@ -18455,7 +18454,6 @@ paths:
         - name: room
           in: query
           description: room
-          required: true
           style: form
           explode: true
           schema:
@@ -18464,7 +18462,8 @@ paths:
         '200':
           description: ''
           headers: {}
-      deprecated: false
+      deprecated: true
+      x-internal: false
   '/sessions/{channel}/top':
     get:
       tags:
@@ -18561,31 +18560,30 @@ paths:
   /songrequest/youtube:
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: /youtube
-      description: Get song details
-      operationId: /youtube
+      description: "Get song details\r\n\r\n`search` and `videoId` are not required at the same time, but at least one of them need to be present on the query.\r\n\r\nIf both are used, the result will be based on `search` parameter."
+      operationId: Get/songrequest/youtube
       parameters:
         - name: videoId
           in: query
-          description: string - YouTube video ID
-          required: true
+          description: string - YouTube video ID or URL
           style: form
           explode: true
           schema:
             type: string
+            example: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         - name: search
           in: query
           description: string - phrase to search
-          required: true
           style: form
           explode: true
           schema:
             type: string
+            example: Never gonna give you up
       responses:
         '200':
-          description: ''
+          description: "There are two response formats, depending on which query you used.\r\n\r\nWhen using `videoId`, this is the response example:\r\n\r\n```json\r\n{\r\n  \"videoId\": \"dQw4w9WgXcQ\",\r\n  \"title\": \"Rick Astley - Never Gonna Give You Up (Official Music Video)\",\r\n  \"channel\": \"Rick Astley\",\r\n  \"duration\": 213,\r\n  \"tags\": [\r\n    \"rick astley\",\r\n    \"never gonna give you up\",\r\n    \"nggyu\",\r\n    \"never gonna give you up lyrics\",\r\n    \"[...]\"\r\n  ],\r\n  \"categoryId\": 10,\r\n  \"status\": {\r\n    \"uploadStatus\": \"processed\",\r\n    \"privacyStatus\": \"public\",\r\n    \"license\": \"youtube\",\r\n    \"embeddable\": true,\r\n    \"publicStatsViewable\": true,\r\n    \"madeForKids\": false\r\n  },\r\n  \"statistics\": {\r\n    \"viewCount\": 654321,\r\n    \"likeCount\": 123456,\r\n    \"dislikeCount\": 0\r\n  }\r\n}\r\n```\r\n\r\nWhen using `search`, this is the response example:\r\n\r\n```json\r\n[\r\n  {\r\n    \"videoId\": \"dQw4w9WgXcQ\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg\",\r\n    \"title\": \"Rick Astley - Never Gonna Give You Up (Official Music Video)\"\r\n  },\r\n  {\r\n    \"videoId\": \"3BFTio5296w\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/3BFTio5296w/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up (2022 Remaster)\"\r\n  },\r\n  {\r\n    \"videoId\": \"o-YBDTqX_ZU\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/o-YBDTqX_ZU/default.jpg\",\r\n    \"title\": \"Rick Astley - Never Gonna Give You Up (Remastered 4K 60fps,AI)\"\r\n  },\r\n  {\r\n    \"videoId\": \"SbYXkOAoZpI\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/SbYXkOAoZpI/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up (Lyrics) - Rick Astley\"\r\n  },\r\n  {\r\n    \"videoId\": \"XGxIE1hr0w4\",\r\n    \"thumbnail\": \"https://i.ytimg.com/vi/XGxIE1hr0w4/default.jpg\",\r\n    \"title\": \"Never Gonna Give You Up | Rick Astley Rocks New Year&#39;s Eve - BBC\"\r\n  }\r\n]\r\n```"
           headers:
             Date:
               content:
@@ -18637,15 +18635,44 @@ paths:
                 - videoId: p1tMZ50s2Oo
                   thumbnail: 'https://i.ytimg.com/vi/p1tMZ50s2Oo/default.jpg'
                   title: 'Rick Astley - Never Gonna Give You Up (Live @ V Festival 2016 + Interview, HD)'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+                    message: 'No videoes found with videoId: 4w9WgXcQaaa'
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
+                    message: 'No videoes found with videoId: 4w9WgXcQaaa'
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/songrequest/{channel}/settings':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/settings'
-      description: Get settings
-      operationId: 'Get/:channel/settings'
+      description: Get songrequest settings
+      operationId: 'Get/channelrequest/:channel/settings'
       parameters:
         - name: channel
           in: path
@@ -18672,7 +18699,7 @@ paths:
                     type: string
                   example: '600'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/MediaRequestData'
               example:
@@ -18711,14 +18738,16 @@ paths:
                 _id: 5b2e2007760aeb82e8487dc4
                 bannedUsers: []
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   '/songrequest/{channel}/settings/public':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/settings/public'
       description: Get public settings
-      operationId: '/:channel/settings/public'
+      operationId: 'Get/songrequest/:channel/settings/public'
       parameters:
         - name: channel
           in: path
@@ -18765,14 +18794,14 @@ paths:
                 youtube:
                   musicOnly: false
       deprecated: false
+      security: []
   '/songrequest/{channel}/queue':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/queue'
       description: Get songrequest queue
-      operationId: '/:channel/queue'
+      operationId: 'Get/songrequest/:channel/queue'
       parameters:
         - name: channel
           in: path
@@ -18784,63 +18813,150 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Sat, 08 Dec 2018 11:15:04 GMT'
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '332'
+          description: OK
+          headers: {}
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Song'
-                example:
-                  - duration: 213
-                    tags: []
-                    _id: 5c0ba7b3de9a4c7036a15040
-                    videoId: dQw4w9WgXcQ
-                    title: Rick Astley - Never Gonna Give You Up (Video)
-                    channel: RickAstleyVEVO
-                    statistics:
-                      viewCount: 504489596
-                      likeCount: 3380238
-                      dislikeCount: 154269
-                    source: site
+                  type: object
+                  properties:
+                    videoId:
+                      type: string
+                    title:
+                      type: string
+                    duration:
+                      type: integer
+                    channel:
+                      type: string
                     user:
-                      username: leeeeex
-                      providerId: '85827806'
-                    voteskips: []
-              example:
-                - duration: 213
-                  tags: []
-                  _id: 5c0ba7b3de9a4c7036a15040
-                  videoId: dQw4w9WgXcQ
-                  title: Rick Astley - Never Gonna Give You Up (Video)
-                  channel: RickAstleyVEVO
-                  statistics:
-                    viewCount: 504489596
-                    likeCount: 3380238
-                    dislikeCount: 154269
-                  source: site
-                  user:
-                    username: leeeeex
-                    providerId: '85827806'
-                  voteskips: []
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        providerId:
+                          type: string
+                    source:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}
+                    statistics:
+                      type: object
+                      properties:
+                        viewCount:
+                          type: integer
+                        likeCount:
+                          type: integer
+                        dislikeCount:
+                          type: integer
+                    _id:
+                      type: string
+                    voteskips:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}
+                x-examples:
+                  Example 1:
+                    - videoId: dQw4w9WgXcQ
+                      title: Rick Astley - Never Gonna Give You Up (Official Music Video)
+                      duration: 213
+                      channel: Rick Astley
+                      user:
+                        username: c4ldas
+                        providerId: '28057703'
+                      source: site
+                      tags: []
+                      statistics:
+                        viewCount: 1604008711
+                        likeCount: 18061877
+                        dislikeCount: 0
+                      _id: 676472fccbb481a8770f1c97
+                      voteskips: []
+                    - videoId: d2smz_1L2_0
+                      title: Lady Gaga - Paparazzi (Official Music Video)
+                      duration: 432
+                      channel: LadyGagaVEVO
+                      user:
+                        username: c4ldas
+                        providerId: '28057703'
+                      source: site
+                      tags: []
+                      statistics:
+                        viewCount: 328870190
+                        likeCount: 1994386
+                        dislikeCount: 0
+                      _id: 6764730ce62f91dbcc5990ef
+                      voteskips: []
+              examples:
+                Example 1:
+                  value:
+                    - videoId: dQw4w9WgXcQ
+                      title: Rick Astley - Never Gonna Give You Up (Official Music Video)
+                      duration: 213
+                      channel: Rick Astley
+                      user:
+                        username: usernam3
+                        providerId: '7654321'
+                      source: site
+                      tags: []
+                      statistics:
+                        viewCount: 1604008711
+                        likeCount: 18061877
+                        dislikeCount: 0
+                      _id: 676472fccbb481a8770f1c97
+                      voteskips: []
+                    - videoId: d2smz_1L2_0
+                      title: Lady Gaga - Paparazzi (Official Music Video)
+                      duration: 432
+                      channel: LadyGagaVEVO
+                      user:
+                        username: username1
+                        providerId: '1234567'
+                      source: site
+                      tags: []
+                      statistics:
+                        viewCount: 328870190
+                        likeCount: 1994386
+                        dislikeCount: 0
+                      _id: 6764730ce62f91dbcc5990ef
+                      voteskips: []
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 403
+                    error: Forbidden
+                    message: Not allowed to perform this operation
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
     post:
       tags:
         - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/queue'
       description: Get songrequest queue
       operationId: 'Post/:channel/queue'
@@ -18917,14 +19033,13 @@ paths:
                 error: Not Found
                 message: No videos found
       deprecated: false
-  '/songrequest/{channel}/queue/{song}':
+  '/songrequest/{channel}/queue/{songId}':
     delete:
       tags:
-        - a pending
-        - songrequests
-      summary: '/:channel/queue/:song'
+        - songrequest
+      summary: '/:channel/queue/:songId'
       description: Remove song from queue
-      operationId: '/:channel/queue/:song'
+      operationId: 'Delete/songrequest/:channel/queue/:songId'
       parameters:
         - name: channel
           in: path
@@ -18934,7 +19049,7 @@ paths:
           schema:
             type: string
             example: 5b2e2007760aeb7729487dab
-        - name: song
+        - name: songId
           in: path
           description: guid - Song id
           required: true
@@ -18964,29 +19079,42 @@ paths:
                 type: string
                 example: Created
               example: Created
-        '400':
-          description: Bad Request
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/400-badrequest'
-              example:
-                statusCode: 400
-                error: Bad Request
-                message: 'child "songId" fails because ["songId" with value "truncated" fails to match the required pattern: /^[0-9a-fA-F]{24}$/]'
-                details:
-                  - path:
-                      - songId
-                    message: '"songId" with value "truncated" fails to match the required pattern: /^[0-9a-fA-F]{24}$/'
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 500
+                    error: Internal Server Error
+                    message: An internal server error occurred
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 500
+                    error: Internal Server Error
+                    message: An internal server error occurred
       deprecated: false
+      security:
+        - JWTBearer: []
+      x-stoplight:
+        id: yag8adcw1zb09
   '/songrequest/{channel}/queue/public':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/queue/public'
       description: Get songrequest queue for public exposure (without video details)
-      operationId: '/:channel/queue/public'
+      operationId: 'Get/songrequest/:channel/queue/public'
       parameters:
         - name: channel
           in: path
@@ -19039,14 +19167,14 @@ paths:
                     username: leeeeex
                     providerId: '85827806'
       deprecated: false
+      security: []
   '/songrequest/{channel}/pending':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/pending'
       description: Get songs in moderation queue
-      operationId: '/:channel/pending'
+      operationId: 'Get/songrequest/:channel/pending'
       parameters:
         - name: channel
           in: path
@@ -19058,32 +19186,166 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    videoId:
+                      type: string
+                    title:
+                      type: string
+                    duration:
+                      type: integer
+                    channel:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        providerId:
+                          type: string
+                        subscriber:
+                          type: boolean
+                    source:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    statistics:
+                      type: object
+                      properties:
+                        viewCount:
+                          type: integer
+                        likeCount:
+                          type: integer
+                        dislikeCount:
+                          type: integer
+                    _id:
+                      type: string
+                    voteskips:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}
+                x-examples:
+                  Example 1:
+                    - videoId: x-y1mjUSD0s
+                      title: Pray - Pump it up - Full song
+                      duration: 228
+                      channel: R Produções
+                      user:
+                        username: c4ldasbot
+                        providerId: '629674320'
+                        subscriber: false
+                      source: bot
+                      tags:
+                        - pump
+                        - it
+                        - up
+                        - piu
+                        - ba
+                        - rae
+                        - boa
+                        - banya
+                      statistics:
+                        viewCount: 7515
+                        likeCount: 68
+                        dislikeCount: 0
+                      _id: 67648d8f5124f924232bf2b9
+                      voteskips: []
+                    - videoId: jJYHPQi12jU
+                      title: Perry - Storm
+                      duration: 209
+                      channel: Chousho
+                      user:
+                        username: c4ldasbot
+                        providerId: '629674320'
+                        subscriber: false
+                      source: bot
+                      tags:
+                        - perry
+                        - storm
+                        - korean
+                        - hiphop
+                      statistics:
+                        viewCount: 19806
+                        likeCount: 67
+                        dislikeCount: 0
+                      _id: 67648da8712b15e637ca71cd
+                      voteskips: []
+              examples:
+                Example 1:
+                  value:
+                    - videoId: jJYHPQi12jU
+                      title: Perry - Storm
+                      duration: 209
+                      channel: Chousho
+                      user:
+                        username: username1
+                        providerId: '7654321'
+                        subscriber: false
+                      source: bot
+                      tags:
+                        - perry
+                        - storm
+                      statistics:
+                        viewCount: 19806
+                        likeCount: 67
+                        dislikeCount: 0
+                      _id: 67648da8712b15e637ca71cd
+                      voteskips: []
+                    - videoId: dQw4w9WgXcQ
+                      title: Rick Astley - Never Gonna Give You Up (Official Music Video)
+                      duration: 213
+                      channel: Rick Astley
+                      user:
+                        username: username2
+                        providerId: '1234567'
+                        subscriber: false
+                      source: bot
+                      tags:
+                        - rick astley
+                        - never gonna give you up
+                        - nggyu
+                      statistics:
+                        viewCount: 1604050280
+                        likeCount: 18062060
+                        dislikeCount: 0
+                      _id: 67648e3ea62fa5ae48a79da5
+                      voteskips: []
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   '/songrequest/{channel}/playlist':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/playlist'
-      description: Get songs on playlist
-      operationId: '/:channel/playlist'
+      description: Get songs on backup playlist
+      operationId: 'Get/songrequest/:channel/playlist'
       parameters:
         - name: limit
           in: query
           description: integer - number of results per page
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+            minimum: 1
+            maximum: 100
+          required: true
         - name: page
           in: query
           description: string - page identifier as in nextPage
-          required: true
           style: form
           explode: true
           schema:
@@ -19113,7 +19375,7 @@ paths:
                     type: string
                   example: '3041'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/MediaRequestQueue'
               example:
@@ -19196,32 +19458,41 @@ paths:
                   - videoId: iS-PpppSj0E
                     title: 'SLANDER - So Long (feat. Juliana Chahayed) [Monstercat Release]'
                     channel: 'Monstercat: Instinct'
-        '400':
-          description: Bad Request
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/400-badrequest'
-              example:
-                statusCode: 400
-                error: Bad Request
-                message: 'child "limit" fails because ["limit" must be a number]. child "page" fails because ["page" is not allowed to be empty]'
-                details:
-                  - path:
-                      - limit
-                    message: '"limit" must be a number'
-                  - path:
-                      - page
-                    message: '"page" is not allowed to be empty'
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+                    message: The backup playlist is not set
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
+                    message: The backup playlist is not set
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   '/songrequest/{channel}/player':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/player'
       description: Get current player status
-      operationId: '/:channel/player'
+      operationId: 'Get/songrequest/:channel/player'
       parameters:
         - name: channel
           in: path
@@ -19248,20 +19519,23 @@ paths:
                     type: string
                   example: '18'
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Success53'
               example:
                 state: paused
+                volume: 50
       deprecated: false
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   '/songrequest/{channel}/player/{state}':
     post:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/player/:state'
       description: Change current state of media player
-      operationId: '/:channel/player/:state'
+      operationId: 'Post/songrequest/:channel/player/:state'
       parameters:
         - name: channel
           in: path
@@ -19273,39 +19547,19 @@ paths:
             example: 5b2e2007760aeb7729487dab
         - name: state
           in: path
-          description: 'string - one of play, pause'
+          description: string - one of `play` or `pause`
           required: true
           style: simple
           schema:
             type: string
       responses:
         '201':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Tue, 11 Dec 2018 08:31:47 GMT'
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '7'
-            Vary:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: X-HTTP-Method-Override
+          description: Created
           content:
-            text/plain; charset=utf-8:
+            text/plain:
               schema:
                 type: string
                 example: Created
-              example: Created
         '400':
           description: Bad Request
           content:
@@ -19321,29 +19575,41 @@ paths:
                       - state
                     message: '"state" must be one of [volume, play, pause]'
       deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              Example 1:
+                value: {}
+        description: Body is not needed for this request
+      security:
+        - JWTBearer: []
+        - ApiKeyBearer: []
   '/songrequest/{channel}/history':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/history'
       description: Get songrequest history
-      operationId: 'Get/:channel/history1'
+      operationId: 'Get/songrequest/:channel/history'
       parameters:
         - name: limit
           in: query
           description: integer - Number of items per page
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+            maximum: 100
+            minimum: 1
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -19360,17 +19626,972 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+                  total:
+                    type: integer
+                  history:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        song:
+                          type: object
+                          properties:
+                            videoId:
+                              type: string
+                            title:
+                              type: string
+                            duration:
+                              type: integer
+                            channel:
+                              type: string
+                            user:
+                              type: object
+                              properties:
+                                username:
+                                  type: string
+                                providerId:
+                                  type: string
+                            source:
+                              type: string
+                            voteskips:
+                              type: array
+                              items:
+                                type: object
+                                properties: {}
+                            tags:
+                              type: array
+                              items:
+                                type: object
+                                properties: {}
+                            statistics:
+                              type: object
+                              properties:
+                                viewCount:
+                                  type: integer
+                                likeCount:
+                                  type: integer
+                                dislikeCount:
+                                  type: integer
+                            _id:
+                              type: string
+                        createdAt:
+                          type: string
+                x-examples:
+                  Example 1:
+                    limit: 0
+                    offset: 0
+                    total: 56
+                    history:
+                      - _id: 674bd2c4a396e1717b5d11cb
+                        song:
+                          videoId: _HKH7Emy1SY
+                          title: Ciara - Like A Boy (Official Video)
+                          duration: 238
+                          channel: CiaraVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 326910685
+                            likeCount: 1727925
+                            dislikeCount: 0
+                          _id: 67312ea314e20b126fdfd7de
+                        createdAt: '2024-12-01T03:06:44.503Z'
+                      - _id: 673132d75f3efdfcf6a639ee
+                        song:
+                          videoId: _HKH7Emy1SY
+                          title: Ciara - Like A Boy (Official Video)
+                          duration: 238
+                          channel: CiaraVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 326910685
+                            likeCount: 1727925
+                            dislikeCount: 0
+                          _id: 67312ea314e20b126fdfd7de
+                        createdAt: '2024-11-10T22:25:27.861Z'
+                      - _id: 673131e887963f29f5233fad
+                        song:
+                          videoId: VCLxJd1d84s
+                          title: The Pussycat Dolls - Buttons (Official Music Video) ft. Snoop Dogg
+                          duration: 236
+                          channel: ThePussycatDollsVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 885933051
+                            likeCount: 3691677
+                            dislikeCount: 0
+                          _id: 67312e936898b1d208bb87fb
+                        createdAt: '2024-11-10T22:21:28.268Z'
+                      - _id: 673130fa5c4f610470c68f99
+                        song:
+                          videoId: 12CeaxLiMgE
+                          title: 'Dillon Francis, DJ Snake - Get Low (Official Music Video)'
+                          duration: 213
+                          channel: DillonFrancisVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 758864355
+                            likeCount: 5433811
+                            dislikeCount: 0
+                          _id: 67312e87d63f5cf0b5d87dcd
+                        createdAt: '2024-11-10T22:17:30.814Z'
+                      - _id: 67312fd35f3efdfcf6a512dc
+                        song:
+                          videoId: 3BBsF7VIQyo
+                          title: The Pussycat Dolls - Hush Hush; Hush Hush (Official Music Video)
+                          duration: 253
+                          channel: ThePussycatDollsVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 226874222
+                            likeCount: 1089572
+                            dislikeCount: 0
+                          _id: 67312c0e17c3e6a82a0831f2
+                        createdAt: '2024-11-10T22:12:35.610Z'
+                      - _id: 67312ed55f3efdfcf6a4a483
+                        song:
+                          videoId: iBHNgV6_znU
+                          title: 'Ciara - 1, 2 Step (Official Video) ft. Missy Elliott'
+                          duration: 205
+                          channel: CiaraVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 307062856
+                            likeCount: 1541905
+                            dislikeCount: 0
+                          _id: 67312c0cd63f5cf0b5d76795
+                        createdAt: '2024-11-10T22:08:21.066Z'
+                      - _id: 67312e0736bb1f2072ea4430
+                        song:
+                          videoId: IcrbM1l_BoI
+                          title: Avicii - Wake Me Up (Official Video)
+                          duration: 273
+                          channel: AviciiOfficialVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 2397869565
+                            likeCount: 12435894
+                            dislikeCount: 0
+                          _id: 67312bf787963f29f520f389
+                        createdAt: '2024-11-10T22:04:55.143Z'
+                      - _id: 67312cf587963f29f5214972
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 67312c1f6898b1d208baa424
+                        createdAt: '2024-11-10T22:00:21.192Z'
+                      - _id: 6731188317c3e6a82a0042f1
+                        song:
+                          videoId: iBHNgV6_znU
+                          title: 'Ciara - 1, 2 Step (Official Video) ft. Missy Elliott'
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 673117b5d63f5cf0b5cf15b3
+                        createdAt: '2024-11-10T20:33:07.575Z'
+                      - _id: 673117b517c3e6a82afff5d1
+                        song:
+                          videoId: 3BBsF7VIQyo
+                          title: The Pussycat Dolls - Hush Hush; Hush Hush (Official Music Video)
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 673116b714e20b126fd59aba
+                        createdAt: '2024-11-10T20:29:41.346Z'
+                      - _id: 673116b75c4f610470bb6909
+                        song:
+                          videoId: fzQk6A1n6BA
+                          title: Quando você passa "Turu Turu" | Sandy e Junior (cover)
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 673115f9703049114c32ff6b
+                        createdAt: '2024-11-10T20:25:27.268Z'
+                      - _id: 673115f914e20b126fd529bd
+                        song:
+                          videoId: mVEG793G3N4
+                          title: 'Lady Gaga - Eh, Eh (Nothing Else I Can Say) (Official Music Video)'
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 6731154714e20b126fd4ea74
+                        createdAt: '2024-11-10T20:22:17.655Z'
+                      - _id: 673115475c4f610470bab57f
+                        song:
+                          videoId: sRbB8QwfGHE
+                          title: Run to you Full Version
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 6731146417c3e6a82afe5caf
+                        createdAt: '2024-11-10T20:19:19.384Z'
+                      - _id: 67311463c158715df1486b09
+                        song:
+                          videoId: 12CeaxLiMgE
+                          title: 'Dillon Francis, DJ Snake - Get Low (Official Music Video)'
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 6731138a0c86a2aae2a31959
+                        createdAt: '2024-11-10T20:15:31.905Z'
+                      - _id: 6731138ac158715df1480580
+                        song:
+                          videoId: '-y5ah2gE1_4'
+                          title: Seo Taiji Boys  Unforgetable Memories
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 6731138814e20b126fd41d1e
+                        createdAt: '2024-11-10T20:11:54.633Z'
+                      - _id: 6731138836bb1f2072dee09e
+                        song:
+                          videoId: 4F6TKtJzvz8
+                          title: Starian - Banya
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 6731135c5c4f610470b99c12
+                        createdAt: '2024-11-10T20:11:52.823Z'
+                      - _id: 6731135c87963f29f5160ad3
+                        song:
+                          videoId: 7tQY5sRCF6Y
+                          title: First Love (Español)
+                          duration: 0
+                          channel: c4ldas
+                          voteskips: []
+                          tags: []
+                          _id: 673113365f3efdfcf698d95b
+                        createdAt: '2024-11-10T20:11:08.274Z'
+                      - _id: 673113359a21316b801fe2d9
+                        song:
+                          videoId: IcrbM1l_BoI
+                          title: Avicii - Wake Me Up (Official Video)
+                          duration: 273
+                          channel: AviciiOfficialVEVO
+                          user:
+                            username: c4ldasbot
+                            providerId: '629674320'
+                          voteskips: []
+                          tags: []
+                          _id: 6706b9871023c4a63c3edf6c
+                        createdAt: '2024-11-10T20:10:29.856Z'
+                      - _id: 6706b8001a3a7fbbad9cdb33
+                        song:
+                          videoId: Cwkej79U3ek
+                          title: Vanessa Carlton - A Thousand Miles
+                          duration: 267
+                          channel: VanessaCarltonVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 409657586
+                            likeCount: 4040897
+                            dislikeCount: 0
+                          _id: 66f003690632e75fb0c824c3
+                        createdAt: '2024-10-09T17:06:08.779Z'
+                      - _id: 66f0037cc4931e9d6b6de029
+                        song:
+                          videoId: hJ8at4JeFW0
+                          title: FEEL THIS AOM MOMENT
+                          duration: 145
+                          channel: AOM
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 66b390c5720f3333fdfb4cfd
+                        createdAt: '2024-09-22T11:46:04.167Z'
+                      - _id: 66f003523171d6eaa0fb6a05
+                        song:
+                          videoId: hJ8at4JeFW0
+                          title: FEEL THIS AOM MOMENT
+                          duration: 145
+                          channel: AOM
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 66b390c5720f3333fdfb4cfd
+                        createdAt: '2024-09-22T11:45:22.390Z'
+                      - _id: 65cd396fa92173117769b67e
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T22:06:39.250Z'
+                      - _id: 65cd131f77b3965038a71c7b
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T19:23:11.332Z'
+                      - _id: 65cd0fe59ac0a81eb15dca1e
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T19:09:25.910Z'
+                      - _id: 65cd0e412b55c008e99d5149
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T19:02:25.227Z'
+                      - _id: 65cd0d0c6f38080d2ae51590
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:57:16.555Z'
+                      - _id: 65cd0ac6421e0a214dfe08a9
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:47:34.387Z'
+                      - _id: 65cd09fa77b3965038a2695c
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          _id: 65cd091728382cb6c3c74777
+                        createdAt: '2024-02-14T18:44:10.442Z'
+                      - _id: 65cd09146f38080d2ae31e76
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:40:20.363Z'
+                      - _id: 65cd083d3daaead75b3ac290
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:36:45.966Z'
+                      - _id: 65cd06c02b55c008e999559c
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:30:24.919Z'
+                      - _id: 65cd05e6ca5759e84bd92515
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:26:46.115Z'
+                      - _id: 65cd0501ca5759e84bd8b78b
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:22:57.302Z'
+                      - _id: 65cd040eb496bb4ad494d9ee
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-14T18:18:54.332Z'
+                      - _id: 65cbe59ea921731177dc7afe
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-13T21:56:46.584Z'
+                      - _id: 65cbe2394ebb102a8378c9fe
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-13T21:42:17.899Z'
+                      - _id: 65cbe0c44ebb102a8377fc46
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-13T21:36:04.485Z'
+                      - _id: 65cbdfa53ba03790270f01a6
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-13T21:31:17.483Z'
+                      - _id: 65cbddcd3c43927715141790
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 1931581458
+                            likeCount: 10975642
+                            dislikeCount: 0
+                          _id: 65cbdbcfad5ab977f648bcf1
+                        createdAt: '2024-02-13T21:23:25.371Z'
+                      - _id: 65cbdbe23daaead75bc44a1e
+                        song:
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          duration: 259
+                          channel: League of Legends
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 29582388
+                            likeCount: 442179
+                            dislikeCount: 0
+                          _id: 65cbdb72ad5ab977f648a967
+                        createdAt: '2024-02-13T21:15:14.302Z'
+                      - _id: 65cbdb760cfad1dbb986891d
+                        song:
+                          videoId: YBHQbu5rbdQ
+                          title: Fifth Harmony - Worth It (Official Video) ft. Kid Ink
+                          duration: 225
+                          channel: FifthHarmonyVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 2244950552
+                            likeCount: 11778519
+                            dislikeCount: 0
+                          _id: 65cbdb343ba03790270ce4ce
+                        createdAt: '2024-02-13T21:13:26.602Z'
+                      - _id: 65cbdb504ebb102a8374b9a7
+                        song:
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          duration: 259
+                          channel: League of Legends
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 65cbd6bd4ebb102a83728afb
+                        createdAt: '2024-02-13T21:12:48.262Z'
+                      - _id: 65cbd87b2b55c008e922cf00
+                        song:
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          duration: 259
+                          channel: League of Legends
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 65cbd6bd4ebb102a83728afb
+                        createdAt: '2024-02-13T21:00:43.417Z'
+                      - _id: 65cbd4e5a921731177d4724e
+                        song:
+                          videoId: vjW8wmF5VWc
+                          title: Silentó - Watch Me (Whip/Nae Nae) (Official)
+                          duration: 203
+                          channel: SilentoVEVO
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          tags: []
+                          _id: 65cbd2ccad5ab977f64461d1
+                        createdAt: '2024-02-13T20:45:25.152Z'
+                      - _id: 650179335bb52477f4ec5d47
+                        song:
+                          duration: 214
+                          tags: []
+                          _id: 6501761e997cf7ba769fcc6e
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          statistics:
+                            viewCount: 241173924
+                            likeCount: 3232385
+                            dislikeCount: 0
+                          voteskips: []
+                          videoId: F5tSoaJ93ac
+                          title: 'Imagine Dragons & JID - Enemy (from the series Arcane: League of Legends) | Official Music Video'
+                          channel: League of Legends
+                          source: site
+                        createdAt: '2023-09-13T08:56:19.218Z'
+                      - _id: 6501785b57252e2549d59885
+                        song:
+                          duration: 179
+                          tags: []
+                          _id: 65017603eb7974a8b521a2a8
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          statistics:
+                            viewCount: 250901494
+                            likeCount: 3021760
+                            dislikeCount: 0
+                          voteskips: []
+                          videoId: r6zIGXun57U
+                          title: Legends Never Die (ft. Against The Current) | Worlds 2017 - League of Legends
+                          channel: League of Legends
+                          source: site
+                        createdAt: '2023-09-13T08:52:43.998Z'
+                      - _id: 650177a7ff9e5540ec5938ef
+                        song:
+                          duration: 259
+                          tags: []
+                          _id: 650175c037c99825c0ccfe68
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          statistics:
+                            viewCount: 29219821
+                            likeCount: 438892
+                            dislikeCount: 0
+                          voteskips: []
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          channel: League of Legends
+                          source: site
+                        createdAt: '2023-09-13T08:49:43.350Z'
+                      - _id: 6501749aeb797404e5219ebb
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 646996f6c8b857290d31633b
+                          voteskips: []
+                          videoId: _M0GeUCqUms
+                          title: 'warner case & Bhaskar - do my own thing [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-09-13T08:36:42.050Z'
+                      - _id: 6469965b7d48765ee7d7f801
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 64699642e3dbf9663ab117bc
+                          voteskips: []
+                          videoId: Xv9q1Hafg2o
+                          title: 'SABAI & RUNN - Landslide [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-05-21T03:56:11.602Z'
+                      - _id: 64699642552fef64d1cdd3f8
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 64699634d574e46d24c73cd5
+                          voteskips: []
+                          videoId: lItJzxqvxIM
+                          title: 'Britt Lari - Say My Name [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-05-21T03:55:46.779Z'
+                      - _id: 64699633e3dbf901a4b11766
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 646995afd574e444eac739c9
+                          voteskips: []
+                          videoId: EHcbY8OAr00
+                          title: 'LissA & Lane Boy - Fire In Your Eyes [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-05-21T03:55:31.904Z'
+                      - _id: 644554979f2598c4bfb8b56b
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 644553e039d86d6abed5b49a
+                          voteskips: []
+                          videoId: JkXa6CAEjM8
+                          title: 'Conro - Tell Me [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-04-23T15:53:59.754Z'
+                      - _id: 644553e0883f84ce4268144c
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 644552e8b4203f5c69b54dd8
+                          voteskips: []
+                          videoId: c-SHTd5xo40
+                          title: 'Blanke - Talk To You (feat. Sofia Quinn) [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-04-23T15:50:56.670Z'
+                      - _id: 644552e86f14d1919532408b
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 64455225ff69bd87af7dbbec
+                          voteskips: []
+                          videoId: SVOFbNRZ3qg
+                          title: 'BEAUZ, Miles Away, & RYYZN - Never Let You Down [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-04-23T15:46:48.526Z'
+                      - _id: 64455225ff69bd5c6c7dbbe8
+                        song:
+                          duration: 0
+                          tags: []
+                          _id: 64455190b4203f1476b54417
+                          voteskips: []
+                          videoId: FTJm9XtRJQI
+                          title: 'Lewis Thompson & Punctual - Fever [Monstercat Release]'
+                          channel: Monstercat Instinct
+                        createdAt: '2023-04-23T15:43:33.178Z'
+                      - _id: 644551909e56ce817a6d56f8
+                        song:
+                          duration: 259
+                          tags: []
+                          _id: 63bd96701a37031597e78d34
+                          user:
+                            username: c4ldas
+                            providerId: '28057703'
+                          voteskips: []
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          channel: League of Legends
+                        createdAt: '2023-04-23T15:41:04.150Z'
+              examples:
+                Example 1:
+                  value:
+                    limit: 0
+                    offset: 0
+                    total: 3
+                    history:
+                      - _id: 67648564e0264de640535e91
+                        song:
+                          videoId: dQw4w9WgXcQ
+                          title: Rick Astley - Never Gonna Give You Up (Official Music Video)
+                          duration: 213
+                          channel: Rick Astley
+                          user:
+                            username: username1
+                            providerId: '5643217'
+                          voteskips: []
+                          tags: []
+                          _id: 67648543e62f91dbcc612fc8
+                        createdAt: '2024-12-19T20:43:16.472Z'
+                      - _id: 6501785b57252e2549d59885
+                        song:
+                          duration: 179
+                          tags: []
+                          _id: 65017603eb7974a8b521a2a8
+                          user:
+                            username: otherusername
+                            providerId: '7654321'
+                          statistics:
+                            viewCount: 250901494
+                            likeCount: 3021760
+                            dislikeCount: 0
+                          voteskips: []
+                          videoId: r6zIGXun57U
+                          title: Legends Never Die (ft. Against The Current) | Worlds 2017 - League of Legends
+                          channel: League of Legends
+                          source: site
+                        createdAt: '2023-09-13T08:52:43.998Z'
+                      - _id: 65cbdbe23daaead75bc44a1e
+                        song:
+                          videoId: 0AvWV6Mk374
+                          title: The Curse of the Sad Mummy | Amumu Music Video - League of Legends
+                          duration: 259
+                          channel: League of Legends
+                          user:
+                            username: exampleusername
+                            providerId: '1234567'
+                          source: site
+                          voteskips: []
+                          tags: []
+                          statistics:
+                            viewCount: 29582388
+                            likeCount: 442179
+                            dislikeCount: 0
+                          _id: 65cbdb72ad5ab977f648a967
+                        createdAt: '2024-02-13T21:15:14.302Z'
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - JWTBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/songrequest/{channel}/playing':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/playing'
-      description: Get currently playing song
-      operationId: '/:channel/playing'
+      description: 'Get currently playing song. If no song is playing, gets the one ready to be played'
+      operationId: 'Get/songrequest/:channel/playing'
       parameters:
         - name: channel
           in: path
@@ -19382,49 +20603,78 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers:
-            Date:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: 'Sat, 08 Dec 2018 11:21:33 GMT'
-            Content-Length:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-                  example: '330'
+          description: OK
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/Song'
-              example:
-                user:
-                  username: leeeeex
-                  providerId: '85827806'
-                statistics:
-                  viewCount: 504489596
-                  likeCount: 3380238
-                  dislikeCount: 154269
-                duration: 213
-                tags: []
-                _id: 5c0ba73fde9a4c1385a1503b
-                voteskips: []
-                videoId: dQw4w9WgXcQ
-                title: Rick Astley - Never Gonna Give You Up (Video)
-                channel: RickAstleyVEVO
-                source: site
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      providerId:
+                        type: string
+                  videoId:
+                    type: string
+                  title:
+                    type: string
+                  duration:
+                    type: integer
+                  channel:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                      properties: {}
+                  _id:
+                    type: string
+                  voteskips:
+                    type: array
+                    items:
+                      type: object
+                      properties: {}
+                x-examples:
+                  Example 1:
+                    user:
+                      username: username
+                      providerId: '1234567'
+                    videoId: iBHNgV6_znU
+                    title: 'Ciara - 1, 2 Step (Official Video) ft. Missy Elliott'
+                    duration: 205
+                    channel: CiaraVEVO
+                    tags: []
+                    _id: 674bd372e9c0d483dafb1d9e
+                    voteskips: []
+              examples:
+                Example 1:
+                  value:
+                    user:
+                      username: username
+                      providerId: '1234567'
+                    videoId: iBHNgV6_znU
+                    title: 'Ciara - 1, 2 Step (Official Video) ft. Missy Elliott'
+                    duration: 205
+                    channel: CiaraVEVO
+                    tags: []
+                    _id: 674bd372e9c0d483dafb1d9e
+                    voteskips: []
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/songrequest/{channel}/next':
     get:
       tags:
-        - a pending
-        - songrequests
+        - songrequest
       summary: '/:channel/next'
       description: Get details of next song in queue
-      operationId: '/:channel/next'
+      operationId: 'Get/songrequest/:channel/next'
       parameters:
         - name: channel
           in: path
@@ -19472,6 +20722,12 @@ paths:
                   channel: RickAstleyVEVO
                   source: site
       deprecated: false
+      security:
+        - {}
+        - JWTBearer: []
+        - ApiKeyBearer: []
+        - OAuth2:
+            - 'channel:read'
   '/stats/{channel}':
     get:
       tags:
@@ -20637,12 +21893,11 @@ paths:
         - redemptions
       summary: '/:channel/redemptions'
       description: List redemptions
-      operationId: '/:channel/redemptions'
+      operationId: 'Get/store/:channel/redemptions'
       parameters:
         - name: offset
           in: query
           description: integer - items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -20652,7 +21907,6 @@ paths:
         - name: limit
           in: query
           description: integer - limit items
-          required: true
           style: form
           explode: true
           schema:
@@ -20661,12 +21915,12 @@ paths:
             example: 25
         - name: pending
           in: query
-          description: boolean
-          required: true
+          description: boolean - Pending items
           style: form
           explode: true
           schema:
-            type: string
+            type: boolean
+            default: false
         - name: channel
           in: path
           description: guid - Channel id
@@ -20677,21 +21931,162 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  docs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        channel:
+                          type: string
+                        redeemerType:
+                          type: string
+                        redeemer:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            avatar:
+                              type: string
+                            username:
+                              type: string
+                            inactive:
+                              type: boolean
+                            isPartner:
+                              type: boolean
+                        item:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            userInput:
+                              type: array
+                              items:
+                                type: object
+                                properties: {}
+                            name:
+                              type: string
+                        completed:
+                          type: boolean
+                        source:
+                          type: string
+                        input:
+                          type: array
+                          items:
+                            type: object
+                            properties: {}
+                        message:
+                          type: string
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                x-examples:
+                  Example 1:
+                    _total: 2649
+                    docs:
+                      - _id: 6743dc12e38eb16c7c28e579
+                        channel: 5f2de5dd9a474a2c2aaaaaaa
+                        redeemerType: Channel
+                        redeemer:
+                          _id: 5f2de5dd9a474a2c2d000000
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username1
+                          inactive: false
+                          isPartner: true
+                        item:
+                          _id: 5feaf146d07f8725e3f10c0d
+                          userInput: []
+                          name: Message
+                        completed: false
+                        source: website
+                        input: []
+                        message: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.'
+                        createdAt: '2024-11-25T02:08:18.259Z'
+                        updatedAt: '2024-11-25T02:08:18.259Z'
+                      - _id: 6737d07a18403d790bb9884f
+                        channel: 5f2de5dd9a474a2c2aaaaaaa
+                        redeemerType: Channel
+                        redeemer:
+                          _id: 5f9f41667bfa5e81eeaaaaaa
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username2
+                          inactive: false
+                          isPartner: true
+                        item:
+                          _id: 64fe4286be5cb0835e9a2eb1
+                          userInput: []
+                          name: Test Item
+                        completed: false
+                        source: website
+                        input: []
+                        createdAt: '2024-11-15T22:51:38.267Z'
+                        updatedAt: '2024-11-15T22:51:38.267Z'
+              examples:
+                Example 1:
+                  value:
+                    _total: 2649
+                    docs:
+                      - _id: 6743dc12e38eb16c7c28e579
+                        channel: 5f2de5dd9a474a2c2aaaaaaa
+                        redeemerType: Channel
+                        redeemer:
+                          _id: 5f2de5dd9a474a2c2d000000
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username1
+                          inactive: false
+                          isPartner: true
+                        item:
+                          _id: 5feaf146d07f8725e3f10c0d
+                          userInput: []
+                          name: Message
+                        completed: false
+                        source: website
+                        input: []
+                        message: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.'
+                        createdAt: '2024-11-25T02:08:18.259Z'
+                        updatedAt: '2024-11-25T02:08:18.259Z'
+                      - _id: 6737d07a18403d790bb9884f
+                        channel: 5f2de5dd9a474a2c2aaaaaaa
+                        redeemerType: Channel
+                        redeemer:
+                          _id: 5f9f41667bfa5e81eeaaaaaa
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username2
+                          inactive: false
+                          isPartner: true
+                        item:
+                          _id: 64fe4286be5cb0835e9a2eb1
+                          userInput: []
+                          name: Test Item
+                        completed: false
+                        source: website
+                        input: []
+                        createdAt: '2024-11-15T22:51:38.267Z'
+                        updatedAt: '2024-11-15T22:51:38.267Z'
       deprecated: false
+      security:
+        - JWTBearer: []
   '/store/{channel}/redemptions/me':
     get:
       tags:
         - redemptions
       summary: '/:channel/redemptions/me'
       description: Get own redemptions
-      operationId: '/:channel/redemptions/me'
+      operationId: 'Get/store/:channel/redemptions/me'
       parameters:
         - name: limit
           in: query
-          description: integer - Number of items per page
-          required: true
+          description: integer - Number of items per page. Omit it to show all items
           style: form
           explode: true
           schema:
@@ -20701,7 +22096,6 @@ paths:
         - name: offset
           in: query
           description: integer - Number of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
@@ -20718,85 +22112,242 @@ paths:
             example: 5b2e2007760aeb7729487dab
       responses:
         '200':
-          description: ''
+          description: OK
           headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  docs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        channel:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            avatar:
+                              type: string
+                            username:
+                              type: string
+                            displayName:
+                              type: string
+                            inactive:
+                              type: boolean
+                            isPartner:
+                              type: boolean
+                        redeemerType:
+                          type: string
+                        redeemer:
+                          type: string
+                        item:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            name:
+                              type: string
+                            cost:
+                              type: integer
+                            createdAt:
+                              type: string
+                        completed:
+                          type: boolean
+                        source:
+                          type: string
+                        input:
+                          type: array
+                          items:
+                            type: object
+                            properties: {}
+                        message:
+                          type: string
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                x-examples:
+                  Example 1:
+                    total: 2921
+                    docs:
+                      - _id: 675a4faec9d08222913f4e67
+                        channel:
+                          _id: 5e766c7ab8229906739ea391
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/044e146b-09ff-449d-b2a1-95a2358ac3a8-profile_image-300x300.png'
+                          username: jukes
+                          displayName: jukes
+                          inactive: false
+                          isPartner: true
+                        redeemerType: Channel
+                        redeemer: 5f2de5dd9a474a2c2dc4d0ab
+                        item:
+                          _id: 664d75483d4e921ba1ca971d
+                          name: JUKES - BOTA TUDO
+                          cost: 300
+                          createdAt: '2024-05-22T04:32:08.484Z'
+                        completed: true
+                        source: bot
+                        input: []
+                        message: ''
+                        createdAt: '2024-12-12T02:51:26.427Z'
+                        updatedAt: '2024-12-12T02:51:26.427Z'
+                      - _id: 67574b500a95aa7751740797
+                        channel:
+                          _id: 5f2de5dd9a474a2c2dc4d0ab
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/451dd285-491d-49e0-b1e0-20147f3ab56b-profile_image-300x300.png'
+                          username: c4ldas
+                          displayName: c4ldas
+                          inactive: false
+                          isPartner: true
+                        redeemerType: Channel
+                        redeemer: 5f2de5dd9a474a2c2dc4d0ab
+                        item:
+                          _id: 64fe4286be5cb0835e9a2eb1
+                          name: Test Item
+                          cost: 0
+                          createdAt: '2023-09-10T22:26:14.975Z'
+                        completed: false
+                        source: website
+                        input: []
+                        createdAt: '2024-12-09T19:56:00.789Z'
+                        updatedAt: '2024-12-09T19:56:00.789Z'
+              examples:
+                Example 1:
+                  value:
+                    total: 2921
+                    docs:
+                      - _id: 67574b500a95aa7751740797
+                        channel:
+                          _id: 5f2de5dd9a474a2c21234567
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username1
+                          displayName: userName1
+                          inactive: false
+                          isPartner: true
+                        redeemerType: Channel
+                        redeemer: 5f2de5dd9a474a2c20000000
+                        item:
+                          _id: 64fe4286be5cb0835e9a2eb1
+                          name: Test Item
+                          cost: 0
+                          createdAt: '2023-09-10T22:26:14.975Z'
+                        completed: false
+                        source: website
+                        input: []
+                        createdAt: '2024-12-09T19:56:00.789Z'
+                        updatedAt: '2024-12-09T19:56:00.789Z'
+                      - _id: 67574aea6653cd743b70d36d
+                        channel:
+                          _id: 5f2de5dd9a474a2c23456789
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          username: username1
+                          displayName: userName1
+                          inactive: false
+                          isPartner: true
+                        redeemerType: Channel
+                        redeemer: 5f2de5dd9a474a2c20000000
+                        item:
+                          _id: 5feaf146d07f8725e3f10c0d
+                          name: Mensagem
+                          cost: 0
+                          createdAt: '2020-12-29T09:05:10.916Z'
+                        completed: false
+                        source: website
+                        input: []
+                        message: This is a message
+                        createdAt: '2024-12-09T19:54:18.121Z'
+                        updatedAt: '2024-12-09T19:54:18.121Z'
       deprecated: false
+      security:
+        - JWTBearer: []
   '/store/{channel}/redemptions/search':
     get:
       tags:
         - redemptions
       summary: '/:channel/redemptions/search'
       description: Search for redemptions
-      operationId: '/:channel/redemptions/search'
+      operationId: 'Get/store/:channel/redemptions/search'
       parameters:
         - name: offset
           in: query
           description: integer - Amount of items to be skipped
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 0
+          required: true
         - name: limit
           in: query
           description: integer - Max amount to show
-          required: true
           style: form
           explode: true
           schema:
             type: integer
             format: int32
             example: 25
+          required: true
         - name: search
           in: query
-          description: Search
-          required: true
+          description: Search term (no spaces allowed)
           style: form
           explode: true
           schema:
             type: string
         - name: searchBy
           in: query
-          description: 'One of `item.name`, `redeemer.username`, `input`'
-          required: true
+          description: 'string - Item to be searched. One of `item.name`, `redeemer.username`, `input`'
           style: form
           explode: true
           schema:
             type: string
+            enum:
+              - item.name
+              - redeemer.username
+              - input
+            default: redeemer.username
         - name: from
           in: query
-          description: From
-          required: true
+          description: date or timestamp - Initial date
           style: form
           explode: true
           schema:
             type: string
+            format: date-time
+            example: '2024-02-01T12:00:00Z'
         - name: to
           in: query
-          description: To
-          required: true
+          description: date or timestamp- End date
           style: form
           explode: true
           schema:
             type: string
+            format: date-time
+            example: '2024-03-01T12:00:00Z'
         - name: pending
           in: query
-          description: Pending
-          required: true
+          description: boolean - filter based on pending items
           style: form
           explode: true
           schema:
-            type: string
+            type: boolean
+            default: false
         - name: sort
           in: query
-          description: sort
-          required: true
+          description: 'object - Sort items by key/value. Possible keys: `item.name`, `redeemer.username`, `input`, `updatedAt`. Possible values: `-1` (descending), `1` (ascending)'
           style: form
           explode: true
           schema:
-            type: string
+            example: '{ "updatedAt": -1 }'
+          required: true
         - name: channel
           in: path
           description: guid - Channel id
@@ -20806,12 +22357,191 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _total:
+                    type: integer
+                  docs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        redeemer:
+                          type: object
+                          properties:
+                            username:
+                              type: string
+                            avatar:
+                              type: string
+                            inactive:
+                              type: boolean
+                        item:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            userInput:
+                              type: array
+                              items:
+                                type: object
+                                properties: {}
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        _id:
+                          type: string
+                        channel:
+                          type: string
+                        completed:
+                          type: boolean
+                        rejected:
+                          type: boolean
+                        redeemerType:
+                          type: string
+                        input:
+                          type: array
+                          items:
+                            type: object
+                            properties: {}
+                x-examples:
+                  Example 1:
+                    _total: 726
+                    docs:
+                      - redeemer:
+                          username: username1
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          inactive: false
+                        item:
+                          name: Message
+                          userInput: []
+                        createdAt: '2024-12-09T19:54:18.121Z'
+                        updatedAt: '2024-12-19T23:58:54.758Z'
+                        _id: 67574aea6653cd743b70d36d
+                        channel: 5f2de5dd9a474a2c20000000
+                        completed: true
+                        rejected: false
+                        redeemerType: Channel
+                        input: []
+                      - redeemer:
+                          username: usernam2
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          inactive: false
+                        item:
+                          name: Test Item
+                          userInput: []
+                        createdAt: '2024-12-09T03:31:22.701Z'
+                        updatedAt: '2024-12-19T23:58:54.003Z'
+                        _id: 6756648a97e5b1adc27f53a3
+                        channel: 5f2de5dd9a474a2c20000000
+                        completed: true
+                        rejected: false
+                        redeemerType: Channel
+                        input: []
+                      - redeemer:
+                          username: username1
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          inactive: false
+                        item:
+                          name: Mensagem
+                          userInput: []
+                        createdAt: '2024-12-09T03:31:40.309Z'
+                        updatedAt: '2024-12-19T23:58:52.972Z'
+                        _id: 6756649c667d79ab68b78e6a
+                        channel: 5f2de5dd9a474a2c20000000
+                        completed: true
+                        rejected: false
+                        redeemerType: Channel
+                        input: []
+              examples:
+                Example 1:
+                  value:
+                    _total: 726
+                    docs:
+                      - redeemer:
+                          username: username1
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          inactive: false
+                        item:
+                          name: Message
+                          userInput: []
+                        createdAt: '2024-12-09T19:54:18.121Z'
+                        updatedAt: '2024-12-19T23:58:54.758Z'
+                        _id: 67574aea6653cd743b70d36d
+                        channel: 5f2de5dd9a474a2c20000000
+                        completed: true
+                        rejected: false
+                        redeemerType: Channel
+                        input: []
+                      - redeemer:
+                          username: usernam2
+                          avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                          inactive: false
+                        item:
+                          name: Test Item
+                          userInput: []
+                        createdAt: '2024-12-09T03:31:22.701Z'
+                        updatedAt: '2024-12-19T23:58:54.003Z'
+                        _id: 6756648a97e5b1adc27f53a3
+                        channel: 5f2de5dd9a474a2c20000000
+                        completed: true
+                        rejected: false
+                        redeemerType: Channel
+                        input: []
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: array
+                          items:
+                            type: string
+                        message:
+                          type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 400
+                    error: Bad Request
+                    message: 'child "sort" fails because ["sort" must be an object]'
+                    details:
+                      - path:
+                          - sort
+                        message: '"sort" must be an object'
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 400
+                    error: Bad Request
+                    message: 'child "sort" fails because ["sort" must be an object]'
+                    details:
+                      - path:
+                          - sort
+                        message: '"sort" must be an object'
       deprecated: false
+      security:
+        - JWTBearer: []
   '/store/{channel}/redemptions/{redemptionId}':
     put:
       tags:
+        - a pending
         - redemptions
       summary: '/:channel/redemptions/:redemptionId'
       description: Update redemption
@@ -20848,6 +22578,7 @@ paths:
       deprecated: false
     delete:
       tags:
+        - a pending
         - redemptions
       summary: '/:channel/redemptions/:redemptionId'
       description: Delete redemption
@@ -20876,18 +22607,18 @@ paths:
     get:
       tags:
         - redemptions
-      summary: '/:channel/redemptions/:redemptionId1'
+      summary: '/:channel/redemptions/:redemptionId'
       description: Get redemption details
-      operationId: '/:channel/redemptions/:redemptionId1'
+      operationId: 'Get/store/:channel/redemptions/:redemptionId'
       parameters:
         - name: channel
           in: path
-          description: guid - Channel name
+          description: guid - Channel id
           required: true
           style: simple
           schema:
             type: string
-            example: leeeeex
+            example: 5b2e2007760aeb7729487dab
         - name: redemptionId
           in: path
           description: guid - Redemption id
@@ -20897,9 +22628,124 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
-          headers: {}
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  channel:
+                    type: string
+                  redeemerType:
+                    type: string
+                  redeemer:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      avatar:
+                        type: string
+                      username:
+                        type: string
+                      inactive:
+                        type: boolean
+                      isPartner:
+                        type: boolean
+                  item:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      userInput:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                      name:
+                        type: string
+                  completed:
+                    type: boolean
+                  source:
+                    type: string
+                  input:
+                    type: array
+                    items:
+                      type: object
+                      properties: {}
+                  message:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                x-examples:
+                  Example 1:
+                    _id: 6743dc12e38eb16c7c28e579
+                    channel: 5f2de5dd9a474a2c2aaaaaaa
+                    redeemerType: Channel
+                    redeemer:
+                      _id: 5f2de5dd9a474a2c20000000
+                      avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                      username: username1
+                      inactive: false
+                      isPartner: true
+                    item:
+                      _id: 5feaf146d07f8725e3f10c0d
+                      userInput: []
+                      name: Message
+                    completed: false
+                    source: website
+                    input: []
+                    message: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.'
+                    createdAt: '2024-11-25T02:08:18.259Z'
+                    updatedAt: '2024-11-25T02:08:18.259Z'
+              examples:
+                Example 1:
+                  value:
+                    _id: 6743dc12e38eb16c7c28e579
+                    channel: 5f2de5dd9a474a2c2aaaaaaa
+                    redeemerType: Channel
+                    redeemer:
+                      _id: 5f2de5dd9a474a2c20000000
+                      avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile_image-300x300.png'
+                      username: username1
+                      inactive: false
+                      isPartner: true
+                    item:
+                      _id: 5feaf146d07f8725e3f10c0d
+                      userInput: []
+                      name: Message
+                    completed: false
+                    source: website
+                    input: []
+                    message: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.'
+                    createdAt: '2024-11-25T02:08:18.259Z'
+                    updatedAt: '2024-11-25T02:08:18.259Z'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    statusCode: 404
+                    error: Not Found
+              examples:
+                Example 1:
+                  value:
+                    statusCode: 404
+                    error: Not Found
       deprecated: false
+      security:
+        - JWTBearer: []
   '/store/{channel}/items':
     get:
       tags:
@@ -23086,7 +24932,7 @@ paths:
         - integrations
       summary: '/:channel/tiltify'
       description: Get information on Tiltify integration
-      operationId: 'Get/:channel/tiltify'
+      operationId: 'Get/integrations/:channel/tiltify'
       responses:
         '200':
           description: ''
@@ -23235,13 +25081,23 @@ paths:
                 Example:
                   value:
                     success: true
-      operationId: 'Post/:channel/tiltify/disconnect'
+      operationId: 'Post/integrations/:channel/tiltify/disconnect'
       description: Remove Tiltify integration
       security:
         - JWTBearer: []
         - ApiKeyBearer: []
       x-stoplight:
         id: as83z36jpfgsp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              Example 1:
+                value: {}
+        description: No body is needed for this request
   '/integrations/{channel}/donordrive/disconnect':
     parameters:
       - name: channel
@@ -23273,20 +25129,30 @@ paths:
                 Example:
                   value:
                     success: true
-      operationId: 'Post/:channel/donordrive/disconnect'
+      operationId: 'Post/integrations/:channel/donordrive/disconnect'
       description: Remove DonorDrive integration
       security:
         - JWTBearer: []
         - ApiKeyBearer: []
       x-stoplight:
         id: e6zkfv587vyt7
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              Example 1:
+                value: {}
+        description: No body is needed for this request
   '/integrations/{channel}/donordrive/settings':
     get:
       tags:
         - integrations
       summary: '/:channel/donordrive/settings'
-      description: Get infoormation on DonorDrive integration
-      operationId: 'Post/:channel/donordrive/settings'
+      description: Get information on DonorDrive integration
+      operationId: 'Post/integrations/:channel/donordrive/settings'
       responses:
         '200':
           description: ''
@@ -23391,7 +25257,7 @@ paths:
                     statusCode: 400
                     error: Bad Request
                     message: Integration is already connected
-      operationId: 'Post/:channel/donordrive/connect'
+      operationId: 'Post/integrations/:channel/donordrive/connect'
       requestBody:
         content:
           application/json:
@@ -24215,46 +26081,13 @@ components:
       description: ''
     BotModules:
       title: BotModules
-      required:
-        - roulette
-        - raffle
-        - pyramid
-        - bingo
-        - slotmachine
-        - duel
-        - eightball
-        - emotecombo
-        - twitter
-        - chatalerts
-        - songrequest
-        - announcements
       type: object
-      properties:
-        roulette:
-          $ref: '#/components/schemas/Roulette'
-        raffle:
-          $ref: '#/components/schemas/Raffle'
-        pyramid:
-          $ref: '#/components/schemas/Pyramid'
-        bingo:
-          $ref: '#/components/schemas/Bingo'
-        slotmachine:
-          $ref: '#/components/schemas/Slotmachine'
-        duel:
-          $ref: '#/components/schemas/Duel'
-        eightball:
-          $ref: '#/components/schemas/Eightball'
-        emotecombo:
-          $ref: '#/components/schemas/Emotecombo'
-        twitter:
-          $ref: '#/components/schemas/Twitter'
-        chatalerts:
-          $ref: '#/components/schemas/Chatalerts'
-        songrequest:
-          $ref: '#/components/schemas/Songrequest'
-        announcements:
-          $ref: '#/components/schemas/Announcements'
       example:
+        ai:
+          enabled: false
+          model: default
+          persona: default
+          temperature: 0.7
         roulette:
           cooldown:
             user: 60
@@ -24488,6 +26321,68 @@ components:
             enabled: true
             message: '${channel.display_name} is now live! Streaming {game}: {title}'
           enabled: true
+        votekick:
+          chatKeywords:
+            yay: VoteYea
+            nay: VoteNay
+          enabled: false
+          kickDuration: 10
+          minVotes: 1
+          nativePoll: true
+          voteDuration: 30
+        audienceQueue:
+          enabled: true
+          startMessage: 'A {title} queue has been opened. Type \"!queue join\" to enter the queue'
+      x-examples: {}
+      required:
+        - ai
+        - roulette
+        - raffle
+        - pyramid
+        - bingo
+        - slotmachine
+        - duel
+        - eightball
+        - emotecombo
+        - twitter
+        - chatalerts
+        - songrequest
+        - announcements
+        - votekick
+        - audienceQueue
+      properties:
+        ai:
+          $ref: '#/components/schemas/Ai'
+        roulette:
+          $ref: '#/components/schemas/Roulette'
+        raffle:
+          $ref: '#/components/schemas/Raffle'
+        pyramid:
+          $ref: '#/components/schemas/Pyramid'
+        bingo:
+          $ref: '#/components/schemas/Bingo'
+        slotmachine:
+          $ref: '#/components/schemas/Slotmachine'
+        duel:
+          $ref: '#/components/schemas/Duel'
+        eightball:
+          $ref: '#/components/schemas/Eightball'
+        emotecombo:
+          $ref: '#/components/schemas/Emotecombo'
+        twitter:
+          $ref: '#/components/schemas/Twitter'
+        chatalerts:
+          $ref: '#/components/schemas/Chatalerts'
+        songrequest:
+          $ref: '#/components/schemas/Songrequest'
+        announcements:
+          $ref: '#/components/schemas/Announcements'
+        fourthwall:
+          $ref: '#/components/schemas/Fourthwall'
+        votekick:
+          $ref: '#/components/schemas/VoteKick'
+        audienceQueue:
+          $ref: '#/components/schemas/AudienceQueue'
     Roulette:
       title: Roulette
       required:
@@ -24704,6 +26599,97 @@ components:
       example:
         enabled: false
         maxAmount: 4000
+    Ai:
+      title: Ai
+      required:
+        - enabled
+        - model
+        - persona
+        - temperature
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        model:
+          type: string
+        persona:
+          type: string
+        temperature:
+          type: number
+      example:
+        enabled: false
+        model: default
+        persona: default
+        temperature: 0.7
+    AudienceQueue:
+      title: AudienceQueue
+      x-stoplight:
+        id: lje4zja2enavn
+      type: object
+      example:
+        enabled: false
+        model: default
+        persona: default
+        temperature: 0.7
+      required:
+        - enabled
+      properties:
+        enabled:
+          type: boolean
+        startMessage:
+          type: string
+          x-stoplight:
+            id: bb76x76qx5lp4
+    VoteKick:
+      type: object
+      x-examples:
+        Example 1:
+          chatKeywords:
+            yay: VoteYea
+            nay: VoteNay
+          enabled: false
+          kickDuration: 10
+          minVotes: 1
+          nativePoll: true
+          voteDuration: 30
+      properties:
+        chatKeywords:
+          type: object
+          properties:
+            string1:
+              type: string
+              x-stoplight:
+                id: ulod6axmzxsf2
+            string2:
+              type: string
+              x-stoplight:
+                id: af8ak1zqxn3s9
+        enabled:
+          type: boolean
+        kickDuration:
+          type: integer
+        minVotes:
+          type: integer
+        nativePoll:
+          type: boolean
+        voteDuration:
+          type: integer
+    Fourthwall:
+      type: object
+      x-stoplight:
+        id: 725q83ff74a4t
+      x-examples:
+        Example 1:
+          enabled: false
+          joinKeyword: join
+      properties:
+        enabled:
+          type: boolean
+        joinKeyword:
+          type: string
+          x-stoplight:
+            id: 7pbnhjv85p2si
+      title: ''
     Slotmachine:
       title: Slotmachine
       required:
@@ -38599,14 +40585,19 @@ components:
         channel: 'Monstercat: Instinct'
     Success53:
       title: Success53
+      type: object
+      example:
+        state: paused
+        volume: 50
       required:
         - state
-      type: object
+        - volume
       properties:
         state:
           type: string
-      example:
-        state: paused
+        volume:
+          type: integer
+          format: int32
     Song:
       type: object
       properties:
@@ -39549,7 +41540,7 @@ tags:
     description: 'This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.'
   - name: single user
     description: 'Endpoints to manage single user points data '
-  - name: songrequests
+  - name: songrequest
     description: Endpoints to interact with StreamElements Mediashare
   - name: speech
     description: Endpoints to interact with StreamElements TTS
@@ -39567,3 +41558,5 @@ tags:
     description: Endpoints to interact with tips
   - name: users
     description: Folder for loyalty
+  - name: void
+    description: Endpoints not working or without explanation
