@@ -1040,7 +1040,6 @@ paths:
     post:
       tags:
         - manager
-        - invite
       summary: '/:channel'
       operationId: 'Post/invite/:channel'
       description: "Create manager invite code.\r\n\r\nUse the code generated to create an invite link in the following format (replace `INVITE_CODE` with the actual code):\r\n\r\n`https://streamelements.com/invite/INVITE_CODE`"
@@ -1445,7 +1444,6 @@ paths:
     get:
       tags:
         - wonky - not working
-        - activities
       summary: '/:channel/:activityId'
       description: Get activity details by id
       operationId: 'Get/:channel/:activityId'
@@ -1514,7 +1512,6 @@ paths:
     post:
       tags:
         - wonky - not working
-        - activities
       summary: '/:channel/:activityId'
       description: Update activity id
       operationId: 'Post/:channel/:activityId1'
@@ -3042,7 +3039,6 @@ paths:
     get:
       tags:
         - emotes
-        - channels
       summary: '/:channel/emotes'
       description: 'Get emotes that can be used on channel (twitch, bttv, ffz)'
       operationId: 'Get/channels/:channel/emotes'
@@ -6853,7 +6849,6 @@ paths:
       description: Remove manager access
       tags:
         - manager
-        - channels
       summary: '/:channel/access/:userId'
       operationId: 'Delete/channels/:channel/accesst/:userId'
       parameters:
@@ -6904,7 +6899,6 @@ paths:
       summary: '/:channel/users/:userId'
       tags:
         - manager
-        - channels
       operationId: 'Put/channels/:channel/users/:userId'
       description: Change manager role
       requestBody:
@@ -7531,7 +7525,6 @@ paths:
     get:
       tags:
         - wonky - not working
-        - chatstats
       summary: '/:username/:category/:item'
       description: Get channels details linked to provided URL
       operationId: 'Get/chatstats/:username/:category/:item'
@@ -7567,7 +7560,6 @@ paths:
     get:
       tags:
         - commands
-        - bot
       summary: '/:channel'
       description: List custom commands
       operationId: 'Get/:channel'
@@ -7782,7 +7774,6 @@ paths:
     get:
       tags:
         - commands
-        - bot
       summary: '/:channel/public'
       description: List public commands
       operationId: 'Get/:channel/public'
@@ -7906,7 +7897,6 @@ paths:
     get:
       tags:
         - commands
-        - bot
       summary: '/:channel/default'
       description: List default commands
       operationId: 'Get/:channel/default'
@@ -13604,7 +13594,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - filters
       summary: '/:channel/:filter'
       description: Update filters
       operationId: '/:channel/:filter'
@@ -14570,7 +14559,6 @@ paths:
     post:
       tags:
         - wonky - not working
-        - single giveaway
       summary: '/:channel/:giveawayId'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway"
       operationId: 'Post/:channel/:giveawayId'
@@ -14651,7 +14639,6 @@ paths:
     put:
       tags:
         - single giveaway
-        - giveaways
       summary: '/:channel/:giveawayId'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway title"
       operationId: 'Put/giveaways/:channel/:giveawayId'
@@ -14802,7 +14789,6 @@ paths:
     get:
       tags:
         - wonky - not working
-        - single giveaway
       summary: '/:channel/:giveawayId/joined'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway"
       operationId: '/:channel/:giveawayId/joined'
@@ -14961,7 +14947,6 @@ paths:
       summary: '/:channel/:giveawayId/entry'
       tags:
         - single giveaway
-        - giveaways
       responses:
         '200':
           description: OK
@@ -15055,8 +15040,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - single giveaway
-        - giveaways
       summary: '/:channel/:giveawayId/start'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway"
       operationId: '/:channel/:giveawayId/start'
@@ -15129,8 +15112,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - single giveaway
-        - giveaways
       summary: '/:channel/:giveawayId/winner'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner"
       operationId: '/:channel/:giveawayId/winner'
@@ -15173,7 +15154,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - single giveaway
       summary: '/:channel/:giveawayId/complete'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete\r\n"
       operationId: '/:channel/:giveawayId/complete'
@@ -15234,7 +15214,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - single giveaway
       summary: '/:channel/:giveawayId/reopen'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway"
       operationId: '/:channel/:giveawayId/reopen'
@@ -15295,8 +15274,6 @@ paths:
     delete:
       tags:
         - wonky - not working
-        - giveaways
-        - single giveaway
       summary: '/:channel/:giveawayId/refund'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway "
       operationId: '/:channel/:giveawayId/refund'
@@ -15371,7 +15348,6 @@ paths:
       summary: '/:channel/:giveawayId/action'
       tags:
         - single giveaway
-        - giveaways
       responses:
         '200':
           description: OK
@@ -15410,8 +15386,6 @@ paths:
     delete:
       tags:
         - wonky - not working
-        - giveaways
-        - single giveaway
       summary: '/:channel/:giveawayId/close'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway"
       operationId: '/:channel/:giveawayId/close'
@@ -15706,7 +15680,6 @@ paths:
     get:
       tags:
         - wonky - not working
-        - giveaways
       summary: '/:channel/history'
       description: "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways"
       operationId: 'Get/giveaways/:channel/history'
@@ -17812,7 +17785,6 @@ paths:
     put:
       tags:
         - wonky - not working
-        - overlays
       summary: '/:channel/action/:action'
       description: Overlay/Alerts control
       operationId: '/:channel/action/:action'
@@ -17858,7 +17830,6 @@ paths:
     get:
       tags:
         - single user
-        - points
       summary: '/:channel/:user'
       description: Get userpoints for specific username
       operationId: 'Get/points/:channel/:user'
@@ -17925,7 +17896,6 @@ paths:
     delete:
       tags:
         - single user
-        - points
       summary: '/:channel/:user'
       description: Reset user points (remove from table)
       operationId: 'Delete/points/:channel/:user'
@@ -17975,7 +17945,6 @@ paths:
     get:
       tags:
         - single user
-        - points
       summary: '/:channel/:user/rank'
       description: Get current user rank by username
       operationId: 'Get/points/:channel/:user/rank'
@@ -18027,7 +17996,6 @@ paths:
     put:
       tags:
         - single user
-        - points
       summary: '/:channel/:user/:amount'
       description: Add or remove points from user
       operationId: 'Put/points/:channel/:user/:amount'
@@ -18099,7 +18067,6 @@ paths:
     put:
       tags:
         - single user
-        - points
       summary: '/:channel/alltime/:user/:amount'
       description: Update alltime points for user
       operationId: 'Put/points/:channel/alltime/:user/:amount'
@@ -18181,7 +18148,6 @@ paths:
       description: Reset alltime user points (remove from table)
       tags:
         - single user
-        - points
       summary: '/:channel/alltime/:user'
       operationId: 'Delete/points/:channel/alltime/:user'
       parameters:
@@ -20829,7 +20795,6 @@ paths:
       description: TODO - Description missing
       tags:
         - wonky - not working
-        - songrequest
       summary: /playing
       operationId: Get/songrequest/playing
       parameters:
