@@ -1337,8 +1337,7 @@
     "/invite/{channel}": {
       "post": {
         "tags": [
-          "manager",
-          "invite"
+          "manager"
         ],
         "summary": "/:channel",
         "description": "Create manager invite code.\r\n\r\nUse the code generated to create an invite link in the following format (replace `INVITE_CODE` with the actual code):\r\n\r\n`https://streamelements.com/invite/INVITE_CODE`",
@@ -2015,8 +2014,7 @@
     "/activities/{channel}/{activityId}": {
       "get": {
         "tags": [
-          "wonky - not working",
-          "activities"
+          "wonky - not working"
         ],
         "summary": "/:channel/:activityId",
         "description": "Get activity details by id",
@@ -2143,8 +2141,7 @@
       },
       "post": {
         "tags": [
-          "wonky - not working",
-          "activities"
+          "wonky - not working"
         ],
         "summary": "/:channel/:activityId",
         "description": "Update activity id",
@@ -4716,8 +4713,7 @@
     "/channels/{channel}/emotes": {
       "get": {
         "tags": [
-          "emotes",
-          "channels"
+          "emotes"
         ],
         "summary": "/:channel/emotes",
         "description": "Get emotes that can be used on channel (twitch, bttv, ffz)",
@@ -9341,8 +9337,7 @@
     "/channels/{channel}/access/{userId}": {
       "delete": {
         "tags": [
-          "manager",
-          "channels"
+          "manager"
         ],
         "summary": "/:channel/access/:userId",
         "description": "Remove manager access",
@@ -9410,8 +9405,7 @@
     "/channels/{channel}/users/{userId}": {
       "put": {
         "tags": [
-          "manager",
-          "channels"
+          "manager"
         ],
         "summary": "/:channel/users/:userId",
         "description": "Change manager role",
@@ -10459,8 +10453,7 @@
     "/chatstats/{username}/{category}/{item}": {
       "get": {
         "tags": [
-          "wonky - not working",
-          "chatstats"
+          "wonky - not working"
         ],
         "summary": "/:username/:category/:item",
         "description": "Get channels details linked to provided URL",
@@ -10519,8 +10512,7 @@
     "/bot/commands/{channel}": {
       "get": {
         "tags": [
-          "commands",
-          "bot"
+          "commands"
         ],
         "summary": "/:channel",
         "description": "List custom commands",
@@ -10867,8 +10859,7 @@
     "/bot/commands/{channel}/public": {
       "get": {
         "tags": [
-          "commands",
-          "bot"
+          "commands"
         ],
         "summary": "/:channel/public",
         "description": "List public commands",
@@ -11043,8 +11034,7 @@
     "/bot/commands/{channel}/default": {
       "get": {
         "tags": [
-          "commands",
-          "bot"
+          "commands"
         ],
         "summary": "/:channel/default",
         "description": "List default commands",
@@ -19228,8 +19218,7 @@
     "/bot/filters/{channel}/{filter}": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "filters"
+          "wonky - not working"
         ],
         "summary": "/:channel/:filter",
         "description": "Update filters",
@@ -20801,8 +20790,7 @@
       },
       "post": {
         "tags": [
-          "wonky - not working",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nCreate a new Giveaway",
@@ -20946,8 +20934,7 @@
       },
       "put": {
         "tags": [
-          "single giveaway",
-          "giveaways"
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nUpdate giveaway title",
@@ -21203,8 +21190,7 @@
     "/giveaways/{channel}/{giveawayId}/joined": {
       "get": {
         "tags": [
-          "wonky - not working",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/joined",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList joined users in giveaway",
@@ -21432,8 +21418,7 @@
     "/giveaways/{channel}/{giveawayId}/entry": {
       "post": {
         "tags": [
-          "single giveaway",
-          "giveaways"
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/entry",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nBuy giveaway tickets ",
@@ -21610,9 +21595,7 @@
     "/giveaways/{channel}/{giveawayId}/start": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "single giveaway",
-          "giveaways"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/start",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nStart a Giveaway",
@@ -21743,9 +21726,7 @@
     "/giveaways/{channel}/{giveawayId}/winner": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "single giveaway",
-          "giveaways"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/winner",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nDraw a Giveaway winner",
@@ -21832,8 +21813,7 @@
     "/giveaways/{channel}/{giveawayId}/complete": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/complete",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nMark Giveaway as complete\r\n",
@@ -21951,8 +21931,7 @@
     "/giveaways/{channel}/{giveawayId}/reopen": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/reopen",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nReopen Giveaway",
@@ -22070,9 +22049,7 @@
     "/giveaways/{channel}/{giveawayId}/refund": {
       "delete": {
         "tags": [
-          "wonky - not working",
-          "giveaways",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/refund",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nRefund Giveaway ",
@@ -22190,8 +22167,7 @@
     "/giveaways/{channel}/{giveawayId}/action": {
       "put": {
         "tags": [
-          "single giveaway",
-          "giveaways"
+          "single giveaway"
         ],
         "summary": "/:channel/:giveawayId/action",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nGiveaway control. Start / Close / Refund / Reopen / Draw winner / Mark as completed\r\n",
@@ -22287,9 +22263,7 @@
     "/giveaways/{channel}/{giveawayId}/close": {
       "delete": {
         "tags": [
-          "wonky - not working",
-          "giveaways",
-          "single giveaway"
+          "wonky - not working"
         ],
         "summary": "/:channel/:giveawayId/close",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nClose Giveaway",
@@ -22741,8 +22715,7 @@
     "/giveaways/{channel}/history": {
       "get": {
         "tags": [
-          "wonky - not working",
-          "giveaways"
+          "wonky - not working"
         ],
         "summary": "/:channel/history",
         "description": "*This endpoint is available only in the API version 3. Make sure to use the v3 base URL: https://api.streamelements.com/kappa/v3.*\r\n\r\nList previous giveaways",
@@ -25685,8 +25658,7 @@
     "/overlays/{channel}/action/{action}": {
       "put": {
         "tags": [
-          "wonky - not working",
-          "overlays"
+          "wonky - not working"
         ],
         "summary": "/:channel/action/:action",
         "description": "Overlay/Alerts control",
@@ -25776,8 +25748,7 @@
     "/points/{channel}/{user}": {
       "get": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/:user",
         "description": "Get userpoints for specific username",
@@ -25887,8 +25858,7 @@
       },
       "delete": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/:user",
         "description": "Reset user points (remove from table)",
@@ -25975,8 +25945,7 @@
     "/points/{channel}/{user}/rank": {
       "get": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/:user/rank",
         "description": "Get current user rank by username",
@@ -26068,8 +26037,7 @@
     "/points/{channel}/{user}/{amount}": {
       "put": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/:user/:amount",
         "description": "Add or remove points from user",
@@ -26185,8 +26153,7 @@
     "/points/{channel}/alltime/{user}/{amount}": {
       "put": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/alltime/:user/:amount",
         "description": "Update alltime points for user",
@@ -26314,8 +26281,7 @@
     "/points/{channel}/alltime/{user}": {
       "delete": {
         "tags": [
-          "single user",
-          "points"
+          "single user"
         ],
         "summary": "/:channel/alltime/:user",
         "description": "Reset alltime user points (remove from table)",
@@ -30660,8 +30626,7 @@
     "/songrequest/playing": {
       "get": {
         "tags": [
-          "wonky - not working",
-          "songrequest"
+          "wonky - not working"
         ],
         "summary": "/playing",
         "description": "TODO - Description missing",
