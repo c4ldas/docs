@@ -1,9 +1,17 @@
-# Repo
+# About this Repository
 
-I am using this repo to create a copy of Streamelements API and update its endpoints as their documentation is outdated. I am mainly using it to store the api.yaml and api.json. 
+This repository was initially created to maintain a copy of the [StreamElements](https://dev.streamelements.com/docs/api-docs) API and update its endpoints, as the official documentation is significantly outdated. The primary purpose was to store the `api.yaml` and `api.json` files.
 
-The URL with the updated endpoints is https://seapi.stoplight.io/docs/se-endpoints
+The project also served as an opportunity to explore how the Mintlify interface works with REST APIs. During this exploration, I observed that while Mintlify's API reference interface is straightforward, it lacks certain features available in Stoplight. Although Stoplight's interface can be slower, I find it more appealing due to its cleaner design and inclusion of a live requests panel—a must-have feature, in my opinion.
 
-The same endpoints are available in Mintlify, on the following URL: https://na-d8bb7418.mintlify.app/api-reference/
+Through this process, I discovered [Stoplight Elements](https://docs.stoplight.io/docs/elements/a71d7fcfefcd6-elements-in-html), which uses the same Stoplight interface but allows you to host your webpage and `.yaml` files locally. This approach effectively resolves the loading time issues.
 
-I noticed Mintlify API reference does not provide all fields available in Stoplight, and although Stoplight interface is slower, the way they show the information is better for me.
+The Mintlify API reference is still accessible at [this URL](https://na-d8bb7418.mintlify.app/api-reference), but it is not fully updated since I decided to switch to Stoplight and no longer maintain it.
+
+# Updated documentation
+
+For the updated endpoints and documentation using Stoplight, please visit:
+
+Live URL: [https://c4ldas.github.io/streamelements-api](https://c4ldas.github.io/streamelements-api)
+
+Repository: [c4ldas/streamelements-api](https://github.com/c4ldas/streamelements-api)
